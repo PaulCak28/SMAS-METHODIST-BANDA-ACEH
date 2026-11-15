@@ -28,9 +28,12 @@ class ClassroomController extends Controller
     public function show(Request $request, ClassSubjectTeacher $cst)
     {
         Access::authorizeTeacher($request->user(), $cst);
-        $cst->load('subject', 'schoolClass', 'joinedStudents.user', 'materials', 'assignments.submissions', 'exams');
+        $cst->load('subject', 'schoolClass', 'joinedStudents.user', 'materials', 'assignments.submissions', 'exams.questions');
+        $class = $cst;
+        $students = $cst->joinedStudents;
+        $exams = $cst->exams()->withCount('questions')->get();
 
-        return view('guru.classes.show', compact('cst'));
+        return view('guru.classes.show', compact('cst', 'class', 'students', 'exams'));
     }
 
     public function regenerateCode(Request $request, ClassSubjectTeacher $cst)
