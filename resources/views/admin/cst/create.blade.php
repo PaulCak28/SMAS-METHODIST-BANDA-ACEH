@@ -37,22 +37,33 @@
                         </select>
                     </div>
 
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark">Tingkatan Kelas <span class="text-danger">*</span></label>
+                        <select name="class_id" class="form-select bg-light" required>
+                            <option value="" selected disabled>-- Pilih Ruangan Kelas --</option>
+                            @foreach($rooms as $room)
+                                <option value="{{ $room->class_id }}" {{ old('class_id') == $room->class_id ? 'selected' : '' }}>{{ $room->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="row mb-5">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Alokasi Ruangan (Label) <span class="text-danger">*</span></label>
-                            <select name="class_id" class="form-select bg-light" required>
-                                <option value="" selected disabled>-- Pilih Ruangan Kelas --</option>
-                                @foreach($rooms as $room)
-                                    <option value="{{ $room->class_id }}" {{ old('class_id') == $room->class_id ? 'selected' : '' }}>{{ $room->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-dark">Tahun Ajaran <span class="text-danger">*</span></label>
                             <input type="text" name="academic_year" class="form-control bg-light" value="{{ old('academic_year', '2025/2026') }}" required>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">Semester <span class="text-danger">*</span></label>
+                            <select name="semester" class="form-select bg-light" required>
+                                <option value="" selected disabled>-- Pilih Semester --</option>
+                                <option value="Ganjil" {{ old('semester') == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
+                                <option value="Genap" {{ old('semester') == 'Genap' ? 'selected' : '' }}>Genap</option>
+                            </select>
+                        </div>
                     </div>
+
                     <hr class="border-secondary mb-4 opacity-10">
+                    
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('admin.cst.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Batal</a>
                         <button type="submit" class="btn btn-primary px-4 rounded-3 fw-medium">Simpan & Buat Join Code</button>

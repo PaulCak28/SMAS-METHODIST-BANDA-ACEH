@@ -44,7 +44,6 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <div>
-                            {{-- Menggunakan array_unique agar tidak terjadi cetak badge berulang (bug duplikasi) --}}
                             @foreach(array_unique($item->target_roles ?? []) as $role)
                                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 text-uppercase small fw-bold me-1">
                                     {{ $role == 'teacher' ? 'Guru' : ($role == 'student' ? 'Siswa' : 'Semua') }}
@@ -53,19 +52,30 @@
                         </div>
                         <small class="text-muted"><i class="bi bi-clock me-1"></i> {{ $item->created_at->format('d M Y, H:i') }}</small>
                     </div>
+
                     <h5 class="fw-bold text-dark mb-2">
-                        <a href="{{ route('admin.announcements.show', $item->announcement_id) }}" class="text-dark text-decoration-none">
+                        <a href="{{ route('admin.announcements.show', $item->slug ?: $item->announcement_id) }}" class="text-dark text-decoration-none">
                             {{ $item->title }}
                         </a>
                     </h5>
+                    
                     <p class="text-muted small mb-3">{{ Str::limit(strip_tags($item->content), 120) }}</p>
+
+                    @if(!empty($item->link))
+                        <div>
+                            <a href="{{ $item->link }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Buka Tautan
+                            </a>
+                        </div>
+                    @endif
                 </div>
+
                 <div class="card-footer bg-white border-0 pt-0 pb-4 px-4 d-flex justify-content-between align-items-center">
                     <small class="text-muted">Oleh: <span class="fw-semibold text-dark">{{ $item->creator->name ?? 'Admin' }}</span></small>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('admin.announcements.show', $item->announcement_id) }}" class="btn btn-sm btn-light border text-primary shadow-sm" title="Lihat"><i class="bi bi-eye"></i></a>
-                        <a href="{{ route('admin.announcements.edit', $item->announcement_id) }}" class="btn btn-sm btn-light border text-warning shadow-sm" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                        <form action="{{ route('admin.announcements.destroy', $item->announcement_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus pengumuman ini?')">
+                        <a href="{{ route('admin.announcements.show', $item->slug ?: $item->announcement_id) }}" class="btn btn-sm btn-light border text-primary shadow-sm" title="Lihat"><i class="bi bi-eye"></i></a>
+                        <a href="{{ route('admin.announcements.edit', $item->slug ?: $item->announcement_id) }}" class="btn btn-sm btn-light border text-warning shadow-sm" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        <form action="{{ route('admin.announcements.destroy', $item->slug ?: $item->announcement_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus pengumuman ini?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-light border text-danger shadow-sm" title="Hapus"><i class="bi bi-trash"></i></button>
                         </form>

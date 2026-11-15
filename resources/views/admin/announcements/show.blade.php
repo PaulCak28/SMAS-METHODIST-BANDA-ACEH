@@ -14,24 +14,46 @@
 <div class="row">
     <div class="col-lg-10">
         <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <div>
-                    @foreach($announcement->target_roles ?? [] as $role)
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 text-uppercase fw-bold me-1">
-                            {{ $role == 'teacher' ? 'Khusus Guru' : 'Khusus Siswa' }}
+                    @foreach(array_unique($announcement->target_roles ?? []) as $role)
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 text-uppercase small fw-bold me-1">
+                            {{ $role == 'teacher' ? 'Guru' : ($role == 'student' ? 'Siswa' : 'Semua') }}
                         </span>
                     @endforeach
                 </div>
                 <span class="text-muted small"><i class="bi bi-calendar-event me-1"></i> {{ $announcement->created_at->format('d M Y, H:i') }}</span>
             </div>
+
             <h3 class="fw-bold text-dark mb-3">{{ $announcement->title }}</h3>
-            <p class="text-muted small mb-4 pb-3 border-bottom">Dipublikasikan oleh: <span class="fw-semibold text-dark">{{ $announcement->creator->name ?? 'Admin' }}</span></p>
+            
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom">
+                <span class="text-muted small mb-0">Dipublikasikan oleh: <span class="fw-semibold text-dark">{{ $announcement->creator->name ?? 'Admin' }}</span></span>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-secondary border fw-normal py-1 px-2">
+                        <i class="bi bi-link-45deg"></i> {{ route('admin.announcements.show', $announcement->slug ?: $announcement->announcement_id) }}
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="navigator.clipboard.writeText('{{ route('admin.announcements.show', $announcement->slug ?: $announcement->announcement_id) }}'); alert('Tautan berhasil disalin!')" title="Salin Tautan">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+
+            @if(!empty($announcement->link))
+                <div class="mb-4">
+                    <a href="{{ $announcement->link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-medium">
+                        <i class="bi bi-box-arrow-up-right me-2"></i> Kunjungi Tautan Tujuan
+                    </a>
+                </div>
+            @endif
             
             <div class="text-dark lh-lg" style="white-space: pre-line;">
                 {{ $announcement->content }}
             </div>
 
-            <div class="mt-5 pt-3 border-top d-flex justify-content-end">
+            <div class="mt-5 pt-3 border-top d-flex justify-content-end gap-2">
+                <a href="{{ route('admin.announcements.edit', $announcement->slug ?: $announcement->announcement_id) }}" class="btn btn-warning text-dark px-4 rounded-3 fw-medium">Edit</a>
                 <a href="{{ route('admin.announcements.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Kembali</a>
             </div>
         </div>

@@ -14,7 +14,7 @@ class AnnouncementController extends Controller
     {
         $search = $request->input('search');
 
-        $announcements = Announcement::with('creator') // Diperbaiki dari 'author' ke 'creator'
+        $announcements = Announcement::with('creator')
             ->when($search, function ($query, $search) {
                 $query->where('title', 'like', "%{$search}%")
                       ->orWhere('content', 'like', "%{$search}%");
@@ -35,16 +35,18 @@ class AnnouncementController extends Controller
     {
         $v = $request->validate([
             'title' => 'required|string|max:255',
+            'link' => 'nullable|url|max:255',
             'content' => 'required|string',
-            'target_roles' => 'required|array', // Sesuai kolom model (array)
+            'target_roles' => 'required|array',
             'target_roles.*' => Rule::in(['all', 'teacher', 'student']),
         ]);
 
         Announcement::create([
             'title' => $v['title'],
+            'link' => $v['link'] ?? null,
             'content' => $v['content'],
             'target_roles' => $v['target_roles'],
-            'created_by' => Auth::id(), // Sesuai kolom created_by di model
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()->route('admin.announcements.index')
@@ -53,7 +55,7 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
-        $announcement->load('creator'); // Diperbaiki dari 'author' ke 'creator'
+        $announcement->load('creator');
         return view('admin.announcements.show', compact('announcement'));
     }
 
@@ -66,13 +68,19 @@ class AnnouncementController extends Controller
     {
         $v = $request->validate([
             'title' => 'required|string|max:255',
+            'link' => 'nullable|url|max:255',
             'content' => 'required|string',
             'target_roles' => 'required|array',
             'target_roles.*' => Rule::in(['all', 'teacher', 'student']),
         ]);
 
+        if ($announcement->title !== $v['title']) {
+            $announcement->slug = null;
+        }
+
         $announcement->update([
             'title' => $v['title'],
+            'link' => $v['link'] ?? null,
             'content' => $v['content'],
             'target_roles' => $v['target_roles'],
         ]);

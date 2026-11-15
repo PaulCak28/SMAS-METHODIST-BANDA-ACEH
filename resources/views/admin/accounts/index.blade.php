@@ -45,7 +45,6 @@
                     <option value="admin" {{ ($role ?? '') == 'admin' ? 'selected' : '' }}>Admin</option>
                     <option value="guru" {{ ($role ?? '') == 'guru' ? 'selected' : '' }}>Guru</option>
                     <option value="siswa" {{ ($role ?? '') == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                    <option value="orangtua" {{ ($role ?? '') == 'orangtua' ? 'selected' : '' }}>Orang Tua</option>
                 </select>
             </div>
             <div class="col-md-3 d-flex gap-2">
@@ -64,7 +63,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light text-muted small text-uppercase" style="letter-spacing: 0.5px;">
                 <tr>
-                    <th class="ps-4 py-3">ID (NIP/NIS/NIK)</th>
+                    <th class="ps-4 py-3">ID (NIP/NIS)</th>
                     <th class="py-3">Nama Lengkap</th>
                     <th class="py-3">Email</th>
                     <th class="py-3">Peran</th>
@@ -87,10 +86,8 @@
                                 <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Admin</span>
                             @elseif($user->role == 'guru')
                                 <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Guru</span>
-                            @elseif($user->role == 'siswa')
+                            @else($user->role == 'siswa')
                                 <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">Siswa</span>
-                            @else
-                                <span class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill">Orang Tua</span>
                             @endif
                         </td>
                         <td class="text-muted small">

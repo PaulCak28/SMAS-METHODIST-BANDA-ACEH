@@ -15,7 +15,7 @@
     <div class="col-lg-10">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-4 p-md-5">
-                <form action="{{ route('admin.announcements.update', $announcement->announcement_id) }}" method="POST">
+                <form action="{{ route('admin.announcements.update', $announcement->slug ?: $announcement->announcement_id) }}" method="POST">
                     @csrf @method('PUT')
                     
                     <div class="mb-3">
@@ -26,8 +26,12 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold d-block">Target Penerima <span class="text-danger">*</span></label>
-                        <div class="d-flex gap-4 mt-2">
+                        <div class="d-flex gap-4 bg-light p-3 rounded-3 border">
                             @php $currentRoles = old('target_roles', $announcement->target_roles ?? []); @endphp
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="target_roles[]" value="all" id="roleAll" {{ in_array('all', $currentRoles) ? 'checked' : '' }}>
+                                <label class="form-check-label text-dark" for="roleAll">Semua (Publik)</label>
+                            </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="target_roles[]" value="teacher" id="roleTeacher" {{ in_array('teacher', $currentRoles) ? 'checked' : '' }}>
                                 <label class="form-check-label text-dark" for="roleTeacher">Guru</label>
@@ -38,6 +42,16 @@
                             </div>
                         </div>
                         @error('target_roles')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tautan / URL Tujuan <span class="text-muted small">(Opsional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="bi bi-link-45deg"></i></span>
+                            <input type="url" name="link" class="form-control bg-light @error('link') is-invalid @enderror" placeholder="https://contoh-website.com" value="{{ old('link', $announcement->link) }}">
+                        </div>
+                        <small class="text-muted">Diawali dengan <code>http://</code> atau <code>https://</code>. Jika diisi, tombol menuju website akan muncul.</small>
+                        @error('link')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="mb-4">
