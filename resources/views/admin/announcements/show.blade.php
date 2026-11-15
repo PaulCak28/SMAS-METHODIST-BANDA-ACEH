@@ -40,16 +40,8 @@
                 </div>
             </div>
 
-            @if(!empty($announcement->link))
-                <div class="mb-4">
-                    <a href="{{ $announcement->link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-medium">
-                        <i class="bi bi-box-arrow-up-right me-2"></i> Kunjungi Tautan Tujuan
-                    </a>
-                </div>
-            @endif
-            
-            <div class="text-dark lh-lg" style="white-space: pre-line;">
-                {{ $announcement->content }}
+            <div class="announcement-content text-dark lh-lg">
+                {!! $safeContent !!}
             </div>
 
             <div class="mt-5 pt-3 border-top d-flex justify-content-end gap-2">
@@ -60,3 +52,25 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+    <style>
+        .announcement-content img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 1.5rem auto;
+            border-radius: 0.75rem;
+        }
+
+        .announcement-content blockquote {
+            padding-left: 1rem;
+            border-left: 4px solid var(--bs-primary);
+            color: var(--bs-secondary-color);
+        }
+
+        .announcement-content li[data-list="bullet"] {
+            list-style-type: disc;
+        }
+    </style>
+@endpush

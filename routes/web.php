@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
@@ -137,6 +138,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/{enrollment}/edit', [ClassEnrollmentController::class, 'edit'])->name('edit');
     Route::put('/{enrollment}', [ClassEnrollmentController::class, 'update'])->name('update');
     Route::delete('/{enrollment}', [ClassEnrollmentController::class, 'destroy'])->name('destroy');
+    Route::post('/bulk', [ClassEnrollmentController::class, 'storeBulk'])->name('store-bulk');
     });
 
     // Menambah enrollment langsung dari halaman siswa
@@ -168,14 +170,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // Admin untuk announcement
-    Route::prefix('admin/announcements')->name('admin.announcements.')->group(function () {
-    Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
-    Route::get('/create', [AdminAnnouncement::class, 'create'])->name('create');
-    Route::post('/', [AdminAnnouncement::class, 'store'])->name('store');
-    Route::get('/{announcement}', [AdminAnnouncement::class, 'show'])->name('show');
-    Route::get('/{announcement}/edit', [AdminAnnouncement::class, 'edit'])->name('edit');
-    Route::put('/{announcement}', [AdminAnnouncement::class, 'update'])->name('update');
-    Route::delete('/{announcement}', [AdminAnnouncement::class, 'destroy'])->name('destroy');
+        Route::prefix('admin/announcements')->name('admin.announcements.')->middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
+        Route::get('/create', [AdminAnnouncement::class, 'create'])->name('create');
+        Route::post('/', [AdminAnnouncement::class, 'store'])->name('store');
+        Route::post('/images', [AnnouncementImageController::class, 'store'])
+            ->middleware('throttle:30,1')
+            ->name('images.store');
+        Route::get('/{announcement}', [AdminAnnouncement::class, 'show'])->name('show');
+        Route::get('/{announcement}/edit', [AdminAnnouncement::class, 'edit'])->name('edit');
+        Route::put('/{announcement}', [AdminAnnouncement::class, 'update'])->name('update');
+        Route::delete('/{announcement}', [AdminAnnouncement::class, 'destroy'])->name('destroy');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
