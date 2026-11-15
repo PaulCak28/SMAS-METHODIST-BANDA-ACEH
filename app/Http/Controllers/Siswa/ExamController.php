@@ -149,17 +149,16 @@ class ExamController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    /** Esai: unggah foto lembar jawaban. */
+    /** Simpan jawaban esai berupa teks yang diketik siswa. */
     public function essay(Request $request, Exam $exam, int $question)
     {
         $session = $this->runningSession($request, $exam);
         $q = $exam->questions()->where('question_type', 'esai')->findOrFail($question);
-        $request->validate(['photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:6144']);
-        $path = $request->file('photo')->store("exam-essays/{$exam->exam_id}/{$session->students_id}", 'local');
+        $v = $request->validate(['answer' => 'nullable|string|max:20000']);
 
         ExamAnswer::updateOrCreate(
             ['exam_id' => $exam->exam_id, 'students_id' => $session->students_id, 'question_id' => $q->exam_question_id],
-            ['answer_file' => $path]
+            ['answer' => json_encode($v['answer'] ?? '', JSON_UNESCAPED_UNICODE), 'answer_file' => null]
         );
 
         return response()->json(['ok' => true]);

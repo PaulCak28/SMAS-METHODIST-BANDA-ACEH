@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/siswa/e-class', [SiswaClassroom::class, 'index'])
         ->name('siswa.classes.index');
+    Route::post('/siswa/e-class/join', [SiswaClassroom::class, 'join'])->name('siswa.classes.join');
+    Route::get('/siswa/e-class/{cst}', [SiswaClassroom::class, 'show'])->name('siswa.classes.show');
+    Route::post('/siswa/e-class/assignments/{assignment}/submit', [SiswaClassroom::class, 'submit'])->name('siswa.classes.assignments.submit');
 
     Route::get('/siswa/e-exam', [SiswaExam::class, 'index'])
         ->name('siswa.exams.index');
@@ -69,6 +72,13 @@ Route::middleware('auth')->group(function () {
       Route::get('/guru', [GuruDashboard::class, 'index'])->name('guru.dashboard');
     Route::get('/guru/e-class', [GuruClassroom::class, 'index'])->name('guru.classes.index');
     Route::get('/guru/e-class/{cst}', [GuruClassroom::class, 'show'])->name('guru.classes.show');
+    Route::post('/guru/e-class/{cst}/materials', [GuruClassroom::class, 'storeMaterial'])->name('guru.classes.materials.store');
+    Route::delete('/guru/e-class/{cst}/materials/{material}', [GuruClassroom::class, 'destroyMaterial'])->name('guru.classes.materials.destroy');
+    Route::post('/guru/e-class/{cst}/assignments', [GuruClassroom::class, 'storeAssignment'])->name('guru.classes.assignments.store');
+    Route::get('/guru/e-class/assignments/{assignment}', [GuruClassroom::class, 'showAssignment'])->name('guru.classes.assignments.show');
+    Route::delete('/guru/e-class/assignments/{assignment}', [GuruClassroom::class, 'destroyAssignment'])->name('guru.classes.assignments.destroy');
+    Route::patch('/guru/e-class/assignments/{assignment}/students/{nis}/grade', [GuruClassroom::class, 'gradeSubmission'])->name('guru.classes.assignments.grade');
+    Route::get('/guru/e-class/assignments/{assignment}/students/{nis}/download', [GuruClassroom::class, 'downloadSubmission'])->name('guru.assignments.download');
     Route::get('/guru/e-exam', [GuruExam::class, 'index'])->name('guru.exams.index');
     Route::get('/e-exam/create', [GuruExam::class, 'create'])->name('guru.exams.create');
     Route::post('/e-exam', [GuruExam::class, 'store'])->name('guru.exams.store');

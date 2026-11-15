@@ -111,6 +111,16 @@ class ClassroomController extends Controller
         return view('guru.classes.assignment', compact('assignment', 'cst', 'subs'));
     }
 
+    public function downloadSubmission(Request $request, Assignment $assignment, int $nis)
+    {
+        Access::authorizeTeacher($request->user(), $assignment->classSubjectTeacher);
+        $submission = AssignmentSubmission::where('assignment_id', $assignment->assignment_id)
+            ->where('students_id', $nis)->firstOrFail();
+        abort_unless($submission->file_path && Storage::disk('local')->exists($submission->file_path), 404);
+
+        return Storage::disk('local')->download($submission->file_path);
+    }
+
     public function gradeSubmission(Request $request, Assignment $assignment, int $nis)
     {
         $cst = $assignment->classSubjectTeacher;
