@@ -126,7 +126,7 @@
     const answers = {};
     QUESTIONS.forEach((q) => {
         const s = (SAVED && SAVED[q.id]) || null;
-        if (q.type === 'esai') { answers[q.id] = { file: !!(s && s.file) }; return; }
+        if (q.type === 'esai') { answers[q.id] = { text: s && typeof s.answer === 'string' ? s.answer : (s && s.answer ? String(s.answer) : '') }; return; }
         let a = s ? s.answer : null;
         if (a !== null && a !== undefined && a !== '') {
             if (q.type === 'pg') {
@@ -158,7 +158,7 @@
     }
     function isAnswered(q) {
         const a = answers[q.id];
-        if (q.type === 'esai') return !!(a && a.file);
+        if (q.type === 'esai') return !!(a && a.text && a.text.trim().length);
         if (q.type === 'pg_kompleks') return Array.isArray(a) && a.length > 0;
         if (q.type === 'benar_salah') {
             return Array.isArray(a) && a.length === (q.options || []).length && a.every((v) => v === true || v === false);
@@ -171,41 +171,23 @@
     async function saveAnswer(q) {
         const a = answers[q.id];
         let payload;
-        if (q.type === 'pg') payload = String(L2I(a));                       // indeks, mis. "3"
+        if (q.type === 'esai') payload = JSON.stringify(a.text || '');
+        else if (q.type === 'pg') payload = String(L2I(a));                       // indeks, mis. "3"
         else if (q.type === 'pg_kompleks') payload = JSON.stringify(a.map(L2I)); // mis. [0,2]
         else payload = JSON.stringify(a);                                    // benar_salah: [true,false,...]
         setStatus('Menyimpan...');
         try {
-            const res = await fetch(URL_ANSWER, {
+            const isEssay = q.type === 'esai';
+            const res = await fetch(isEssay ? URL_ESSAY_TPL.replace(/\/0$/, '/' + q.id) : URL_ANSWER, {
                 method: 'POST',
                 headers: Object.assign({ 'Content-Type': 'application/json' }, headers()),
-                body: JSON.stringify({ question_id: q.id, answer: payload, token: TOKEN }),
+                body: JSON.stringify(isEssay ? { answer: a.text || '', token: TOKEN } : { question_id: q.id, answer: payload, token: TOKEN }),
             });
             if (res.status === 403) { return autoFinish(); }
             if (!res.ok) throw new Error();
             setStatus('Tersimpan ✓', true);
         } catch (e) {
             setStatus('Gagal menyimpan, periksa koneksi.');
-        }
-    }
-
-    async function uploadEssay(q, file, previewBox) {
-        const fd = new FormData();
-        fd.append('photo', file);
-        fd.append('token', TOKEN);
-        setStatus('Mengunggah foto...');
-        try {
-            const res = await fetch(URL_ESSAY_TPL.replace(/\/0$/, '/' + q.id), {
-                method: 'POST', headers: headers(), body: fd,
-            });
-            if (res.status === 403) { return autoFinish(); }
-            if (!res.ok) throw new Error();
-            answers[q.id] = { file: true };
-            previewBox.classList.add('is-uploaded');
-            setStatus('Foto terunggah ✓', true);
-            renderNav();
-        } catch (e) {
-            setStatus('Gagal mengunggah (maks 6 MB, jpg/png/webp).');
         }
     }
 
@@ -366,28 +348,23 @@
     }
 
     function renderEssay(q) {
-        const box = el('div', 'upload-box' + (answers[q.id] && answers[q.id].file ? ' is-uploaded' : ''));
-        box.appendChild(el('div', '', 'Tulis jawaban di kertas, lalu unggah foto lembar jawabanmu (jpg/png/webp, maks 6 MB).'));
-        const status = el('div', '', answers[q.id] && answers[q.id].file ? '✓ Foto jawaban sudah terunggah. Pilih file baru untuk mengganti.' : '');
-        status.style.cssText = 'margin-top:8px; font-weight:600;';
-        const input = document.createElement('input');
-        input.type = 'file'; input.accept = 'image/jpeg,image/png,image/webp';
-        input.onchange = () => {
-            const f = input.files[0];
-            if (!f) return;
-            if (f.size > 6 * 1024 * 1024) { setStatus('Ukuran foto melebihi 6 MB.'); input.value = ''; return; }
-            const old = box.querySelector('.upload-preview');
-            if (old) old.remove();
-            const img = el('img', 'upload-preview');
-            img.src = URL.createObjectURL(f);
-            box.appendChild(img);
-            status.textContent = 'Mengunggah...';
-            uploadEssay(q, f, box).then(() => {
-                if (answers[q.id] && answers[q.id].file) status.textContent = '✓ Foto jawaban terunggah.';
-            });
-        };
-        box.append(status, input);
-        return box;
+        const wrap = el('div', 'space-y-3');
+        const hint = el('p', 'text-sm text-slate-600', 'Ketik jawaban esai langsung pada kolom di bawah ini. Jawaban tersimpan otomatis.');
+        const textarea = document.createElement('textarea');
+        textarea.className = 'w-full min-h-48 rounded-xl border border-slate-300 p-4 text-slate-800 focus:border-sky-500 focus:ring-sky-500';
+        textarea.placeholder = 'Tulis jawabanmu di sini...';
+        textarea.maxLength = 20000;
+        textarea.value = (answers[q.id] && answers[q.id].text) || '';
+        let saveTimer;
+        textarea.addEventListener('input', () => {
+            answers[q.id] = { text: textarea.value };
+            renderNav();
+            clearTimeout(saveTimer);
+            setStatus('Menunggu penyimpanan...');
+            saveTimer = setTimeout(() => saveAnswer(q), 600);
+        });
+        wrap.append(hint, textarea);
+        return wrap;
     }
 
     function renderNav() {
