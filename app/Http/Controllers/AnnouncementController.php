@@ -7,15 +7,13 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
-    /** Semua pengguna melihat pengumuman yang ditujukan ke perannya. Admin melihat semuanya. */
     public function index(Request $request)
     {
-<<<<<<< HEAD
         $category = $request->query('kategori');
 
         $announcements = Announcement::published()
             ->when(
-                array_key_exists($category, Announcement::CATEGORIES),
+                $category && array_key_exists($category, Announcement::CATEGORIES),
                 fn ($q) => $q->where('category', $category)
             )
             ->latest('published_at')
@@ -33,14 +31,14 @@ class AnnouncementController extends Controller
                 && $announcement->published_at->lte(now()),
             404
         );
-=======
-        $user = $request->user();
 
-        $announcements = Announcement::with('creator')->latest()->get()
-            ->filter(fn ($a) => $user->isAdmin() || in_array($user->role, $a->target_roles ?? [], true))
-            ->take(30);
+        $related = Announcement::published()
+            ->where('announcement_id', '!=', $announcement->announcement_id)
+            ->latest('published_at')
+            ->take(3)
+            ->get();
 
-        return view('admin.announcements.index', compact('announcements'));
+        return view('announcements.show', compact('announcement', 'related'));
     }
 
     /** Hanya admin (dibatasi di route dan dicek lagi di sini). */
@@ -58,18 +56,9 @@ class AnnouncementController extends Controller
         ]);
 
         Announcement::create($v + ['created_by' => $request->user()->user_id]);
->>>>>>> 014121bbfae10bf11aad37e9d5abba9c3797084e
 
-        $related = Announcement::published()
-            ->where('announcement_id', '!=', $announcement->announcement_id)
-            ->latest('published_at')
-            ->take(3)
-            ->get();
-
-        return view('announcements.show', compact('announcement', 'related'));
+        return back()->with('success', 'Pengumuman berhasil diterbitkan.');
     }
-<<<<<<< HEAD
-=======
 
     public function destroy(Request $request, Announcement $announcement)
     {
@@ -79,5 +68,4 @@ class AnnouncementController extends Controller
 
         return back()->with('success', 'Pengumuman dihapus.');
     }
->>>>>>> 014121bbfae10bf11aad37e9d5abba9c3797084e
 }
