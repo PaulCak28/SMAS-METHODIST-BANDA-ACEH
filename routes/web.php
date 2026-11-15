@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\ClassEnrollmentController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\CstController;
 use App\Http\Controllers\Admin\TeacherController;
-use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncement;
 use App\Http\Controllers\Guru\ClassroomController as GuruClassroom;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
 use App\Http\Controllers\Guru\ExamController as GuruExam;
@@ -169,13 +169,13 @@ Route::middleware('auth')->group(function () {
 
     // Admin untuk announcement
     Route::prefix('admin/announcements')->name('admin.announcements.')->group(function () {
-    Route::get('/', [AnnouncementController::class, 'index'])->name('index');
-    Route::get('/create', [AnnouncementController::class, 'create'])->name('create');
-    Route::post('/', [AnnouncementController::class, 'store'])->name('store');
-    Route::get('/{announcement}', [AnnouncementController::class, 'show'])->name('show');
-    Route::get('/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('edit');
-    Route::put('/{announcement}', [AnnouncementController::class, 'update'])->name('update');
-    Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])->name('destroy');
+    Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
+    Route::get('/create', [AdminAnnouncement::class, 'create'])->name('create');
+    Route::post('/', [AdminAnnouncement::class, 'store'])->name('store');
+    Route::get('/{announcement}', [AdminAnnouncement::class, 'show'])->name('show');
+    Route::get('/{announcement}/edit', [AdminAnnouncement::class, 'edit'])->name('edit');
+    Route::put('/{announcement}', [AdminAnnouncement::class, 'update'])->name('update');
+    Route::delete('/{announcement}', [AdminAnnouncement::class, 'destroy'])->name('destroy');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
