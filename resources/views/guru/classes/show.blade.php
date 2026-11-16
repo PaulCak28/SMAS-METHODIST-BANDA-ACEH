@@ -36,7 +36,20 @@
         .rich h2 { font-size: 1.05rem; font-weight: 700; color: #334155; margin-top: .5rem; }
         .rich h3 { font-size: .95rem; font-weight: 700; color: #334155; margin-top: .5rem; }
         .rich a { color: #0369a1; text-decoration: underline; }
-        .rich blockquote { border-left: 3px solid #cbd5e1; padding-left: .75rem; font-style: italic; }
+        .rich img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 12px 0;
+            border-radius: 12px;
+        }
+
+        .ql-editor img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }    
+        
     </style>
 
     <div class="py-8">
@@ -70,13 +83,25 @@
                             <div id="editor-material-create"></div>
                             <input type="hidden" name="description" id="input-material-create">
                         </div>
-                        <div>
-                            <label class="mb-1 block text-sm font-semibold text-slate-700">File materi <span class="font-normal text-slate-400">(opsional, maks. 20 MB)</span></label>
-                            <input type="file" name="file"
-                                   data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,png,mp4,zip" data-max-mb="20"
-                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip"
-                                   class="block w-full rounded-xl border border-slate-300 p-2 text-sm">
-                        </div>
+                            <div>
+                                <label class="mb-1 block text-sm font-semibold text-slate-700">
+                                    File materi
+                                    <span class="font-normal text-slate-400">(maksimal 20 MB)</span>
+                                </label>
+
+                                <p class="mb-2 text-xs text-slate-500">
+                                    Format yang didukung: PDF, Word, PowerPoint, Excel, gambar, video, dan ZIP.
+                                </p>
+
+                                <input
+                                    type="file"
+                                    name="file"
+                                    data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip,txt"
+                                    data-max-mb="20"
+                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip,.txt"
+                                    class="block w-full rounded-xl border border-slate-300 p-2 text-sm"
+                                >
+                            </div>
                         <button class="w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700">+ Unggah Materi</button>
                     </form>
                 </section>
@@ -229,7 +254,7 @@
                                         <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full {{ $cls }}">{{ $label }}</span>
                                     </div>
                                     <dl class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                                        <div><dt class="text-gray-500">Soal</dt><dd class="font-semibold text-gray-900">{{ $e->questions_count }}</dd></div>
+                                        <div><dt class="text-gray-500">Soal</dt><dd class="font-semibold text-gray-900">{{ $e->questions->count() }}</dd></div>
                                         <div><dt class="text-gray-500">Durasi</dt><dd class="font-semibold text-gray-900">{{ $e->duration_minutes }} menit</dd></div>
                                         <div><dt class="text-gray-500">Dibuka</dt><dd class="font-semibold text-gray-900">{{ \Illuminate\Support\Carbon::parse($e->start_time)->format('d M Y, H:i') }}</dd></div>
                                         <div><dt class="text-gray-500">Ditutup</dt><dd class="font-semibold text-gray-900">{{ \Illuminate\Support\Carbon::parse($e->end_time)->format('d M Y, H:i') }}</dd></div>
@@ -287,7 +312,7 @@
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-700">Ganti file <span class="font-normal text-slate-400">(kosongkan jika tidak diganti)</span></label>
-                    <input type="file" name="file" data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,png,mp4,zip" data-max-mb="20" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip" class="block w-full rounded-xl border border-slate-300 p-2 text-sm">
+                    <input type="file" name="file" data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip" data-max-mb="20" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip" class="block w-full rounded-xl border border-slate-300 p-2 text-sm">
                 </div>
                 <div class="flex justify-end gap-2">
                     <button type="button" data-close-modal class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Batal</button>
@@ -335,84 +360,339 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-    <script src="{{ asset('js/file-validator.js') }}"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const toolbar = [
-            [{ header: [2, 3, false] }],
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['link', 'blockquote'],
-            ['clean'],
-        ];
-        const makeEditor = (sel, placeholder) =>
-            new Quill(sel, { theme: 'snow', placeholder, modules: { toolbar } });
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+<script src="{{ asset('js/file-validator.js') }}"></script>
 
-        // Salin isi editor ke input hidden saat form dikirim
-        const bindSync = (form, quill, input) => {
-            form.addEventListener('submit', () => {
-                const empty = quill.getText().trim() === '' && !quill.root.querySelector('img');
-                input.value = empty ? '' : quill.root.innerHTML;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // ==================================================
+    // KONFIGURASI UPLOAD GAMBAR
+    // ==================================================
+
+    
+const uploadUrl = @json(route('guru.classes.editor-images.store', $cst));
+const csrfToken = @json(csrf_token());
+
+function uploadQuillImage(quill) {
+    const fileInput = document.createElement('input');
+
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
+
+    fileInput.click();
+
+    fileInput.onchange = async function () {
+        const file = fileInput.files[0];
+
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Ukuran gambar maksimal 5 MB.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch(uploadUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: formData
             });
-        };
 
-        // Wajib pilih minimal satu format file
-        const requireFormat = (form) => {
-            form.addEventListener('submit', (e) => {
-                if (!form.querySelector('[data-format-group] input:checked')) {
-                    e.preventDefault();
-                    alert('Pilih minimal satu format file untuk pengumpulan tugas.');
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.message || 'Gagal mengunggah gambar.'
+                );
+            }
+
+            const range = quill.getSelection(true);
+
+            quill.insertEmbed(
+                range.index,
+                'image',
+                result.url,
+                'user'
+            );
+
+            quill.setSelection(range.index + 1);
+
+        } catch (error) {
+            console.error(error);
+            alert(error.message || 'Terjadi kesalahan saat upload gambar.');
+        }
+    };
+}
+
+function makeEditor(selector) {
+    const quill = new Quill(selector, {
+        theme: 'snow',
+        modules: {
+            toolbar: {
+                container: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image', 'blockquote'],
+                    ['clean']
+                ],
+                handlers: {
+                    image: function () {
+                        uploadQuillImage(quill);
+                    }
                 }
-            });
-        };
-
-        // --- Form tambah ---
-        const qMatCreate = makeEditor('#editor-material-create', 'Tuliskan ringkasan materi...');
-        const qAsgCreate = makeEditor('#editor-assignment-create', 'Jelaskan tugas yang harus dikerjakan siswa...');
-        const oldMat = @json(old('description'));
-        if (oldMat && document.querySelector('#form-material-create [name=title]').value) qMatCreate.clipboard.dangerouslyPasteHTML(oldMat);
-        bindSync(document.getElementById('form-material-create'), qMatCreate, document.getElementById('input-material-create'));
-        bindSync(document.getElementById('form-assignment-create'), qAsgCreate, document.getElementById('input-assignment-create'));
-        requireFormat(document.getElementById('form-assignment-create'));
-
-        // --- Modal edit ---
-        const qMatEdit = makeEditor('#editor-material-edit', 'Tuliskan ringkasan materi...');
-        const qAsgEdit = makeEditor('#editor-assignment-edit', 'Jelaskan tugas yang harus dikerjakan siswa...');
-        const formMatEdit = document.getElementById('form-material-edit');
-        const formAsgEdit = document.getElementById('form-assignment-edit');
-        bindSync(formMatEdit, qMatEdit, document.getElementById('input-material-edit'));
-        bindSync(formAsgEdit, qAsgEdit, document.getElementById('input-assignment-edit'));
-        requireFormat(formAsgEdit);
-
-        const open = (id) => { const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); };
-        const close = (m) => { m.classList.add('hidden'); m.classList.remove('flex'); };
-        document.querySelectorAll('[data-close-modal]').forEach(b =>
-            b.addEventListener('click', () => close(b.closest('[id^=modal-]'))));
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') document.querySelectorAll('[id^=modal-]').forEach(close);
-        });
-
-        document.querySelectorAll('.js-edit-material').forEach(btn => btn.addEventListener('click', () => {
-            formMatEdit.action = btn.dataset.action;
-            document.getElementById('edit-material-title').value = btn.dataset.title || '';
-            qMatEdit.setContents([]);
-            qMatEdit.clipboard.dangerouslyPasteHTML(btn.dataset.description || '');
-            formMatEdit.querySelector('[type=file]').value = '';
-            open('modal-material');
-        }));
-
-        document.querySelectorAll('.js-edit-assignment').forEach(btn => btn.addEventListener('click', () => {
-            formAsgEdit.action = btn.dataset.action;
-            document.getElementById('edit-assignment-title').value = btn.dataset.title || '';
-            document.getElementById('edit-assignment-due').value = btn.dataset.due || '';
-            qAsgEdit.setContents([]);
-            qAsgEdit.clipboard.dangerouslyPasteHTML(btn.dataset.description || '');
-            let formats = [];
-            try { formats = JSON.parse(btn.dataset.formats || '[]'); } catch (e) {}
-            formAsgEdit.querySelectorAll('.edit-fmt').forEach(cb => { cb.checked = formats.includes(cb.value); });
-            open('modal-assignment');
-        }));
+            }
+        }
     });
-    </script>
+
+    return quill;
+}
+
+    // ==================================================
+    // SINKRONISASI EDITOR KE INPUT HIDDEN
+    // ==================================================
+
+    function bindSync(form, quill, input) {
+
+        form.addEventListener('submit', () => {
+
+            const empty =
+                quill.getText().trim() === '' &&
+                !quill.root.querySelector('img');
+
+            input.value = empty
+                ? ''
+                : quill.root.innerHTML;
+
+        });
+    }
+
+
+    // ==================================================
+    // VALIDASI FORMAT PENGUMPULAN TUGAS
+    // ==================================================
+
+    function requireFormat(form) {
+
+        form.addEventListener('submit', (event) => {
+
+            const checked = form.querySelector(
+                '[data-format-group] input:checked'
+            );
+
+            if (!checked) {
+
+                event.preventDefault();
+
+                alert(
+                    'Pilih minimal satu format file untuk pengumpulan tugas.'
+                );
+            }
+        });
+    }
+
+
+    // ==================================================
+    // EDITOR TAMBAH MATERI DAN TUGAS
+    // ==================================================
+
+    const qMatCreate = makeEditor(
+        '#editor-material-create',
+        'Tuliskan ringkasan materi...'
+    );
+
+    const qAsgCreate = makeEditor(
+        '#editor-assignment-create',
+        'Jelaskan tugas yang harus dikerjakan siswa...'
+    );
+
+    const formMatCreate = document.getElementById(
+        'form-material-create'
+    );
+
+    const formAsgCreate = document.getElementById(
+        'form-assignment-create'
+    );
+
+    const oldMat = @json(old('description'));
+
+    if (oldMat && document.querySelector(
+        '#form-material-create [name=title]'
+    ).value) {
+        qMatCreate.clipboard.dangerouslyPasteHTML(oldMat);
+    }
+
+    bindSync(
+        formMatCreate,
+        qMatCreate,
+        document.getElementById('input-material-create')
+    );
+
+    bindSync(
+        formAsgCreate,
+        qAsgCreate,
+        document.getElementById('input-assignment-create')
+    );
+
+    requireFormat(formAsgCreate);
+
+
+    // ==================================================
+    // EDITOR MODAL EDIT MATERI DAN TUGAS
+    // ==================================================
+
+    const qMatEdit = makeEditor(
+        '#editor-material-edit',
+        'Tuliskan ringkasan materi...'
+    );
+
+    const qAsgEdit = makeEditor(
+        '#editor-assignment-edit',
+        'Jelaskan tugas yang harus dikerjakan siswa...'
+    );
+
+    const formMatEdit = document.getElementById(
+        'form-material-edit'
+    );
+
+    const formAsgEdit = document.getElementById(
+        'form-assignment-edit'
+    );
+
+    bindSync(
+        formMatEdit,
+        qMatEdit,
+        document.getElementById('input-material-edit')
+    );
+
+    bindSync(
+        formAsgEdit,
+        qAsgEdit,
+        document.getElementById('input-assignment-edit')
+    );
+
+    requireFormat(formAsgEdit);
+
+
+    // ==================================================
+    // MODAL BUKA DAN TUTUP
+    // ==================================================
+
+    const open = (id) => {
+
+        const modal = document.getElementById(id);
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    };
+
+    const close = (modal) => {
+
+        if (!modal) return;
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    document.querySelectorAll('[data-close-modal]').forEach(button => {
+
+        button.addEventListener('click', () => {
+
+            close(button.closest('[id^=modal-]'));
+
+        });
+    });
+
+    document.addEventListener('keydown', (event) => {
+
+        if (event.key === 'Escape') {
+
+            document.querySelectorAll('[id^=modal-]').forEach(close);
+
+        }
+    });
+
+
+    // ==================================================
+    // EDIT MATERI
+    // ==================================================
+
+    document.querySelectorAll('.js-edit-material').forEach(button => {
+
+        button.addEventListener('click', () => {
+
+            formMatEdit.action = button.dataset.action;
+
+            document.getElementById(
+                'edit-material-title'
+            ).value = button.dataset.title || '';
+
+            qMatEdit.setContents([]);
+
+            qMatEdit.clipboard.dangerouslyPasteHTML(
+                button.dataset.description || ''
+            );
+
+            formMatEdit.querySelector('[type=file]').value = '';
+
+            open('modal-material');
+
+        });
+    });
+
+
+    // ==================================================
+    // EDIT TUGAS
+    // ==================================================
+
+    document.querySelectorAll('.js-edit-assignment').forEach(button => {
+
+        button.addEventListener('click', () => {
+
+            formAsgEdit.action = button.dataset.action;
+
+            document.getElementById(
+                'edit-assignment-title'
+            ).value = button.dataset.title || '';
+
+            document.getElementById(
+                'edit-assignment-due'
+            ).value = button.dataset.due || '';
+
+            qAsgEdit.setContents([]);
+
+            qAsgEdit.clipboard.dangerouslyPasteHTML(
+                button.dataset.description || ''
+            );
+
+            let formats = [];
+
+            try {
+                formats = JSON.parse(
+                    button.dataset.formats || '[]'
+                );
+            } catch (error) {
+                console.error('Format tugas tidak valid:', error);
+            }
+
+            formAsgEdit.querySelectorAll('.edit-fmt').forEach(checkbox => {
+
+                checkbox.checked = formats.includes(checkbox.value);
+
+            });
+
+            open('modal-assignment');
+
+        });
+    });
+
+});
+</script>
 </x-app-layout>

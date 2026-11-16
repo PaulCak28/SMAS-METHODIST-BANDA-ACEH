@@ -21,12 +21,9 @@ class Material extends Model
         'uploaded_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'uploaded_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'uploaded_at' => 'datetime',
+    ];
 
     public function classSubjectTeacher()
     {

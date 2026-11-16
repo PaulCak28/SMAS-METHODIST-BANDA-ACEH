@@ -18,13 +18,17 @@ class Assignment extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'assignment_id',
         'cst_id',
         'title',
         'description',
         'due_date',
         'max_score',
         'allowed_formats',
+    ];
+
+    protected $casts = [
+        'due_date' => 'datetime',
+        'allowed_formats' => 'array',
     ];
 
     protected function casts(): array
