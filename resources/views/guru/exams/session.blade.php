@@ -15,6 +15,15 @@
         </div>
     </x-slot>
 
+    @php
+        $totalScore = min(100, (float) $answers->sum('score'));
+        $isFinished = in_array($session->status, ['selesai', 'keluar'], true);
+        $waktuSelesai = $session->finished_at ?? ($isFinished ? $session->updated_at : null);
+        $durasiDetik = $session->started_at && $waktuSelesai
+            ? max(0, (int) \Carbon\Carbon::parse($session->started_at)->diffInSeconds(\Carbon\Carbon::parse($waktuSelesai)))
+            : null;
+    @endphp
+
     <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
             
@@ -26,6 +35,12 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="rounded-xl bg-rose-50 border border-rose-200 p-4 text-sm font-medium text-rose-700">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- ======================================================== -->
                 <!-- KARTU INFO SISWA                                         -->
@@ -33,20 +48,26 @@
                 <div class="md:col-span-2 bg-white p-6 shadow-sm ring-1 ring-slate-200 rounded-2xl flex items-center justify-between">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800">{{ $session->student->user->name ?? 'Anonim' }}</h3>
-                        <p class="text-sm text-slate-500 font-medium">NISN: {{ $session->student->nisn ?? '-' }}</p>
+                        <p class="text-sm text-slate-500 font-medium">
+                            NIS: {{ $session->student_id }} | NISN: {{ $session->student->nisn ?? '-' }}
+                        </p>
                         
-                        <div class="flex items-center gap-3 mt-3 text-xs font-semibold">
+                        <div class="flex items-center gap-3 mt-3 text-xs font-semibold flex-wrap">
                             <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">
-                                Mulai: {{ $session->started_at ? \Carbon\Carbon::parse($session->started_at)->format('H:i') : '-' }}
+                                Mulai: {{ $session->started_at ? \Carbon\Carbon::parse($session->started_at)->format('H:i:s') : '-' }}
                             </span>
-                            @php
-                                $waktuSelesai = $session->finished_at ?? ($session->status === 'selesai' ? $session->updated_at : null);
-                            @endphp
                             <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">
-                                Selesai: {{ $waktuSelesai ? \Carbon\Carbon::parse($waktuSelesai)->format('H:i') : '-' }}
+                                Selesai: {{ $waktuSelesai ? \Carbon\Carbon::parse($waktuSelesai)->format('H:i:s') : '-' }}
                             </span>
+                            @if($durasiDetik !== null)
+                                <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">
+                                    Durasi: {{ intdiv($durasiDetik, 60) }} menit {{ $durasiDetik % 60 }} detik
+                                </span>
+                            @endif
                             @if($session->status === 'selesai')
                                 <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg uppercase">Selesai</span>
+                            @elseif($session->status === 'keluar')
+                                <span class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg uppercase">Dikeluarkan</span>
                             @else
                                 <span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg uppercase">Berlangsung</span>
                             @endif
@@ -54,8 +75,8 @@
                     </div>
                     <div class="text-right">
                         <p class="text-xs font-bold text-slate-500 uppercase mb-1">Total Nilai Akhir</p>
-                        <p class="text-4xl font-extrabold {{ ($session->score ?? 0) >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
-                            {{ $session->score ?? 0 }}
+                        <p class="text-4xl font-extrabold {{ $totalScore >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
+                            {{ number_format($totalScore, 2) }}
                         </p>
                     </div>
                 </div>
@@ -74,7 +95,10 @@
                     <div class="space-y-2 max-h-24 overflow-y-auto pr-1">
                         @forelse($session->violations as $v)
                             <div class="text-[11px] bg-rose-50 border border-rose-100 p-2 rounded-lg text-rose-700">
-                                <span class="font-bold">{{ \Carbon\Carbon::parse($v->created_at)->format('H:i:s') }}</span> - {{ $v->description ?? 'Keluar dari layar ujian' }}
+                                <span class="font-bold">
+                                    {{ $v->occurred_at ? \Carbon\Carbon::parse($v->occurred_at)->format('H:i:s') : '-' }}
+                                </span>
+                                - {{ $v->detail ?? Str::headline($v->type ?? 'Pelanggaran ujian') }}
                             </div>
                         @empty
                             <p class="text-xs text-slate-400 font-medium text-center py-2">Tidak ada catatan pelanggaran. Siswa ini aman.</p>
@@ -86,7 +110,7 @@
             <!-- ======================================================== -->
             <!-- LEMBAR JAWABAN & FORM KOREKSI ESAI                       -->
             <!-- ======================================================== -->
-            <form action="{{ route('guru.exams.grade-essay', $session) }}" method="POST">
+            <form action="{{ route('guru.exams.grade-essay', $session->exam_session_id) }}" method="POST">
                 @csrf
                 @method('PATCH')
                 
@@ -107,8 +131,23 @@
                     <div class="p-6 space-y-6">
                         @forelse($exam->questions as $index => $q)
                             @php
-                                // Ambil jawaban siswa untuk soal ini
                                 $ans = $answers->get($q->exam_question_id);
+                                $answerValue = $ans && is_array($ans->answer) ? reset($ans->answer) : ($ans->answer ?? null);
+                                $displayAnswer = $answerValue;
+                                if ($q->question_type === 'pilihan_ganda' && $answerValue !== null) {
+                                    $optionValues = (array) $q->options;
+                                    $optionKeys = array_keys($optionValues);
+                                    $answerIndex = array_search((string) $answerValue, array_map('strval', $optionKeys), true);
+                                    if ($answerIndex === false && is_numeric($answerValue)) {
+                                        $answerIndex = (int) $answerValue;
+                                    }
+                                    if ($answerIndex === false && is_string($answerValue) && strlen($answerValue) === 1 && ctype_alpha($answerValue)) {
+                                        $answerIndex = ord(strtoupper($answerValue)) - ord('A');
+                                    }
+                                    $displayAnswer = $answerIndex !== false && $answerIndex < count($optionKeys)
+                                        ? chr(65 + $answerIndex).'. '.($optionValues[$optionKeys[$answerIndex]] ?? '')
+                                        : $answerValue;
+                                }
                             @endphp
                             
                             <div class="p-5 border {{ $q->question_type === 'esai' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200 bg-white' }} rounded-xl space-y-4">
@@ -127,15 +166,17 @@
                                     <!-- Indikator Nilai -->
                                     @if($q->question_type !== 'esai')
                                         <div class="text-xs font-bold {{ ($ans->score ?? 0) > 0 ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50' }} px-3 py-1 rounded-lg">
-                                            {{ $ans->score ?? 0 }} Poin
+                                            {{ number_format((float) ($ans->score ?? 0), 2) }} / {{ number_format((float) $q->score_weight, 2) }} Poin
                                         </div>
                                     @else
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-amber-700">Beri Nilai:</span>
-                                            <input type="number" step="0.1" min="0" max="100" 
+                                            <span class="text-xs font-bold text-amber-700">
+                                                Beri Nilai (Maks {{ number_format((float) $q->score_weight, 2) }}):
+                                            </span>
+                                            <input type="number" step="0.01" min="0" max="{{ $q->score_weight }}"
                                                    name="scores[{{ $q->exam_question_id }}]" 
                                                    value="{{ $ans->score ?? 0 }}"
-                                                   class="w-20 rounded-lg border-amber-300 py-1 text-xs font-bold text-center focus:ring-amber-500 focus:border-amber-500 bg-white shadow-sm">
+                                                   class="w-24 rounded-lg border-amber-300 py-1 text-xs font-bold text-center focus:ring-amber-500 focus:border-amber-500 bg-white shadow-sm">
                                         </div>
                                     @endif
                                 </div>
@@ -149,20 +190,27 @@
                                 <div class="mt-4 pt-4 border-t border-slate-100">
                                     <p class="text-[11px] font-bold text-slate-400 uppercase mb-2">Jawaban Siswa:</p>
                                     
-                                    @if(!$ans || blank($ans->answer))
+                                    @if(!$ans || (blank($ans->answer) && blank($ans->answer_file)))
                                         <div class="text-xs font-semibold text-slate-400 italic bg-slate-50 p-3 rounded-lg border border-slate-100">
                                             Siswa tidak menjawab soal ini.
                                         </div>
                                     @else
                                         @if($q->question_type === 'esai')
-                                            <!-- Tampilan Jawaban Esai -->
-                                            <div class="text-sm text-slate-700 bg-white p-4 rounded-xl border border-slate-200 whitespace-pre-wrap leading-relaxed shadow-sm">
-                                                {{ is_array($ans->answer) ? json_encode($ans->answer) : $ans->answer }}
-                                            </div>
+                                            @if(!blank($ans->answer))
+                                                <div class="text-sm text-slate-700 bg-white p-4 rounded-xl border border-slate-200 whitespace-pre-wrap leading-relaxed shadow-sm">
+                                                    {{ is_array($ans->answer) ? json_encode($ans->answer) : $ans->answer }}
+                                                </div>
+                                            @endif
+                                            @if(!blank($ans->answer_file))
+                                                <div class="mt-2">
+                                                    <a href="{{ Storage::url($ans->answer_file) }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                                                        📎 Lihat Lampiran Jawaban Esai
+                                                    </a>
+                                                </div>
+                                            @endif
                                         @else
-                                            <!-- Tampilan Jawaban Objektif -->
                                             <div class="text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                                {{ is_array($ans->answer) ? implode(', ', $ans->answer) : $ans->answer }}
+                                                {{ $q->question_type === 'pilihan_ganda' ? $displayAnswer : (is_array($ans->answer) ? implode(', ', $ans->answer) : $ans->answer) }}
                                             </div>
                                         @endif
                                     @endif

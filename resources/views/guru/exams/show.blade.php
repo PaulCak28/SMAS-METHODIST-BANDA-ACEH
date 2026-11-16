@@ -367,7 +367,7 @@
                                             {{ Str::headline($q->question_type) }}
                                         </span>
                                         <span class="text-[11px] font-medium text-slate-500">
-                                            ({{ round($weightPerQuestion, 2) }} Poin)
+                                            ({{ number_format((float) $q->score_weight, 2) }} Poin)
                                         </span>
                                     </div>
                                     

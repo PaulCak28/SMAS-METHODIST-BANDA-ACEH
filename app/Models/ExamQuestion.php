@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *  pilihan_ganda_kompleks options: [...]                              correct: [0,2]
  *  benar_salah            options: ["pernyataan 1","pernyataan 2"]    correct: [true,false]
  *  menjodohkan            options: {"left":[...],"right":[...]}       correct: {"0":1,"1":0}
- *  esai                   -                                           correct: null (tanpa bobot)
+ *  esai                   -                                           correct: null (dinilai manual, dibatasi score_weight)
  */
 class ExamQuestion extends Model
 {

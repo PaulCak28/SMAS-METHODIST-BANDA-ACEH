@@ -37,7 +37,7 @@ class ReportCardService
 
         // Ujian yang sudah selesai
         $grader = app(ExamGrader::class);
-        ExamSession::where('students_id', $student->nis)
+        ExamSession::where('student_id', $student->nis)
             ->where('status', 'selesai')
             ->whereHas('exam', fn ($q) => $q->where('cst_id', $cst->cst_id))
             ->with('exam')->get()

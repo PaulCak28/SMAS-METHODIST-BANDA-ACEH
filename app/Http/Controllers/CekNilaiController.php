@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grade;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CekNilaiController extends Controller
 {
@@ -44,10 +44,10 @@ class CekNilaiController extends Controller
 
         $student->load('user', 'schoolClass');
 
-        $grades = Grade::where('students_id', $student->nis)
-            ->with('classSubjectTeacher.subject', 'assignment', 'exam')
-            ->get()
-            ->groupBy('cst_id');
+        $grades = collect(DB::connection('mysql_siswa')->select(
+            'CALL sp_public_check_grades(?, ?)',
+            [$student->nis, $request->dob]
+        ))->groupBy('subject_name');
 
         return view('cek-nilai.show', compact('student', 'grades'));
     }
