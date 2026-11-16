@@ -27,8 +27,8 @@ return new class extends Migration
         }
 
         // 1. Siswa bergabung ke kelas mata pelajaran memakai kode gabung
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_join_class(IN p_nis VARCHAR(10) {$cs}, IN p_code VARCHAR(8) {$cs})
+        DB::unprepared(
+"CREATE PROCEDURE sp_join_class(IN p_nis VARCHAR(10) {$cs}, IN p_code VARCHAR(8) {$cs})
 SQL SECURITY DEFINER
 BEGIN
     DECLARE v_cst     VARCHAR(20) {$cs};
@@ -65,12 +65,12 @@ BEGIN
     COMMIT;
 
     SELECT v_cst AS cst_id;
-END
-PROC);
+END"
+);
 
         // 2. Guru menilai tugas: perbarui pengumpulan dan buku nilai dalam satu transaksi
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_grade_assignment(
+        DB::unprepared(
+"CREATE PROCEDURE sp_grade_assignment(
     IN p_assignment_id BIGINT UNSIGNED,
     IN p_nis           VARCHAR(10) {$cs},
     IN p_nip           VARCHAR(18) {$cs},
@@ -121,12 +121,12 @@ BEGIN
     ON DUPLICATE KEY UPDATE score = VALUES(score), graded_by = VALUES(graded_by), graded_at = NOW(), updated_at = NOW();
 
     COMMIT;
-END
-PROC);
+END"
+);
 
         // 3. Memasukkan nilai satu sesi ujian ke buku nilai (graded_by NULL = dihitung sistem)
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_record_exam_grade(IN p_session_id BIGINT UNSIGNED)
+        DB::unprepared(
+"CREATE PROCEDURE sp_record_exam_grade(IN p_session_id BIGINT UNSIGNED)
 SQL SECURITY DEFINER
 BEGIN
     INSERT INTO grades (students_id, cst_id, grade_type, exam_id, score, graded_by, graded_at, created_at, updated_at)
@@ -136,12 +136,12 @@ BEGIN
     JOIN exams e ON e.exam_id = s.exam_id
     WHERE s.exam_session_id = p_session_id
     ON DUPLICATE KEY UPDATE score = VALUES(score), graded_at = NOW(), updated_at = NOW();
-END
-PROC);
+END"
+);
 
         // 4. Menyinkronkan nilai tugas dan ujian seorang siswa di satu kelas mapel
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_sync_student_grades(IN p_nis VARCHAR(10) {$cs}, IN p_cst VARCHAR(20) {$cs})
+        DB::unprepared(
+"CREATE PROCEDURE sp_sync_student_grades(IN p_nis VARCHAR(10) {$cs}, IN p_cst VARCHAR(20) {$cs})
 SQL SECURITY DEFINER
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -169,12 +169,12 @@ BEGIN
     ON DUPLICATE KEY UPDATE score = VALUES(score), graded_at = NOW(), updated_at = NOW();
 
     COMMIT;
-END
-PROC);
+END"
+);
 
         // 5. Daftar sesi berlangsung yang batas waktunya sudah lewat (dikoreksi oleh Laravel scheduler)
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_find_expired_sessions()
+        DB::unprepared(
+"CREATE PROCEDURE sp_find_expired_sessions()
 SQL SECURITY DEFINER
 BEGIN
     SELECT s.exam_session_id, s.exam_id, s.students_id,
@@ -184,12 +184,12 @@ BEGIN
     WHERE s.status = 'berlangsung'
       AND s.started_at IS NOT NULL
       AND NOW() >= LEAST(DATE_ADD(s.started_at, INTERVAL e.duration_minutes MINUTE), e.end_time);
-END
-PROC);
+END"
+);
 
         // 6. Naik kelas massal
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_promote_class(IN p_from BIGINT UNSIGNED, IN p_to BIGINT UNSIGNED)
+        DB::unprepared(
+"CREATE PROCEDURE sp_promote_class(IN p_from BIGINT UNSIGNED, IN p_to BIGINT UNSIGNED)
 SQL SECURITY DEFINER
 BEGIN
     DECLARE v_count INT DEFAULT 0;
@@ -216,12 +216,12 @@ BEGIN
     COMMIT;
 
     SELECT v_count AS promoted_students;
-END
-PROC);
+END"
+);
 
         // 7. Membuat kode gabung 6 karakter yang unik
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_generate_join_code(IN p_cst_id VARCHAR(20) {$cs})
+        DB::unprepared(
+"CREATE PROCEDURE sp_generate_join_code(IN p_cst_id VARCHAR(20) {$cs})
 SQL SECURITY DEFINER
 BEGIN
     DECLARE v_code CHAR(8) {$cs};
@@ -246,12 +246,12 @@ BEGIN
     UPDATE class_subject_teacher SET join_code = v_code, updated_at = NOW() WHERE cst_id = p_cst_id;
 
     SELECT v_code AS join_code;
-END
-PROC);
+END"
+);
 
         // 8. Peserta satu ujian (termasuk siswa yang belum mulai) untuk halaman monitoring
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_exam_participants(IN p_exam_id BIGINT UNSIGNED)
+        DB::unprepared(
+"CREATE PROCEDURE sp_exam_participants(IN p_exam_id BIGINT UNSIGNED)
 SQL SECURITY DEFINER
 BEGIN
     SELECT s.nis,
@@ -274,12 +274,12 @@ BEGIN
     LEFT JOIN grades g          ON g.exam_id = e.exam_id AND g.students_id = s.nis
     WHERE e.exam_id = p_exam_id
     ORDER BY s.nis;
-END
-PROC);
+END"
+);
 
         // 9. Statistik dashboard admin dalam satu panggilan
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_dashboard_stats()
+        DB::unprepared(
+"CREATE PROCEDURE sp_dashboard_stats()
 SQL SECURITY DEFINER
 BEGIN
     SELECT
@@ -292,12 +292,12 @@ BEGIN
         (SELECT COUNT(*) FROM exam_sessions WHERE status = 'berlangsung')                       AS sessions_running,
         (SELECT COUNT(*) FROM exam_answers WHERE answer_file IS NOT NULL AND graded_at IS NULL) AS pending_essays,
         (SELECT COUNT(*) FROM students WHERE class_id IS NULL)                                  AS students_no_class;
-END
-PROC);
+END"
+);
 
         // 10. Halaman publik Cek Nilai: nilai hanya keluar bila NISN DAN tanggal lahir cocok
-        DB::unprepared(<<<PROC
-CREATE PROCEDURE sp_public_check_grades(IN p_nis VARCHAR(10) {$cs}, IN p_dob DATE)
+        DB::unprepared(
+"CREATE PROCEDURE sp_public_check_grades(IN p_nis VARCHAR(10) {$cs}, IN p_dob DATE)
 SQL SECURITY DEFINER
 BEGIN
     DECLARE v_found INT DEFAULT 0;
@@ -317,8 +317,8 @@ BEGIN
     FROM v_student_grade_summary
     WHERE nis = TRIM(p_nis)
     ORDER BY academic_year, semester, subject_name;
-END
-PROC);
+END"
+);
     }
 
     public function down(): void
