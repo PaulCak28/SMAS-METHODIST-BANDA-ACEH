@@ -33,7 +33,7 @@
         <form method="POST" action="{{ route('attendances.store') }}">
             @csrf
             <div class="row g-3 mb-3">
-                <div class="col-md-6"><label class="form-label">Kelas & Mata Pelajaran</label><select id="cst-select" name="cst_id" class="form-select" required><option value="">-- Pilih --</option>@foreach($csts as $cst)<option value="{{ $cst->id }}">{{ $cst->schoolClass->name }} — {{ $cst->subject->name }}</option>@endforeach</select></div>
+                <div class="col-md-6"><label class="form-label">Kelas & Mata Pelajaran</label><select id="cst-select" name="cst_id" class="form-select" required><option value="">-- Pilih --</option>@foreach($csts as $cst)<option value="{{ $cst->cst_id }}">{{ $cst->schoolClass->name }} — {{ $cst->subject->name }}</option>@endforeach</select></div>
                 <div class="col-md-4"><label class="form-label">Tanggal</label><input type="date" name="date" class="form-control" value="{{ now()->format('Y-m-d') }}" required></div>
             </div>
             <div id="student-list"></div>
@@ -42,7 +42,7 @@
     </div>
 </div>
 <script>
-const cstStudents = @json($csts->mapWithKeys(fn($cst)=>[$cst->id=>$cst->schoolClass->students->map(fn($s)=>['nis'=>$s->nis,'name'=>$s->user?->name ?? $s->nis])])->toArray());
+const cstStudents = @json($csts->mapWithKeys(fn($cst)=>[$cst->cst_id=>$cst->schoolClass->students->map(fn($s)=>['nis'=>$s->nis,'name'=>$s->user?->name ?? $s->nis])])->toArray());
 const select=document.getElementById('cst-select'), list=document.getElementById('student-list');
 select.addEventListener('change',()=>{ const rows=cstStudents[select.value]||[]; list.innerHTML=rows.length?'<div class="table-responsive"><table class="table table-bordered"><thead><tr><th>NIS</th><th>Nama</th><th>Status</th></tr></thead><tbody>'+rows.map(s=>`<tr><td>${s.nis}</td><td>${s.name}</td><td><select name="attendance[${s.nis}]" class="form-select" required><option value="hadir">Hadir</option><option value="izin">Izin</option><option value="sakit">Sakit</option><option value="alpha">Alpha</option></select></td></tr>`).join('')+'</tbody></table></div>':'<div class="alert alert-secondary">Pilih kelas dan mata pelajaran terlebih dahulu.</div>'; });
 </script>

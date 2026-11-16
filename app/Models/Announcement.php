@@ -19,6 +19,7 @@ class Announcement extends Model
         'category',
         'content',
         'image',
+        'link',
         'target_roles',
         'is_public',
         'published_at',

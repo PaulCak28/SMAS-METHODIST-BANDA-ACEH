@@ -26,6 +26,11 @@ class GradeController extends Controller
     {
         Access::authorizeTeacher($request->user(), $cst);
         $cst->load('subject', 'schoolClass.students.user');
+        $teacherNip = $request->user()->teacher->nip;
+        $gradeSummary = collect(DB::connection('mysql_guru')->select(
+            'CALL sp_teacher_student_grades(?, ?)',
+            [$teacherNip, $cst->cst_id]
+        ))->keyBy('student_id');
 
         $grades = Grade::where('cst_id', $cst->cst_id)
             ->with('assignment', 'exam')
@@ -40,6 +45,7 @@ class GradeController extends Controller
             $rows[] = [
                 'student' => $st,
                 'grades' => $list,
+                'summary' => $gradeSummary->get($st->nis),
                 'average' => $list->whereNotNull('score')->isNotEmpty()
                     ? round($list->whereNotNull('score')->avg('score'), 2)
                     : null,
@@ -83,22 +89,23 @@ class GradeController extends Controller
             'feedback' => 'nullable|string',
         ]);
 
-        DB::transaction(function () use ($v, $assignment, $nis, $request) {
+        abort_unless(
             AssignmentSubmission::where('assignment_id', $assignment->assignment_id)
                 ->where('students_id', $nis)
-                ->update(['score' => $v['score'], 'feedback' => $v['feedback'] ?? null]);
+                ->exists(),
+            404
+        );
 
-            Grade::updateOrCreate(
-                ['students_id' => $nis, 'assignment_id' => $assignment->assignment_id],
-                [
-                    'cst_id' => $assignment->cst_id,
-                    'grade_type' => 'tugas',
-                    'score' => round($v['score'] / max($assignment->max_score, 1) * 100, 2),
-                    'graded_by' => $request->user()->teacher->nip,
-                    'graded_at' => now(),
-                ]
-            );
-        });
+        DB::connection('mysql_guru')->select(
+            'CALL sp_grade_assignment(?, ?, ?, ?, ?)',
+            [
+                $assignment->assignment_id,
+                $nis,
+                $request->user()->teacher->nip,
+                $v['score'],
+                $v['feedback'] ?? null,
+            ]
+        );
 
         return back()->with('success', 'Nilai tugas tersimpan.');
     }

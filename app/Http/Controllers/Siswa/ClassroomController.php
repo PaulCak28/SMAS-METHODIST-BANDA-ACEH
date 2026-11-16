@@ -46,7 +46,7 @@ class ClassroomController extends Controller
         $exams = $cst->exams->where('is_published', true);
         $subs = AssignmentSubmission::where('students_id', $student->nis)
             ->whereIn('assignment_id', $cst->assignments->pluck('assignment_id'))->get()->keyBy('assignment_id');
-        $sessions = $student->examSessions()->whereIn('exam_id', $exams->pluck('id'))->get()->keyBy('exam_id');
+        $sessions = $student->examSessions()->whereIn('exam_id', $exams->pluck('exam_id'))->get()->keyBy('exam_id');
 
         return view('siswa.classes.show', compact('cst', 'exams', 'subs', 'sessions'));
     }
@@ -58,7 +58,15 @@ class ClassroomController extends Controller
         abort_unless($request->user()->isSiswa(), 403);
         $student = $request->user()->student;
 
-        $request->validate(['file' => 'required|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png,zip,ppt,pptx,xls,xlsx']);
+        $allowed = $assignment->allowed_formats ?: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'png', 'zip'];
+        if (in_array('jpg', $allowed)) {
+            $allowed[] = 'jpeg';
+        }
+
+        $request->validate([
+            'file' => ['required', 'file', 'max:10240', 'mimes:'.implode(',', $allowed)],
+        ]);        
+        
         if (now()->gt($assignment->due_date)) {
             return back()->with('error', 'Batas pengumpulan sudah lewat.');
         }

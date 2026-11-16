@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>@yield('title', 'Admin Panel') - MALAS</title>
+    
+    <title>@yield('title', 'Admin Panel') - SMAS Methodist</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,10 +16,10 @@
     <!-- Custom CSS Styles -->
     <style>
         :root {
-            --sidebar-bg: #1c233d; /* Warna background dark navy sesuai gambar */
-            --sidebar-text: #94a3b8; /* Warna teks abu kebiruan */
+            --sidebar-bg: #1c233d;
+            --sidebar-text: #94a3b8;
             --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
-            --sidebar-active-bg: #2563eb; /* Warna biru cerah untuk menu aktif */
+            --sidebar-active-bg: #2563eb;
             --sidebar-active-text: #ffffff;
         }
 
@@ -93,7 +93,7 @@
             border-radius: 10px;
         }
 
-        /* Kategori Menu (MENU UTAMA, AKADEMIK, dll) */
+        /* Kategori Menu */
         .menu-category {
             font-size: 0.75rem;
             font-weight: 700;
@@ -163,7 +163,7 @@
 
         /* MAIN CONTENT AREA */
         .main-wrapper {
-            margin-left: 270px; /* Lebar sidebar */
+            margin-left: 270px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -215,8 +215,8 @@
                 <img src="{{ asset('images/methodist-logo.png') }}" alt="Logo SMAS Methodist Banda Aceh">
             </div>
             <div class="sidebar-brand-text">
-                <h5 class="fw-bold text-white mb-0">MALAS</h5>
-                <small>Methodist Academic Learning</small>
+                <h5 class="fw-bold text-white mb-0">SMAS Methodist</h5>
+                <small>Methodist Academic System</small>
             </div>
         </div>
 
@@ -254,12 +254,10 @@
             </a>
 
             <div class="menu-category">Informasi</div>
-            <li class="nav-item">
-                <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}">
-                    <i class="bi bi-megaphone"></i>
-                    <span>Pengumuman</span>
-                </a>
-            </li>
+            <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}">
+                <i class="bi bi-megaphone"></i>
+                <span>Pengumuman</span>
+            </a>
         </div>
 
         <!-- Sidebar Footer -->
@@ -299,27 +297,12 @@
                 <!-- Breadcrumb atau judul halaman bisa diletakkan di sini jika perlu -->
             </div>
 
-            <!-- User Menu Kanan Atas -->
-            <div class="dropdown">
-                <button class="btn btn-light bg-white border-0 shadow-sm rounded-pill px-3 py-2 d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
-                        <i class="bi bi-person-fill small"></i>
-                    </div>
-                    <span class="fw-semibold small text-dark">{{ auth()->user()->name ?? 'Administrator' }}</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3">
-                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person me-2 text-muted"></i> Profil Saya</a></li>
-                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2 text-muted"></i> Pengaturan</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <form action="{{ Route::has('logout') ? route('logout') : '#' }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item py-2 text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+            <!-- User Info Kanan Atas -->
+            <div class="bg-white border-0 shadow-sm rounded-pill px-3 py-2 d-flex align-items-center gap-2">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                    <i class="bi bi-person-fill small"></i>
+                </div>
+                <span class="fw-semibold small text-dark">{{ auth()->user()->name ?? 'Administrator' }}</span>
             </div>
         </header>
 

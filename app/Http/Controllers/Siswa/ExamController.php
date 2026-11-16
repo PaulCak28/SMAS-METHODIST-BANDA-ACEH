@@ -8,8 +8,8 @@ use App\Models\ExamAnswer;
 use App\Models\ExamSession;
 use App\Models\ExamViolation;
 use App\Services\ExamGrader;
-use App\Services\ReportCardService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ExamController extends Controller
 {
@@ -29,17 +29,10 @@ class ExamController extends Controller
     private function closeIfExpired(?ExamSession $session): ?ExamSession
     {
         if ($session && $session->status === 'berlangsung' && now()->gte($session->deadline())) {
-            $session = app(ExamGrader::class)->gradeSession($session);
-            $this->sync($session);
+            $session = app(ExamGrader::class)->gradeSession($session, 'mysql_siswa');
         }
 
         return $session;
-    }
-
-    private function sync(ExamSession $session): void
-    {
-        $exam = $session->exam()->with('classSubjectTeacher')->first();
-        app(ReportCardService::class)->syncFromActivity($session->student, $exam->classSubjectTeacher);
     }
 
     public function index(Request $request)
@@ -65,7 +58,7 @@ class ExamController extends Controller
     {
         $student = $this->authorizeExam($request, $exam);
         $exam->load('classSubjectTeacher.subject');
-        $session = $this->closeIfExpired(ExamSession::where(['exam_id' => $exam->exam_id, 'students_id' => $student->nis])->first());
+        $session = $this->closeIfExpired(ExamSession::where(['exam_id' => $exam->exam_id, 'student_id' => $student->nis])->first());
         $exam->loadCount('questions');
 
         return view('siswa.exams.show', compact('exam', 'session'));
@@ -79,14 +72,14 @@ class ExamController extends Controller
         if ($exam->questions()->count() === 0) {
             return back()->with('error', 'Soal belum tersedia.');
         }
-        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'students_id' => $student->nis])->first();
+        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'student_id' => $student->nis])->first();
         if ($session) {
             return redirect()->route('siswa.exams.take', $exam);
         }
 
         ExamSession::create([
             'exam_id' => $exam->exam_id,
-            'students_id' => $student->nis,
+            'student_id' => $student->nis,
             'started_at' => now(),
             'status' => 'berlangsung',
         ]);
@@ -97,7 +90,7 @@ class ExamController extends Controller
     public function take(Request $request, Exam $exam)
     {
         $student = $this->authorizeExam($request, $exam);
-        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'students_id' => $student->nis])->first();
+        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'student_id' => $student->nis])->first();
         abort_unless($session, 403, 'Mulai ujian terlebih dahulu.');
         $session = $this->closeIfExpired($session);
         if ($session->status !== 'berlangsung') {
@@ -125,7 +118,7 @@ class ExamController extends Controller
     private function runningSession(Request $request, Exam $exam): ExamSession
     {
         $student = $this->authorizeExam($request, $exam);
-        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'students_id' => $student->nis])->firstOrFail();
+        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'student_id' => $student->nis])->firstOrFail();
 
         $token = (string) ($request->input('token') ?? $request->header('X-Exam-Token'));
         abort_unless(hash_equals($session->token, $token), 403, 'Token ujian tidak valid.');
@@ -142,24 +135,23 @@ class ExamController extends Controller
         abort_if($q->isEssay(), 422);
 
         ExamAnswer::updateOrCreate(
-            ['exam_id' => $exam->exam_id, 'students_id' => $session->students_id, 'question_id' => $q->exam_question_id],
+            ['exam_id' => $exam->exam_id, 'students_id' => $session->student_id, 'question_id' => $q->exam_question_id],
             ['answer' => $v['answer'] ?? null]
         );
 
         return response()->json(['ok' => true]);
     }
 
-    /** Esai: unggah foto lembar jawaban. */
+    /** Simpan jawaban esai berupa teks yang diketik siswa. */
     public function essay(Request $request, Exam $exam, int $question)
     {
         $session = $this->runningSession($request, $exam);
         $q = $exam->questions()->where('question_type', 'esai')->findOrFail($question);
-        $request->validate(['photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:6144']);
-        $path = $request->file('photo')->store("exam-essays/{$exam->exam_id}/{$session->students_id}", 'local');
+        $v = $request->validate(['answer' => 'nullable|string|max:20000']);
 
         ExamAnswer::updateOrCreate(
-            ['exam_id' => $exam->exam_id, 'students_id' => $session->students_id, 'question_id' => $q->exam_question_id],
-            ['answer_file' => $path]
+            ['exam_id' => $exam->exam_id, 'students_id' => $session->student_id, 'question_id' => $q->exam_question_id],
+            ['answer' => $v['answer'] ?? '', 'answer_file' => null]
         );
 
         return response()->json(['ok' => true]);
@@ -171,7 +163,7 @@ class ExamController extends Controller
         $v = $request->validate(['type' => 'required|in:tab_switch,window_blur,fullscreen_exit,copy_paste', 'detail' => 'nullable|string|max:200']);
         ExamViolation::create([
             'exam_session_id' => $session->exam_session_id,
-            'students_id' => $session->students_id,
+            'students_id' => $session->student_id,
             'type' => $v['type'],
             'detail' => $v['detail'] ?? null,
             'occurred_at' => now(),
@@ -182,7 +174,7 @@ class ExamController extends Controller
         $max = config('school.exam.max_violations');
         $finished = false;
         if ($count >= $max) {
-            $this->sync(app(ExamGrader::class)->gradeSession($session));
+            app(ExamGrader::class)->gradeSession($session, 'mysql_siswa');
             $finished = true;
         }
 
@@ -201,10 +193,10 @@ class ExamController extends Controller
     public function finish(Request $request, Exam $exam)
     {
         $student = $this->authorizeExam($request, $exam);
-        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'students_id' => $student->nis])->firstOrFail();
+        $session = ExamSession::where(['exam_id' => $exam->exam_id, 'student_id' => $student->nis])->firstOrFail();
         if ($session->status === 'berlangsung') {
-            $session->update(['finished_at' => now()]);
-            $this->sync(app(ExamGrader::class)->gradeSession($session));
+            app(ExamGrader::class)->gradeAnswers($session);
+            DB::connection('mysql_siswa')->select('CALL sp_record_exam_grade(?)', [$session->exam_session_id]);
         }
 
         return redirect()->route('siswa.exams.show', $exam)->with('success', 'Ujian diselesaikan. Jawaban Anda telah dikoreksi otomatis.');

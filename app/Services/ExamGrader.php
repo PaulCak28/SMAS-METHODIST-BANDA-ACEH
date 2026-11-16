@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Koreksi otomatis berdasarkan kunci jawaban yang dimasukkan guru.
- * Esai TIDAK berbobot dan tidak dikoreksi otomatis.
+ * Esai dinilai manual; bobotnya menjadi poin maksimum yang dapat diberikan guru.
  */
 class ExamGrader
 {
@@ -24,7 +24,30 @@ class ExamGrader
 
         switch ($q->question_type) {
             case 'pilihan_ganda':
-                $ok = (string) $answer === (string) $key;
+                $optionKeys = array_keys((array) $q->options);
+                $optionKeyValues = array_map('strval', $optionKeys);
+                $answerIndex = array_search((string) $answer, $optionKeyValues, true);
+                $correctIndex = array_search((string) $key, $optionKeyValues, true);
+
+                if ($answerIndex === false && is_numeric($answer)) {
+                    $answerIndex = (int) $answer;
+                }
+                if ($correctIndex === false && is_numeric($key)) {
+                    $correctIndex = (int) $key;
+                }
+                if ($answerIndex === false && is_string($answer) && strlen($answer) === 1 && ctype_alpha($answer)) {
+                    $answerIndex = ord(strtoupper($answer)) - ord('A');
+                }
+                if ($correctIndex === false && is_string($key) && strlen($key) === 1 && ctype_alpha($key)) {
+                    $correctIndex = ord(strtoupper($key)) - ord('A');
+                }
+
+                $optionCount = count($optionKeys);
+                $ok = $answerIndex !== false
+                    && $correctIndex !== false
+                    && $answerIndex < $optionCount
+                    && $correctIndex < $optionCount
+                    && $answerIndex === $correctIndex;
                 return [$ok ? $weight : 0.0, $ok];
 
             case 'pilihan_ganda_kompleks':
@@ -75,11 +98,21 @@ class ExamGrader
      * Koreksi seluruh jawaban sesi. Skor dan is_correct ditulis ke exam_answers,
      * sesi hanya ditandai selesai (tidak ada lagi skor di exam_sessions).
      */
-    public function gradeSession(ExamSession $session): ExamSession
+    public function gradeSession(ExamSession $session, string $connection = 'mysql_siswa'): ExamSession
     {
-        return DB::transaction(function () use ($session) {
+        $this->gradeAnswers($session);
+        DB::connection($connection)->select('CALL sp_record_exam_grade(?)', [
+            $session->exam_session_id,
+        ]);
+
+        return $session->fresh();
+    }
+
+    public function gradeAnswers(ExamSession $session): void
+    {
+        DB::transaction(function () use ($session) {
             $exam = $session->exam()->with('questions')->first();
-            $answers = $exam->answers()->where('students_id', $session->students_id)->get()->keyBy('question_id');
+            $answers = $exam->answers()->where('students_id', $session->student_id)->get()->keyBy('question_id');
 
             foreach ($exam->questions as $q) {
                 if ($q->isEssay()) {
@@ -96,33 +129,29 @@ class ExamGrader
                         ->update(['score' => $score, 'is_correct' => $ok]);
                 }
             }
-
-            $session->update([
-                'status' => 'selesai',
-                'finished_at' => $session->finished_at ?? now(),
-            ]);
-
-            $this->recordToGradebook($session);   // BARU
-
-            return $session->fresh();
         });
     }
 
-    /** Nilai objektif sesi, skala 0-100, dihitung dari exam_answers. */
+    /** Jumlah poin jawaban objektif sesuai bobot soal, maksimal 100. */
     public function objectiveScore(ExamSession $session): float
     {
         $exam = $session->exam()->with('questions')->first();
-        $total = $exam->totalWeight();
-        if ($total <= 0) {
-            return 0.0;
-        }
-
         $earned = \App\Models\ExamAnswer::where('exam_id', $session->exam_id)
-            ->where('students_id', $session->students_id)
+            ->where('students_id', $session->student_id)
             ->whereIn('question_id', $exam->questions->where('question_type', '!=', 'esai')->pluck('exam_question_id'))
             ->sum('score');
 
-        return round($earned / $total * 100, 2);
+        return min(100, (float) $earned);
+    }
+
+    /** Jumlah poin seluruh jawaban sesuai bobot soal, maksimal 100. */
+    public function finalScore(ExamSession $session): float
+    {
+        $earned = \App\Models\ExamAnswer::where('exam_id', $session->exam_id)
+            ->where('students_id', $session->student_id)
+            ->sum('score');
+
+        return min(100, (float) $earned);
     }
 
     /** Validasi: apakah kunci jawaban soal lengkap & masuk akal? */
@@ -141,21 +170,29 @@ class ExamGrader
         };
     }
 
+    /** @return list<float> Evenly distributes 100 points, preserving two decimal places. */
+    public static function equalQuestionWeights(int $questionCount): array
+    {
+        if ($questionCount <= 0) {
+            return [];
+        }
+
+        $totalCents = 10000;
+        $baseCents = intdiv($totalCents, $questionCount);
+        $extraCents = $totalCents % $questionCount;
+
+        return array_map(
+            fn (int $index) => (float) ($baseCents + ($index < $extraCents ? 1 : 0)) / 100,
+            range(0, $questionCount - 1)
+        );
+    }
+
     /** Masukkan nilai ujian ke buku nilai (dihitung sistem, graded_by = null). */
 public function recordToGradebook(ExamSession $session): void
 {
-    $exam = $session->exam;
-
-    \App\Models\Grade::updateOrCreate(
-        ['students_id' => $session->students_id, 'exam_id' => $exam->exam_id],
-        [
-            'cst_id' => $exam->cst_id,
-            'grade_type' => $exam->exam_type,   // uts | uas
-            'score' => $this->objectiveScore($session),
-            'graded_by' => null,
-            'graded_at' => now(),
-        ]
-    );
+    \Illuminate\Support\Facades\DB::connection('mysql_siswa')->select('CALL sp_record_exam_grade(?)', [
+        $session->exam_session_id,
+    ]);
 }
 
     /** Ringkasan untuk siswa/orang tua: benar, salah, tidak dijawab, nilai, lulus atau tidak. */
@@ -166,7 +203,7 @@ public function recordToGradebook(ExamSession $session): void
         $essays = $exam->questions->where('question_type', 'esai');
 
         $answers = \App\Models\ExamAnswer::where('exam_id', $session->exam_id)
-            ->where('students_id', $session->students_id)
+            ->where('students_id', $session->student_id)
             ->whereIn('question_id', $objective->pluck('exam_question_id'))
             ->get();
 
@@ -175,10 +212,10 @@ public function recordToGradebook(ExamSession $session): void
             fn ($a) => $a->is_correct === false && $a->answer !== null && $a->answer !== [] && $a->answer !== ''
         )->count();
         $total = $objective->count();
-        $score = $this->objectiveScore($session);
+        $score = $this->finalScore($session);
 
         $essayGraded = \App\Models\ExamAnswer::where('exam_id', $session->exam_id)
-            ->where('students_id', $session->students_id)
+            ->where('students_id', $session->student_id)
             ->whereIn('question_id', $essays->pluck('exam_question_id'))
             ->whereNotNull('graded_at')
             ->count();

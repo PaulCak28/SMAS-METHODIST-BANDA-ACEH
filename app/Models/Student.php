@@ -103,7 +103,7 @@ class Student extends Model
 
     public function examSessions()
     {
-        return $this->hasMany(ExamSession::class, 'students_id', 'nis');
+        return $this->hasMany(ExamSession::class, 'student_id', 'nis');
     }
 
     public function getNameAttribute(): string

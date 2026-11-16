@@ -123,7 +123,7 @@
             </div>
             <div class="modal-body px-4">
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold text-dark">Pilih Kelas & Mapel (CST) <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-semibold text-dark">Pilih Kelas & Mapel<span class="text-danger">*</span></label>
                     <select name="cst_id" class="form-select bg-light" required>
                         <option value="" selected disabled>-- Pilih Kelas Mapel --</option>
                         @foreach($csts as $cst)
@@ -131,17 +131,6 @@
                                 {{ $cst->subject->name ?? '' }} (Ruangan: {{ $cst->schoolClass->name ?? '' }} - {{ $cst->academic_year }})
                             </option>
                         @endforeach
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold text-dark">Status Siswa <span class="text-danger">*</span></label>
-                    <select name="status" class="form-select bg-light" required>
-                        <option value="aktif" selected>Aktif</option>
-                        <option value="naik_kelas">Naik Kelas</option>
-                        <option value="tinggal_kelas">Tinggal Kelas</option>
-                        <option value="pindah">Pindah</option>
-                        <option value="lulus">Lulus</option>
-                        <option value="drop_out">Drop Out</option>
                     </select>
                 </div>
             </div>
