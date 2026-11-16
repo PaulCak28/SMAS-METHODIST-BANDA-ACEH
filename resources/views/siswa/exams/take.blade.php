@@ -206,9 +206,21 @@
         card.appendChild(meta);
 
         card.appendChild(el('div', 'question-card__text', q.text));
+        // Menampilkan gambar soal jika tersedia
         if (q.image) {
             const img = el('img', 'question-card__image');
-            img.src = q.image; img.alt = 'Gambar soal';
+
+            img.src = q.image;
+            img.alt = 'Gambar soal';
+
+            img.onload = () => {
+                console.log('Gambar soal berhasil dimuat:', q.image);
+            };
+
+            img.onerror = () => {
+                console.error('Gambar soal gagal dimuat:', q.image);
+            };
+
             card.appendChild(img);
         }
 
