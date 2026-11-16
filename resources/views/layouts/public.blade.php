@@ -5,6 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title', 'SMAS Methodist Banda Aceh | Portal E-Learning & E-Exam')</title>
+
+        {{-- Favicon / app icon: logo resmi sekolah --}}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
+        <link rel="icon" type="image/png" href="{{ asset('images/methodist-logo.png') }}?v=2">
+        <link rel="apple-touch-icon" href="{{ asset('images/methodist-logo.png') }}?v=2">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700|playfair-display:600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -36,8 +42,9 @@
         {{-- NAVBAR --}}
         <header class="sticky top-0 z-50 border-b border-navy/10 bg-white/95 backdrop-blur">
             <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
-                <a href="{{ url('/') }}" class="font-serif text-lg font-bold text-navy sm:text-xl">
-                    SMAS Methodist <span class="hidden text-softblue sm:inline">Banda Aceh</span>
+                <a href="{{ url('/') }}" class="flex items-center gap-2.5 font-serif text-lg font-bold text-navy sm:text-xl">
+                    <img src="{{ asset('images/methodist-logo.png') }}" alt="Logo SMAS Methodist Banda Aceh" class="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10">
+                    <span>SMAS Methodist <span class="hidden text-softblue sm:inline">Banda Aceh</span></span>
                 </a>
 
                 <nav aria-label="Menu utama" class="hidden items-center gap-8 text-sm font-medium md:flex">
@@ -73,7 +80,10 @@
         <footer id="kontak" class="scroll-mt-24 bg-white">
             <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-8">
                 <div>
-                    <p class="font-serif text-lg font-bold text-navy">SMAS Methodist Banda Aceh</p>
+                    <div class="flex items-center gap-2.5">
+                        <img src="{{ asset('images/methodist-logo.png') }}" alt="Logo SMAS Methodist Banda Aceh" class="h-9 w-9 shrink-0 object-contain">
+                        <p class="font-serif text-lg font-bold text-navy">SMAS Methodist Banda Aceh</p>
+                    </div>
                     <p class="mt-3 text-sm leading-6 text-navy/70">Portal e-learning dan ujian daring untuk siswa, guru, dan orang tua.</p>
                 </div>
                 <div>

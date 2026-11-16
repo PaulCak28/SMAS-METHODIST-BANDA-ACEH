@@ -5,7 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name') === 'Laravel' ? 'SMAS Methodist Banda Aceh' : config('app.name', 'SMAS Methodist Banda Aceh') }}</title>
+
+        <!-- Favicon / app icon: logo resmi sekolah -->
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
+        <link rel="icon" type="image/png" href="{{ asset('images/methodist-logo.png') }}?v=2">
+        <link rel="apple-touch-icon" href="{{ asset('images/methodist-logo.png') }}?v=2">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
