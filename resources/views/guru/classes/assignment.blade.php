@@ -1,0 +1,17 @@
+<x-app-layout>
+    <x-slot name="header"><h2 class="text-xl font-semibold text-slate-800">Pengumpulan Tugas</h2></x-slot>
+    <div class="py-8"><div class="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <a href="{{ route('guru.classes.show', $cst) }}" class="text-sm font-medium text-sky-700 hover:underline">← Kembali ke kelas</a>
+        <div class="rounded-2xl bg-gradient-to-r from-sky-600 to-blue-500 p-6 text-white shadow-sm"><p class="text-sm text-sky-100">{{ $cst->schoolClass->name ?? 'Kelas' }} · {{ $cst->subject->name ?? $cst->subject_code }}</p><h1 class="mt-1 text-2xl font-bold">{{ $assignment->title }}</h1><p class="mt-2 whitespace-pre-line text-sm text-sky-50">{{ $assignment->description }}</p><div class="mt-4 flex flex-wrap gap-5 text-sm"><span>Deadline: {{ $assignment->due_date?->format('d M Y, H:i') }}</span><span>Nilai maksimal: {{ $assignment->max_score }}</span></div></div>
+        @if(session('success'))<div class="rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">{{ session('success') }}</div>@endif
+        @if($errors->any())<div class="rounded-xl bg-rose-50 p-4 text-sm text-rose-700">{{ $errors->first() }}</div>@endif
+        <section class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"><div class="border-b border-slate-100 px-6 py-4"><h2 class="font-bold text-slate-800">Daftar Pengumpulan</h2><p class="text-sm text-slate-500">{{ $subs->count() }} siswa telah mengumpulkan tugas</p></div>
+        @forelse($cst->joinedStudents as $student)
+            @php $submission = $subs->get($student->nis); @endphp
+            <div class="border-b border-slate-100 p-5 last:border-0"><div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><h3 class="font-semibold text-slate-800">{{ $student->user->name ?? $student->name ?? 'Siswa' }}</h3><p class="text-xs text-slate-500">NIS {{ $student->nis }}</p></div>
+            @if($submission)<div class="text-sm"><span class="font-medium text-emerald-700">Sudah mengumpulkan</span><p class="text-xs text-slate-500">{{ $submission->submitted_at?->format('d M Y, H:i') }}</p><a href="{{ route('guru.assignments.download', [$assignment, $student->nis]) }}" class="text-xs font-semibold text-sky-700 hover:underline">Unduh jawaban</a></div>@else<span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Belum mengumpulkan</span>@endif</div>
+            @if($submission)<form action="{{ route('guru.classes.assignments.grade', [$assignment, $student->nis]) }}" method="POST" class="mt-4 grid gap-3 sm:grid-cols-[140px_1fr_auto]">@csrf @method('PATCH')<div><label class="mb-1 block text-xs font-semibold text-slate-600">Nilai</label><input type="number" name="score" min="0" max="{{ $assignment->max_score }}" step="0.01" value="{{ old('score', $submission->score) }}" required class="w-full rounded-lg border-slate-300 text-sm"></div><div><label class="mb-1 block text-xs font-semibold text-slate-600">Feedback</label><input name="feedback" maxlength="1000" value="{{ old('feedback', $submission->feedback) }}" class="w-full rounded-lg border-slate-300 text-sm" placeholder="Catatan untuk siswa"></div><div class="self-end"><button class="w-full rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">Simpan nilai</button></div></form>@endif</div>
+        @empty<p class="p-8 text-center text-sm text-slate-500">Belum ada siswa yang bergabung di kelas ini.</p>@endforelse
+        </section>
+    </div></div>
+</x-app-layout>

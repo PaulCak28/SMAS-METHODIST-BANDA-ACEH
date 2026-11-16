@@ -58,7 +58,15 @@ class ClassroomController extends Controller
         abort_unless($request->user()->isSiswa(), 403);
         $student = $request->user()->student;
 
-        $request->validate(['file' => 'required|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png,zip,ppt,pptx,xls,xlsx']);
+        $allowed = $assignment->allowed_formats ?: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'png', 'zip'];
+        if (in_array('jpg', $allowed)) {
+            $allowed[] = 'jpeg';
+        }
+
+        $request->validate([
+            'file' => ['required', 'file', 'max:10240', 'mimes:'.implode(',', $allowed)],
+        ]);        
+        
         if (now()->gt($assignment->due_date)) {
             return back()->with('error', 'Batas pengumpulan sudah lewat.');
         }
