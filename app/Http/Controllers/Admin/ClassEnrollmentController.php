@@ -86,7 +86,6 @@ class ClassEnrollmentController extends Controller
             'cst_id' => [
                 'required',
                 'exists:class_subject_teacher,cst_id',
-                // satu siswa hanya terdaftar sekali di satu kelas-mapel
                 Rule::unique('class_enrollments')->where(
                     fn ($q) => $q->where('students_id', $request->students_id)
                 ),
@@ -99,22 +98,44 @@ class ClassEnrollmentController extends Controller
         $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
 
         DB::transaction(function () use ($v, $cst) {
-            // academic_year diambil dari cst, tidak diketik manual
-            ClassEnrollment::create($v + ['academic_year' => $cst->academic_year]);
-            $this->syncCurrentClass($v['students_id'], $cst, $v['status']);
+            ClassEnrollment::create(
+                $v + ['academic_year' => $cst->academic_year]
+            );
+
+            $membershipStatus = match ($v['status']) {
+                'aktif' => 'aktif',
+                'lulus' => 'selesai',
+                default => 'keluar',
+            };
+
+            DB::table('cst_students')->updateOrInsert(
+                [
+                    'cst_id' => $cst->cst_id,
+                    'students_id' => $v['students_id'],
+                ],
+                [
+                    'status' => $membershipStatus,
+                    'joined_at' => $v['enrolled_at'] ?? now(),
+                    'left_at' => $membershipStatus === 'aktif'
+                        ? null
+                        : ($v['left_at'] ?? now()),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            $this->syncCurrentClass(
+                $v['students_id'],
+                $cst,
+                $v['status']
+            );
         });
 
-        // Redirect kembali ke halaman show siswa yang bersangkutan jika ditambahkan dari halaman detail
         return redirect()
             ->route('admin.enrollments.show', $v['students_id'])
             ->with('success', 'Siswa berhasil dimasukkan ke kelas mapel.');
     }
 
-    /**
-     * Memasukkan siswa terpilih dari satu kelas induk ke satu kelas-mapel (cst).
-     * Hanya siswa dengan students.class_id = cst.class_id yang diproses, dan siswa yang
-     * sudah terdaftar di cst tersebut dilewati.
-     */
     public function storeBulk(Request $request)
     {
         $v = $request->validate([
@@ -128,7 +149,6 @@ class ClassEnrollmentController extends Controller
 
         $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
 
-        // Batasi ke siswa yang benar-benar berada di kelas induk kelas-mapel ini
         $nisList = Student::where('class_id', $cst->class_id)
             ->whereIn('nis', $v['students_id'])
             ->pluck('nis');
@@ -147,15 +167,30 @@ class ClassEnrollmentController extends Controller
 
         DB::transaction(function () use ($toEnroll, $cst) {
             foreach ($toEnroll as $nis) {
+                $enrolledAt = now();
+
                 ClassEnrollment::create([
                     'students_id' => $nis,
                     'cst_id' => $cst->cst_id,
                     'status' => 'aktif',
-                    'enrolled_at' => now()->toDateString(),
+                    'enrolled_at' => $enrolledAt->toDateString(),
                     'academic_year' => $cst->academic_year,
                 ]);
+
+                DB::table('cst_students')->updateOrInsert(
+                    [
+                        'cst_id' => $cst->cst_id,
+                        'students_id' => $nis,
+                    ],
+                    [
+                        'status' => 'aktif',
+                        'joined_at' => $enrolledAt,
+                        'left_at' => null,
+                        'created_at' => $enrolledAt,
+                        'updated_at' => $enrolledAt,
+                    ]
+                );
             }
-            // students.class_id tidak perlu disinkronkan: siswa sudah berada di kelas induk ini.
         });
 
         $message = "{$toEnroll->count()} siswa berhasil dimasukkan ke kelas mapel.";
@@ -193,24 +228,79 @@ class ClassEnrollmentController extends Controller
         ]);
 
         $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
+        $oldCstId = $enrollment->cst_id;
+        $nis = $enrollment->students_id;
 
-        DB::transaction(function () use ($v, $cst, $enrollment) {
-            $enrollment->update($v + ['academic_year' => $cst->academic_year]);
-            $this->syncCurrentClass($enrollment->students_id, $cst, $v['status']);
+        DB::transaction(function () use ($v, $cst, $enrollment, $oldCstId, $nis) {
+            // Jika kelas mapel berubah, keluarkan dari keanggotaan kelas sebelumnya.
+            if ($oldCstId !== $cst->cst_id) {
+                DB::table('cst_students')
+                    ->where('cst_id', $oldCstId)
+                    ->where('students_id', $nis)
+                    ->update([
+                        'status' => 'keluar',
+                        'left_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+            }
+
+            $enrollment->update(
+                $v + ['academic_year' => $cst->academic_year]
+            );
+
+            $membershipStatus = match ($v['status']) {
+                'aktif' => 'aktif',
+                'lulus' => 'selesai',
+                default => 'keluar',
+            };
+
+            $membership = DB::table('cst_students')
+                ->where('cst_id', $cst->cst_id)
+                ->where('students_id', $nis);
+
+            $membershipData = [
+                'status' => $membershipStatus,
+                'joined_at' => $v['enrolled_at'] ?? now(),
+                'left_at' => $membershipStatus === 'aktif'
+                    ? null
+                    : ($v['left_at'] ?? now()),
+                'updated_at' => now(),
+            ];
+
+            if ($membership->exists()) {
+                $membership->update($membershipData);
+            } else {
+                DB::table('cst_students')->insert(
+                    $membershipData + [
+                        'cst_id' => $cst->cst_id,
+                        'students_id' => $nis,
+                        'created_at' => now(),
+                    ]
+                );
+            }
+
+            $this->syncCurrentClass($nis, $cst, $v['status']);
         });
 
         return redirect()
-            ->route('admin.enrollments.show', $enrollment->students_id)
+            ->route('admin.enrollments.show', $nis)
             ->with('success', 'Data kelas siswa berhasil diperbarui.');
     }
 
     public function destroy(ClassEnrollment $enrollment)
     {
         $studentNis = $enrollment->students_id;
-
-        // students.class_id tidak diubah: hanya riwayat pendaftarannya yang dihapus
-        $enrollment->delete();
-
+        $cstId = $enrollment->cst_id;
+    
+        DB::transaction(function () use ($enrollment, $studentNis, $cstId) {
+            DB::table('cst_students')
+                ->where('cst_id', $cstId)
+                ->where('students_id', $studentNis)
+                ->delete();
+    
+            $enrollment->delete();
+        });
+    
         return redirect()
             ->route('admin.enrollments.show', $studentNis)
             ->with('success', 'Siswa berhasil dikeluarkan dari kelas mapel.');
