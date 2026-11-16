@@ -53,6 +53,7 @@
                     <th class="py-3">Ruangan</th>
                     <th class="py-3">Guru Pengampu</th>
                     <th class="py-3">Tahun Ajaran</th>
+                    <th class="py-3">Semester</th> <!-- Kolom Baru -->
                     <th class="py-3 text-center">Join Code</th>
                     <th class="text-end pe-4 py-3">Aksi</th>
                 </tr>
@@ -67,6 +68,12 @@
                         <td><span class="fw-semibold text-dark">{{ $item->schoolClass->name ?? '-' }}</span></td>
                         <td><div class="fw-medium text-dark">{{ $item->teacher->user->name ?? 'NIP: '.$item->teacher_id }}</div></td>
                         <td class="text-muted small">{{ $item->academic_year }}</td>
+                        <td>
+                            <!-- Menampilkan badge status semester -->
+                            <span class="badge bg-light text-dark border px-2 py-1">
+                                {{ $item->semester ?? '-' }}
+                            </span>
+                        </td>
                         <td class="text-center">
                             <span class="badge bg-warning-subtle text-dark border border-warning px-3 py-2 font-monospace fs-6">
                                 {{ $item->join_code }}
@@ -86,7 +93,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
+                        <td colspan="7" class="text-center py-5 text-muted">
                             <i class="bi bi-building display-4 d-block mb-3 opacity-50"></i>
                             <h6 class="fw-semibold text-dark">Belum ada Kelas</h6>
                         </td>
