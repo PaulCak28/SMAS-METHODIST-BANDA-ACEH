@@ -1,3 +1,51 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .announcement-content p,
+    .announcement-content blockquote,
+    .announcement-content pre,
+    .announcement-content ol,
+    .announcement-content ul {
+        @apply mb-4;
+    }
+
+    .announcement-content h2 {
+        @apply mb-4 mt-8 font-serif text-2xl font-bold text-navy;
+    }
+
+    .announcement-content h3 {
+        @apply mb-3 mt-6 font-serif text-xl font-bold text-navy;
+    }
+
+    .announcement-content ol,
+    .announcement-content ul {
+        @apply pl-6;
+    }
+
+    .announcement-content ol {
+        @apply list-decimal;
+    }
+
+    .announcement-content ul,
+    .announcement-content li[data-list="bullet"] {
+        @apply list-disc;
+    }
+
+    .announcement-content blockquote {
+        @apply border-l-4 border-softblue pl-4 italic text-navy/70;
+    }
+
+    .announcement-content a {
+        @apply font-semibold text-softblue underline underline-offset-2;
+    }
+
+    .announcement-content img {
+        @apply mx-auto my-6 h-auto max-w-full rounded-xl;
+    }
+
+    .announcement-content pre {
+        @apply overflow-x-auto rounded-lg bg-navy p-4 text-sm text-white;
+    }
+}

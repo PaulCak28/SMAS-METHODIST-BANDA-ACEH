@@ -3,41 +3,31 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\SchoolClass;
-use App\Models\Subject;
-use App\Models\Exam;
-use App\Models\ExamSession;
-use App\Models\ExamAnswer;
 use App\Models\ExamViolation;
 use App\Models\Announcement;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $dbStats = DB::selectOne('CALL sp_dashboard_stats()');
+
         $stats = [
-            'Total Siswa' => Student::count(),
-            'Total Guru' => Teacher::count(),
-            'Total Kelas' => SchoolClass::count(),
-            'Mata Pelajaran' => Subject::count(),
-            'Total Ujian' => Exam::count(),
+            'Total Siswa' => $dbStats->total_students,
+            'Total Guru' => $dbStats->total_teachers,
+            'Total Kelas' => $dbStats->total_classes,
+            'Mata Pelajaran' => $dbStats->total_subjects,
+            'Total Ujian' => $dbStats->total_exams,
             'Pengumuman' => Announcement::count(),
         ];
 
-        $sessionsRunning = ExamSession::where('status', 'berlangsung')
-            ->whereNotNull('started_at')
-            ->whereNull('finished_at')
-            ->count();
+        $sessionsRunning = $dbStats->sessions_running;
 
-        $pendingEssays = ExamAnswer::whereNull('score')
-            ->whereHas('question', function ($query) {
-                $query->where('question_type', 'esai');
-            })
-            ->count();
+        $pendingEssays = $dbStats->pending_essays;
 
-        $studentsNoClass = Student::whereNull('class_id')->count();
+        $studentsNoClass = $dbStats->students_no_class;
 
         $recentAnnouncements = Announcement::latest()
             ->take(5)

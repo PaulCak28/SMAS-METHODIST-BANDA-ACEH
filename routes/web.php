@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
@@ -340,29 +341,24 @@ Route::middleware('auth')->group(function () {
     // CLASS ENROLLMENT
     // -----------------------------
 
-    Route::prefix('admin/enrollments')->name('admin.enrollments.')->group(function () {
+Route::prefix('admin/announcements')
+        ->name('admin.announcements.')
+        ->middleware(['auth', 'role:admin'])
+        ->group(function () {
+            Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
+            Route::get('/create', [AdminAnnouncement::class, 'create'])->name('create');
+            Route::post('/', [AdminAnnouncement::class, 'store'])->name('store');
 
-        Route::get('/', [ClassEnrollmentController::class, 'index'])
-            ->name('index');
+            // Upload gambar pengumuman (maksimal 30 request per menit)
+            Route::post('/images', [AnnouncementImageController::class, 'store'])
+                ->middleware('throttle:30,1')
+                ->name('images.store');
 
-        Route::get('/create', [ClassEnrollmentController::class, 'create'])
-            ->name('create');
-
-        Route::post('/', [ClassEnrollmentController::class, 'store'])
-            ->name('store');
-
-        Route::get('/{student}/show', [ClassEnrollmentController::class, 'show'])
-            ->name('show');
-
-        Route::get('/{enrollment}/edit', [ClassEnrollmentController::class, 'edit'])
-            ->name('edit');
-
-        Route::put('/{enrollment}', [ClassEnrollmentController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/{enrollment}', [ClassEnrollmentController::class, 'destroy'])
-            ->name('destroy');
-    });
+            Route::get('/{announcement}', [AdminAnnouncement::class, 'show'])->name('show');
+            Route::get('/{announcement}/edit', [AdminAnnouncement::class, 'edit'])->name('edit');
+            Route::put('/{announcement}', [AdminAnnouncement::class, 'update'])->name('update');
+            Route::delete('/{announcement}', [AdminAnnouncement::class, 'destroy'])->name('destroy');
+        });
 
     // Tambah enrollment dari halaman siswa
     Route::post('/admin/students/{student}/enrollments', [ClassEnrollmentController::class, 'storeFromStudent'])
@@ -423,34 +419,7 @@ Route::middleware('auth')->group(function () {
             ->name('destroy');
     });
 
-
-    // -----------------------------
-    // ANNOUNCEMENT MANAGEMENT
-    // -----------------------------
-
-    Route::prefix('admin/announcements')->name('admin.announcements.')->group(function () {
-
-        Route::get('/', [AdminAnnouncement::class, 'index'])
-            ->name('index');
-
-        Route::get('/create', [AdminAnnouncement::class, 'create'])
-            ->name('create');
-
-        Route::post('/', [AdminAnnouncement::class, 'store'])
-            ->name('store');
-
-        Route::get('/{announcement}', [AdminAnnouncement::class, 'show'])
-            ->name('show');
-
-        Route::get('/{announcement}/edit', [AdminAnnouncement::class, 'edit'])
-            ->name('edit');
-
-        Route::put('/{announcement}', [AdminAnnouncement::class, 'update'])
-            ->name('update');
-
-        Route::delete('/{announcement}', [AdminAnnouncement::class, 'destroy'])
-            ->name('destroy');
-    });
+c
 
 
     // =====================================================

@@ -8,7 +8,6 @@ use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class CstController extends Controller
 {
@@ -18,10 +17,12 @@ class CstController extends Controller
 
         $csts = ClassSubjectTeacher::with(['schoolClass', 'subject', 'teacher.user'])
             ->when($search, function ($query, $search) {
-                $query->whereHas('subject', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                      ->orWhereHas('schoolClass', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                      ->orWhereHas('teacher.user', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                return $query->where(function ($q) use ($search) {
+                    $q->whereHas('subject', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                      ->orWhereHas('schoolClass', fn($cls) => $cls->where('name', 'like', "%{$search}%"))
+                      ->orWhereHas('teacher.user', fn($usr) => $usr->where('name', 'like', "%{$search}%"))
                       ->orWhere('join_code', 'like', "%{$search}%");
+                });
             })
             ->latest('cst_id')
             ->paginate(15)
@@ -57,13 +58,10 @@ class CstController extends Controller
             return back()->withInput()->with('error', 'Kelas mata pelajaran ini sudah ada di ruang dan tahun ajaran tersebut.');
         }
 
-        $v['cst_id'] = 'CST-' . strtoupper(Str::random(6));
-        $v['join_code'] = strtoupper(Str::random(6));
-
-        ClassSubjectTeacher::create($v);
+        $cst = ClassSubjectTeacher::create($v);
 
         return redirect()->route('admin.cst.index')
-            ->with('success', 'Kelas mapel berhasil dibuat! Kode Gabung Siswa: ' . $v['join_code']);
+            ->with('success', 'Kelas mapel berhasil dibuat! Kode Gabung Kelas: ' . $cst->join_code);
     }
 
     public function edit(ClassSubjectTeacher $cst)
@@ -92,6 +90,15 @@ class CstController extends Controller
 
         if ($exists) {
             return back()->withInput()->with('error', 'Perubahan dibatalkan karena akan menduplikat kelas yang sudah ada.');
+        }
+
+        // PERBAIKAN: Gunakan where() untuk mencocokkan primary key/kolom yang tepat
+        $class = SchoolClass::where('class_id', $v['class_id'])->first();
+        $subject = Subject::where('code', $v['subject_code'])->first();
+        
+        if ($class && $subject) {
+            $cleanClass = preg_replace('/\s+/', '', $class->name);
+            $v['join_code'] = strtoupper($subject->code . $cleanClass);
         }
 
         $cst->update($v);
