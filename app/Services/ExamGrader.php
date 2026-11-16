@@ -144,18 +144,9 @@ class ExamGrader
     /** Masukkan nilai ujian ke buku nilai (dihitung sistem, graded_by = null). */
 public function recordToGradebook(ExamSession $session): void
 {
-    $exam = $session->exam;
-
-    \App\Models\Grade::updateOrCreate(
-        ['students_id' => $session->students_id, 'exam_id' => $exam->exam_id],
-        [
-            'cst_id' => $exam->cst_id,
-            'grade_type' => $exam->exam_type,   // uts | uas
-            'score' => $this->objectiveScore($session),
-            'graded_by' => null,
-            'graded_at' => now(),
-        ]
-    );
+    \Illuminate\Support\Facades\DB::statement('CALL sp_record_exam_grade(?)', [
+        $session->exam_session_id,
+    ]);
 }
 
     /** Ringkasan untuk siswa/orang tua: benar, salah, tidak dijawab, nilai, lulus atau tidak. */

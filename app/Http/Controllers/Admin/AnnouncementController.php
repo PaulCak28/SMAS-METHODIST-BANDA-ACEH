@@ -20,8 +20,10 @@ class AnnouncementController extends Controller
 
         $announcements = Announcement::with('creator')
             ->when($search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%")
-                    ->orWhere('content', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('content', 'like', "%{$search}%");
+                });
             })
             ->latest('announcement_id')
             ->paginate(10)
@@ -53,11 +55,15 @@ class AnnouncementController extends Controller
             ]);
         }
 
+        $isPublic = in_array('all', $v['target_roles'], true);
+
         Announcement::create([
             'title' => $v['title'],
             'link' => $v['link'] ?? null,
             'content' => $content,
             'target_roles' => $v['target_roles'],
+            'is_public' => $isPublic,
+            'published_at' => now(),
             'created_by' => Auth::id(),
         ]);
 
@@ -103,11 +109,15 @@ class AnnouncementController extends Controller
             $announcement->slug = null;
         }
 
+        $isPublic = in_array('all', $v['target_roles'], true);
+
         $announcement->update([
             'title' => $v['title'],
             'link' => $v['link'] ?? null,
             'content' => $content,
             'target_roles' => $v['target_roles'],
+            'is_public' => $isPublic,
+            'published_at' => $announcement->published_at ?? now(),
         ]);
 
         return redirect()->route('admin.announcements.index')
