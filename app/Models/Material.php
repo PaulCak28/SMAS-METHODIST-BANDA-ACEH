@@ -8,10 +8,32 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Material extends Model
 {
     use HasFactory;
-    protected $fillable = ['cst_id', 'title', 'description', 'file_path', 'uploaded_at'];
+
+    protected $table = 'materials';
+
+    protected $primaryKey = 'material_id';
+
+    protected $fillable = [
+        'cst_id',
+        'title',
+        'description',
+        'file_path',
+        'uploaded_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'uploaded_at' => 'datetime',
+        ];
+    }
 
     public function classSubjectTeacher()
     {
-        return $this->belongsTo(ClassSubjectTeacher::class, 'cst_id');
+        return $this->belongsTo(
+            ClassSubjectTeacher::class,
+            'cst_id',
+            'cst_id'
+        );
     }
 }

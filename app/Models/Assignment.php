@@ -24,22 +24,20 @@ class Assignment extends Model
         'description',
         'due_date',
         'max_score',
+        'allowed_formats',
     ];
 
     protected function casts(): array
     {
         return [
             'due_date' => 'datetime',
+            'allowed_formats' => 'array',
         ];
     }
 
     public function classSubjectTeacher()
     {
-        return $this->belongsTo(
-            ClassSubjectTeacher::class,
-            'cst_id',
-            'cst_id'
-        );
+        return $this->belongsTo(ClassSubjectTeacher::class, 'cst_id', 'cst_id');
     }
 
     public function submissions()
