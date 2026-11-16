@@ -98,6 +98,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/e-exam/session/{session}', [GuruExam::class, 'session'])->name('guru.exams.session');
     Route::patch('/guru/e-exam/session/{session}/grade-essay', [GuruExam::class, 'gradeEssay'])->name('guru.exams.grade-essay');
     });
+
+    Route::put('classes/{cst}/materials/{material}', [ClassController::class, 'updateMaterial'])
+    ->name('guru.classes.materials.update');
+
+    Route::put('classes/assignments/{assignment}', [ClassController::class, 'updateAssignment'])
+    ->name('guru.classes.assignments.update');
     
     Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])
         ->name('admin.dashboard');

@@ -12,9 +12,25 @@ use App\Services\ReportCardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ClassroomController extends Controller
 {
+    /** Format file yang boleh dipilih guru untuk pengumpulan tugas. */
+    private const FORMATS = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'png', 'zip', 'txt'];
+
+    /** Bersihkan HTML dari editor WYSIWYG (butuh: composer require mews/purifier). */
+    private function cleanHtml(?string $html): ?string
+    {
+        $html = trim((string) $html);
+        if ($html === '') {
+            return null;
+        }
+        $clean = trim(clean($html));
+
+        return $clean === '' ? null : $clean;
+    }
+
     public function index(Request $request)
     {
         $classes = ClassSubjectTeacher::with('subject', 'schoolClass')
@@ -67,12 +83,40 @@ class ClassroomController extends Controller
         Material::create([
             'cst_id' => $cst->cst_id,
             'title' => $v['title'],
-            'description' => $v['description'] ?? null,
+            'description' => $this->cleanHtml($v['description'] ?? null),
             'file_path' => $request->hasFile('file') ? $request->file('file')->store('materials', 'public') : null,
             'uploaded_at' => now(),
         ]);
 
         return back()->with('success', 'Materi berhasil diunggah.');
+    }
+
+    public function updateMaterial(Request $request, ClassSubjectTeacher $cst, Material $material)
+    {
+        Access::authorizeTeacher($request->user(), $cst);
+        abort_unless($material->cst_id === $cst->cst_id, 404);
+
+        $v = $request->validate([
+            'title' => 'required|string|max:150',
+            'description' => 'nullable|string',
+            'file' => 'nullable|file|max:20480|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip',
+        ]);
+
+        $data = [
+            'title' => $v['title'],
+            'description' => $this->cleanHtml($v['description'] ?? null),
+        ];
+
+        if ($request->hasFile('file')) {
+            if ($material->file_path) {
+                Storage::disk('public')->delete($material->file_path);
+            }
+            $data['file_path'] = $request->file('file')->store('materials', 'public');
+        }
+
+        $material->update($data);
+
+        return back()->with('success', 'Materi berhasil diperbarui.');
     }
 
     public function destroyMaterial(Request $request, ClassSubjectTeacher $cst, Material $material)
@@ -95,11 +139,35 @@ class ClassroomController extends Controller
             'title' => 'required|string|max:150',
             'description' => 'nullable|string',
             'due_date' => 'required|date',
-            'max_score' => 'required|integer|min:1|max:1000',
+            'max_score' => 'nullable|integer|min:1|max:1000',
+            'allowed_formats' => 'required|array|min:1',
+            'allowed_formats.*' => ['string', Rule::in(self::FORMATS)],
         ]);
+
+        $v['description'] = $this->cleanHtml($v['description'] ?? null);
+        $v['max_score'] = $v['max_score'] ?? 100;
+
         Assignment::create($v + ['cst_id' => $cst->cst_id]);
 
         return back()->with('success', 'Wadah pengumpulan tugas dibuat.');
+    }
+
+    public function updateAssignment(Request $request, Assignment $assignment)
+    {
+        Access::authorizeTeacher($request->user(), $assignment->classSubjectTeacher);
+
+        $v = $request->validate([
+            'title' => 'required|string|max:150',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+            'allowed_formats' => 'required|array|min:1',
+            'allowed_formats.*' => ['string', Rule::in(self::FORMATS)],
+        ]);
+        $v['description'] = $this->cleanHtml($v['description'] ?? null);
+
+        $assignment->update($v);
+
+        return back()->with('success', 'Tugas berhasil diperbarui.');
     }
 
     public function showAssignment(Request $request, Assignment $assignment)
@@ -129,7 +197,7 @@ class ClassroomController extends Controller
             'score' => 'required|numeric|min:0|max:'.$assignment->max_score,
             'feedback' => 'nullable|string|max:1000',
         ]);
-        
+
         $query = AssignmentSubmission::where('assignment_id', $assignment->assignment_id)->where('students_id', $nis);
         abort_unless($query->exists(), 404);
         $query->update($v);   // PK gabungan: update lewat query, bukan $model->update()
