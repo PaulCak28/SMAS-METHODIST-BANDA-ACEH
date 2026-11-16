@@ -341,6 +341,32 @@ Route::middleware('auth')->group(function () {
     // CLASS ENROLLMENT
     // -----------------------------
 
+    Route::prefix('admin/enrollments')->name('admin.enrollments.')->group(function () {
+        Route::get('/', [ClassEnrollmentController::class, 'index'])
+            ->name('index');
+
+        Route::get('/create', [ClassEnrollmentController::class, 'create'])
+            ->name('create');
+
+        Route::post('/', [ClassEnrollmentController::class, 'store'])
+            ->name('store');
+
+        Route::post('/bulk', [ClassEnrollmentController::class, 'storeBulk'])
+            ->name('store-bulk');
+
+        Route::get('/{nis}', [ClassEnrollmentController::class, 'show'])
+            ->name('show');
+
+        Route::get('/records/{enrollment}/edit', [ClassEnrollmentController::class, 'edit'])
+            ->name('edit');
+
+        Route::put('/records/{enrollment}', [ClassEnrollmentController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/records/{enrollment}', [ClassEnrollmentController::class, 'destroy'])
+            ->name('destroy');
+    });
+
 Route::prefix('admin/announcements')
         ->name('admin.announcements.')
         ->middleware(['auth', 'role:admin'])
