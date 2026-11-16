@@ -149,6 +149,51 @@
                     </div>
                 </div>
 
+                {{-- LOG AKTIVITAS NILAI --}}
+                <div class="portal-card mt-4">
+                    <div class="card-header-portal d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0 text-dark">
+                            <i class="bi bi-clock-history text-accent me-2"></i> Log Aktivitas Nilai
+                        </h5>
+                        <a href="{{ Route::has('admin.activity-logs.index') ? route('admin.activity-logs.index') : '#' }}" class="small text-accent text-decoration-none">
+                            Lihat Semua
+                        </a>
+                    </div>
+                    <div class="p-0">
+                        @forelse($recentGradeLogs ?? collect() as $log)
+                            <div class="p-3 border-bottom border-secondary">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        @php
+                                            $badge = match($log->action) {
+                                                'insert' => 'bg-success-subtle text-success',
+                                                'update' => 'bg-warning-subtle text-warning-emphasis',
+                                                'delete' => 'bg-danger-subtle text-danger',
+                                                default  => 'bg-secondary-subtle text-secondary',
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $badge }} text-uppercase">{{ $log->action }}</span>
+                                        <h6 class="fw-bold text-dark mb-0">
+                                            {{ $log->student->name ?? 'Siswa #' . $log->students_id }}
+                                        </h6>
+                                    </div>
+                                    <small class="text-muted-portal">{{ $log->changed_at?->diffForHumans() ?? '-' }}</small>
+                                </div>
+                                <p class="text-muted-portal small mb-0">
+                                    Tipe <strong>{{ $log->grade_type }}</strong> ({{ $log->cst_id }}) —
+                                    Skor: <span>{{ $log->old_score !== null ? number_format($log->old_score, 2) : '-' }}</span>
+                                    <i class="bi bi-arrow-right mx-1"></i>
+                                    <strong class="text-dark">{{ $log->new_score !== null ? number_format($log->new_score, 2) : 'Dihapus' }}</strong>
+                                    <span class="ms-2 text-secondary">· oleh <code>{{ $log->db_user }}</code></span>
+                                </p>
+                            </div>
+                        @empty
+                            <div class="p-4 text-center text-muted-portal">
+                                Belum ada aktivitas perubahan nilai terbaru.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
 
             {{-- KOLOM KANAN (MANAJEMEN & DATA KELAS) --}}
