@@ -16,7 +16,46 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+
+            {{-- RINGKASAN STATISTIK UJIAN (Dari View v_exam_statistics) --}}
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                    <div class="text-xs font-semibold text-slate-500">Esai menunggu koreksi</div>
+                    <div class="mt-1 text-2xl font-bold text-amber-600">{{ $pendingEssays->count() }}</div>
+                </div>
+                <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                    <div class="text-xs font-semibold text-slate-500">Total pelanggaran tercatat</div>
+                    <div class="mt-1 text-2xl font-bold text-rose-600">
+                        {{ $violationSummaries->flatten(1)->sum('total') }}
+                    </div>
+                </div>
+            </div>
+
+            @if(isset($examStats))
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
+                        <div class="text-xs font-semibold text-slate-500">Rata-rata Nilai</div>
+                        <div class="text-2xl font-bold text-indigo-600 mt-1">{{ $examStats->avg_score ?? '0.00' }}</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
+                        <div class="text-xs font-semibold text-slate-500">Nilai Tertinggi / Terendah</div>
+                        <div class="text-2xl font-bold text-slate-800 mt-1">
+                            {{ $examStats->max_score ?? '0' }} <span class="text-sm font-normal text-slate-400">/ {{ $examStats->min_score ?? '0' }}</span>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
+                        <div class="text-xs font-semibold text-slate-500">Tingkat Ketuntasan (KKM {{ $exam->pass_score }})</div>
+                        <div class="text-2xl font-bold text-emerald-600 mt-1">{{ $examStats->pass_rate ?? '0' }}%</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
+                        <div class="text-xs font-semibold text-slate-500">Sesi Selesai</div>
+                        <div class="text-2xl font-bold text-slate-800 mt-1">
+                            {{ $examStats->finished_sessions ?? 0 }} <span class="text-sm font-normal text-slate-400">/ {{ $examStats->total_sessions ?? $sessions->count() }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endif
             
             <div class="bg-white p-6 shadow-sm ring-1 ring-slate-200 rounded-2xl">
                 <div class="flex items-center justify-between mb-6">
@@ -39,44 +78,53 @@
                         </thead>
                         <tbody class="divide-y divide-slate-200">
                             @forelse($sessions as $session)
+                                @php
+                                    // Ambil hasil kalkulasi dari Database View v_exam_results
+                                    $res = isset($examResultsView) ? $examResultsView->get($session->exam_session_id) : null;
+                                    $finalScore = $res ? (float) $res->final_score : 0;
+                                    $isFinished = in_array($session->status, ['selesai', 'keluar'], true);
+                                    $waktuSelesai = $session->finished_at ?? ($isFinished ? $session->updated_at : null);
+                                @endphp
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     
                                     <!-- NAMA SISWA -->
                                     <td class="px-4 py-3 font-semibold text-slate-800">
                                         {{ $session->student->user->name ?? 'Anonim' }}
-                                        <div class="text-[10px] text-slate-400 font-normal mt-0.5">NISN: {{ $session->student->nisn ?? '-' }}</div>
+                                        <div class="text-[10px] text-slate-400 font-normal mt-0.5">
+                                            NIS: {{ $session->student_id }} | NISN: {{ $session->student->nisn ?? '-' }}
+                                        </div>
                                     </td>
 
-                                    <!-- WAKTU & DURASI (Sejajar ke samping) -->
+                                    <!-- WAKTU & DURASI -->
                                     <td class="px-4 py-3 text-center text-xs">
                                         <div class="flex items-center justify-center gap-3 flex-wrap">
                                             <div class="text-slate-500">
-                                                <span class="font-bold">Mulai:</span> {{ $session->started_at ? \Carbon\Carbon::parse($session->started_at)->format('H:i') : '-' }}
+                                                <span class="font-bold">Mulai:</span> {{ $session->started_at ? \Carbon\Carbon::parse($session->started_at)->format('H:i:s') : '-' }}
                                             </div>
                                             <div class="text-slate-500">
-                                                @php
-                                                    // Pakai finished_at (jika ada), atau updated_at sebagai fallback waktu selesai
-                                                    $waktuSelesai = $session->finished_at ?? ($session->status === 'selesai' ? $session->updated_at : null);
-                                                @endphp
-                                                <span class="font-bold">Selesai:</span> {{ $waktuSelesai ? \Carbon\Carbon::parse($waktuSelesai)->format('H:i') : '-' }}
+                                                <span class="font-bold">Selesai:</span> {{ $waktuSelesai ? \Carbon\Carbon::parse($waktuSelesai)->format('H:i:s') : '-' }}
                                             </div>
 
-                                            @if($session->status === 'selesai' && $session->started_at && $waktuSelesai)
+                                            @if($isFinished && $session->started_at && $waktuSelesai)
                                                 @php
-                                                    $durasi = \Carbon\Carbon::parse($session->started_at)->diffInMinutes(\Carbon\Carbon::parse($waktuSelesai));
+                                                    $durasiDetik = max(0, (int) \Carbon\Carbon::parse($session->started_at)->diffInSeconds(\Carbon\Carbon::parse($waktuSelesai)));
+                                                    $durasiMenit = intdiv($durasiDetik, 60);
+                                                    $sisaDetik = $durasiDetik % 60;
                                                 @endphp
                                                 <div class="inline-flex items-center bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">
-                                                    ⏱️ {{ $durasi }} Menit
+                                                    ⏱️ {{ $durasiMenit }} menit {{ $sisaDetik }} detik
                                                 </div>
                                             @endif
                                         </div>
                                     </td>
 
-                                    <!-- STATUS & PELANGGARAN (Sejajar ke samping) -->
+                                    <!-- STATUS & PELANGGARAN -->
                                     <td class="px-4 py-3 text-center">
                                         <div class="flex items-center justify-center gap-2 flex-wrap">
                                             @if($session->status === 'selesai')
                                                 <span class="inline-flex items-center rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">Selesai</span>
+                                            @elseif($session->status === 'keluar')
+                                                <span class="inline-flex items-center rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">Dikeluarkan</span>
                                             @else
                                                 <span class="inline-flex items-center rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">Berlangsung</span>
                                             @endif
@@ -95,13 +143,13 @@
 
                                     <!-- NILAI AKHIR & STATUS REMEDIAL -->
                                     <td class="px-4 py-3 text-center">
-                                        <div class="font-bold text-lg {{ ($session->score ?? 0) >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
-                                            {{ $session->score ?? 0 }}
+                                        <div class="font-bold text-lg {{ $finalScore >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
+                                            {{ number_format($finalScore, 2) }}
                                         </div>
                                         
-                                        @if($session->status === 'selesai')
+                                        @if($isFinished)
                                             <div class="mt-1">
-                                                @if(($session->score ?? 0) >= $exam->pass_score)
+                                                @if($finalScore >= $exam->pass_score)
                                                     <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                                                         TUNTAS
                                                     </span>
@@ -118,7 +166,7 @@
 
                                     <!-- AKSI -->
                                     <td class="px-4 py-3 text-center">
-                                        <a href="{{ route('guru.exams.session', $session) }}" class="text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-lg transition-colors inline-block">
+                                        <a href="{{ route('guru.exams.session', $session->exam_session_id) }}" class="text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-lg transition-colors inline-block">
                                             Cek Detail Jawaban
                                         </a>
                                     </td>

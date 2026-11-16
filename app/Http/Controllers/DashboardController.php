@@ -33,7 +33,8 @@ class DashboardController extends Controller
                     'Kelas' => SchoolClass::count(), 'Mata Pelajaran' => Subject::count(),
                     'Ujian Aktif' => Exam::where('is_published', true)->count(),
                 ],
-                'violations' => ExamViolation::with('session.student.user', 'session.exam')->latest()->take(8)->get(),
+                'violations' => ExamViolation::with('session.student.user', 'session.exam')
+                    ->orderByDesc('occurred_at')->take(8)->get(),
                 'openMessages' => ParentMessage::whereNull('teacher_user_id')->whereNull('reply')->count(),
             ],
             'guru' => $this->guru($user),

@@ -5,13 +5,13 @@
     <p class="text-gray-500 mb-4">{{ $student->schoolClass?->name }}</p>
 
     @forelse ($grades as $list)
-        <h2 class="font-medium mt-4">{{ $list->first()->classSubjectTeacher->subject->name }}</h2>
+        <h2 class="font-medium mt-4">{{ $list->first()->subject_name }}</h2>
         <table class="w-full border-collapse">
             @foreach ($list as $g)
                 <tr>
                     <td class="border p-2">
                         {{ strtoupper($g->grade_type) }}
-                        {{ $g->assignment?->title ?? $g->exam?->title }}
+                        {{ $g->title }}
                     </td>
                     <td class="border p-2 text-right">{{ number_format($g->score ?? 0, 2) }}</td>
                 </tr>

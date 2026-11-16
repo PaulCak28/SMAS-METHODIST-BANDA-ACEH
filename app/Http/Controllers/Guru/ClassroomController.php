@@ -8,7 +8,6 @@ use App\Models\AssignmentSubmission;
 use App\Models\ClassSubjectTeacher;
 use App\Models\Material;
 use App\Services\Access;
-use App\Services\ReportCardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -487,23 +486,16 @@ class ClassroomController extends Controller
 
         abort_unless($query->exists(), 404);
 
-        $student = $cst->joinedStudents()
-            ->where('students.nis', $nis)
-            ->first();
-
-        DB::transaction(function () use (
-            $query,
-            $v,
-            $student,
-            $cst
-        ) {
-            $query->update($v);
-
-            if ($student) {
-                app(ReportCardService::class)
-                    ->syncFromActivity($student, $cst);
-            }
-        });
+        DB::connection('mysql_guru')->select(
+            'CALL sp_grade_assignment(?, ?, ?, ?, ?)',
+            [
+                $assignment->assignment_id,
+                $nis,
+                $request->user()->teacher->nip,
+                $v['score'],
+                $v['feedback'] ?? null,
+            ]
+        );
 
         return back()->with(
             'success',

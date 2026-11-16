@@ -104,7 +104,7 @@
                                             </td>
                                             <td class="text-end">
                                                 {{-- Menyesuaikan ke rute monitoring ujian jika ada --}}
-                                                <a href="{{ Route::has('admin.monitoring.session') ? route('admin.monitoring.session', $session->id ?? 1) : '#' }}" class="btn btn-sm btn-portal-primary">
+                                                <a href="{{ route('admin.monitoring.show', $session->exam_id) }}" class="btn btn-sm btn-portal-primary">
                                                     Masuk Sesi
                                                 </a>
                                             </td>

@@ -93,7 +93,7 @@
                             @endif
                         </td>
                         <td class="fw-semibold">
-                            {{ $p->score !== null ? number_format($p->score, 1) : '-' }}
+                            {{ $p->total_score !== null ? number_format($p->total_score, 1) : '-' }}
                         </td>
                         <td class="pe-4">
                             @if($p->session_status === 'selesai')

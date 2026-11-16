@@ -66,7 +66,7 @@ class DemoDataSeeder extends Seeder
 
         foreach ($students->take(3) as $idx => $st) {
             $session = ExamSession::updateOrCreate(
-                ['exam_id' => $exam->exam_id, 'students_id' => $st->nis],
+                ['exam_id' => $exam->exam_id, 'student_id' => $st->nis],
                 [
                     'started_at' => now()->subHours(3),
                     'finished_at' => now()->subHours(2),
@@ -102,7 +102,7 @@ class DemoDataSeeder extends Seeder
 
         $first = ExamSession::where('exam_id', $exam->exam_id)->orderBy('exam_session_id')->first();
         ExamViolation::firstOrCreate(
-            ['exam_session_id' => $first->exam_session_id, 'students_id' => $first->students_id, 'type' => 'tab_switch'],
+            ['exam_session_id' => $first->exam_session_id, 'students_id' => $first->student_id, 'type' => 'tab_switch'],
             ['detail' => 'Berpindah tab (dummy)', 'occurred_at' => now()->subHours(2)]
         );
 

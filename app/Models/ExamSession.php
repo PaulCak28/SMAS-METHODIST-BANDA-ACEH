@@ -10,7 +10,7 @@ class ExamSession extends Model
     protected $primaryKey = 'exam_session_id';
 
     protected $fillable = [
-        'exam_id', 'students_id', 'token',
+        'exam_id', 'student_id', 'token',
         'started_at', 'finished_at', 'left_at', 'status',
     ];
 
@@ -44,7 +44,7 @@ class ExamSession extends Model
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'students_id', 'nis');
+        return $this->belongsTo(Student::class, 'student_id', 'nis');
     }
 
     public function violations()

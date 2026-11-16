@@ -101,9 +101,9 @@ class AccountController extends Controller
     $user = User::where('user_id', $id)->firstOrFail();
 
     $gradeSummary = $user->role === 'siswa'
-        ? DB::table('cst_students as cs')
+        ? DB::connection('mysql_admin')->table('cst_students as cs')
             ->join('class_subject_teacher as cst', 'cst.cst_id', '=', 'cs.cst_id')
-            ->join('subjects as s', 's.subject_id', '=', 'cst.subject_id')
+            ->join('subjects as s', 's.code', '=', 'cst.subject_code')
             ->join('classes as c', 'c.class_id', '=', 'cst.class_id')
             ->where('cs.students_id', $user->user_id)
             ->select('s.name as subject_name', 'c.name as class_name')

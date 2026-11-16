@@ -12,7 +12,7 @@ class MonitoringController extends Controller
 {
     public function index()
     {
-        $activeSessions = DB::table('v_exam_statistics as vs')
+        $activeSessions = DB::connection('mysql_admin')->table('v_exam_statistics as vs')
             ->join('exams as e', 'e.exam_id', '=', 'vs.exam_id')
             ->select(
                 'vs.exam_id as id',
@@ -56,19 +56,19 @@ class MonitoringController extends Controller
     public function show($id, ExamGrader$grader)
     {
         // Tutup otomatis sesi ujian yang melewati batas waktu via Stored Procedure sp_find_expired_sessions
-        $expiredIds = collect(DB::select('CALL sp_find_expired_sessions()'))
+        $expiredIds = collect(DB::connection('mysql_admin')->select('CALL sp_find_expired_sessions()'))
             ->where('exam_id', $id)
             ->pluck('exam_session_id');
 
         if ($expiredIds->isNotEmpty()) {
-            ExamSession::with('exam')
+            ExamSession::on('mysql_admin')->with('exam')
                 ->whereIn('exam_session_id', $expiredIds)
                 ->get()
-                ->each(fn ($s) => $grader->gradeSession($s));
+                ->each(fn ($s) => $grader->gradeSession($s, 'mysql_admin'));
         }
 
         // 1. Detail ujian dari View v_exam_statistics + join_code kelas
-        $rawSession = DB::table('v_exam_statistics as vs')
+        $rawSession = DB::connection('mysql_admin')->table('v_exam_statistics as vs')
             ->join('exams as e', 'e.exam_id', '=', 'vs.exam_id')
             ->join('class_subject_teacher as cst', 'cst.cst_id', '=', 'e.cst_id')
             ->select(
@@ -103,18 +103,19 @@ class MonitoringController extends Controller
         ];
 
         // 2. Ambil rekap pelanggaran dari View v_violation_summary per NIS siswa
-        $violationMap = DB::table('v_violation_summary')
+        $violationMap = DB::connection('mysql_admin')->table('v_violation_summary')
             ->where('exam_id', $id)
-            ->select('nis', DB::raw('SUM(total) as total_violations'))
+            ->select('nis', DB::connection('mysql_admin')->raw('SUM(total) as total_violations'))
             ->groupBy('nis')
             ->pluck('total_violations', 'nis');
 
         // 3. Daftar peserta dari Stored Procedure sp_exam_participants
-        $participants = collect(DB::select('CALL sp_exam_participants(?)', [$id]))
+        $participants = collect(DB::connection('mysql_admin')->select('CALL sp_exam_participants(?)', [$id]))
             ->map(function ($row) use ($violationMap) {
                 $row->start_time =$row->started_at
                     ? Carbon::parse($row->started_at)->format('H:i:s')
                     : '-';
+                $row->nis = $row->student_id;
 
                 // Gabungkan hasil fn_violation_count dengan v_violation_summary agar selalu akurat
                 $row->violation_count = max(
@@ -123,7 +124,7 @@ class MonitoringController extends Controller
                 );
 
                 $row->student = (object) [
-                    'nisn' => $row->nis,
+                    'nisn' => $row->student_id,
                     'user' => (object) ['name' => $row->student_name],
                 ];
 
@@ -131,7 +132,7 @@ class MonitoringController extends Controller
             });
 
         // 4. Rincian jenis pelanggaran dari View v_violation_summary untuk ditampilkan di tabel bawah
-        $violations = DB::table('v_violation_summary')
+        $violations = DB::connection('mysql_admin')->table('v_violation_summary')
             ->where('exam_id', $id)
             ->orderByDesc('last_occurred_at')
             ->get();
