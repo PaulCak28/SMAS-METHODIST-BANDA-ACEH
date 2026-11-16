@@ -2,6 +2,627 @@
 @tailwind components;
 @tailwind utilities;
 
+.school-login-page {
+    /* Palette resmi */
+    --sl-cream: #f7f2e8;
+    --sl-cream-soft: #fbf8f1;
+    --sl-navy: #17365d;
+    --sl-navy-deep: #0f2743;
+    --sl-navy-soft: #244b79;
+    --sl-blue: #8eadd0;
+    --sl-blue-soft: #c6d6e8;
+    --sl-white: #ffffff;
+
+    /* Turunan untuk teks & border */
+    --sl-ink: #17365d;
+    --sl-muted: #5a6b82;
+    --sl-line: #e3dccd;
+    --sl-danger: #b3261e;
+    --sl-success: #2f7a4d;
+
+    --sl-radius: 22px;
+    --sl-radius-sm: 12px;
+    --sl-shadow: 0 24px 60px -24px rgba(15, 39, 67, 0.45);
+    --sl-shadow-soft: 0 10px 30px -18px rgba(15, 39, 67, 0.35);
+
+    --sl-font-head: "Playfair Display", "Georgia", "Times New Roman", serif;
+    --sl-font-body: "Plus Jakarta Sans", "Figtree", ui-sans-serif, system-ui,
+        -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    font-family: var(--sl-font-body);
+    color: var(--sl-ink);
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--sl-cream);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.school-login-page *,
+.school-login-page *::before,
+.school-login-page *::after {
+    box-sizing: border-box;
+}
+
+/* Cegah kedip elemen Alpine sebelum JS siap (scoped) */
+.school-login-page [x-cloak] { display: none !important; }
+
+/* ---------- Shell dua kolom ---------- */
+.school-login-page .sl-shell {
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* =====================================================================
+   KIRI — BRANDING SEKOLAH
+   ===================================================================== */
+.school-login-page .sl-brand {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5rem;
+    padding: clamp(2.25rem, 4vw, 4rem);
+    color: var(--sl-white);
+    background:
+        radial-gradient(120% 90% at 12% 8%, #21497a 0%, transparent 55%),
+        radial-gradient(130% 120% at 100% 100%, #0c2039 0%, transparent 60%),
+        linear-gradient(155deg, var(--sl-navy) 0%, var(--sl-navy-deep) 100%);
+    overflow: hidden;
+}
+/* accent bar tipis di sisi atas panel — kesan institusi resmi */
+.school-login-page .sl-brand::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 3;
+    background: linear-gradient(90deg, var(--sl-blue) 0%, var(--sl-navy-soft) 60%, var(--sl-navy-soft) 100%);
+}
+
+/* Foto utama sekolah (full-bleed) + fallback gradient navy di atas bila gagal dimuat.
+   Sedikit diselaraskan warnanya agar terasa akademik, bukan snapshot mentah. */
+.school-login-page .sl-brand-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    filter: saturate(0.82) contrast(1.03) brightness(0.98);
+    z-index: -3;
+}
+.school-login-page .sl-brand-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+        linear-gradient(to top, rgba(12, 32, 57, 0.94) 0%, rgba(12, 32, 57, 0.4) 32%, rgba(12, 32, 57, 0.08) 60%),
+        linear-gradient(105deg, rgba(15, 39, 67, 0.96) 0%, rgba(17, 43, 74, 0.86) 52%, rgba(23, 54, 93, 0.6) 100%);
+}
+
+/* Elemen dekoratif (cream / soft blue) */
+.school-login-page .sl-orb {
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(0.5px);
+}
+.school-login-page .sl-orb--blue {
+    width: 420px;
+    height: 420px;
+    top: -140px;
+    right: -120px;
+    background: radial-gradient(circle at 30% 30%, rgba(142, 173, 208, 0.55), rgba(142, 173, 208, 0) 70%);
+}
+.school-login-page .sl-orb--cream {
+    width: 300px;
+    height: 300px;
+    bottom: -120px;
+    left: -90px;
+    background: radial-gradient(circle at 50% 50%, rgba(247, 242, 232, 0.16), rgba(247, 242, 232, 0) 70%);
+}
+.school-login-page .sl-grid-lines {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        linear-gradient(rgba(198, 214, 232, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(198, 214, 232, 0.06) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(80% 70% at 50% 40%, #000 30%, transparent 80%);
+}
+
+/* Header brand: logo + nama */
+.school-login-page .sl-brand-head {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+}
+.school-login-page .sl-logo {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 auto;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 6px 14px rgba(8, 20, 36, 0.4));
+}
+.school-login-page .sl-logo svg { width: 36px; height: 36px; display: block; }
+/* logo resmi (gambar) di dalam tile — tidak terpotong / gepeng */
+.school-login-page .sl-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.school-login-page .sl-brand-name {
+    font-family: var(--sl-font-body);
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+.school-login-page .sl-brand-sub {
+    font-size: 0.78rem;
+    color: var(--sl-blue-soft);
+    margin: 0.1rem 0 0;
+    letter-spacing: 0.02em;
+}
+
+/* Badge portal */
+.school-login-page .sl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    padding: 0.42rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sl-cream);
+    background: rgba(142, 173, 208, 0.16);
+    border: 1px solid rgba(142, 173, 208, 0.4);
+}
+.school-login-page .sl-badge::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--sl-blue);
+    box-shadow: 0 0 0 3px rgba(142, 173, 208, 0.25);
+}
+
+/* Blok tengah: heading + deskripsi + ilustrasi */
+.school-login-page .sl-brand-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+.school-login-page .sl-headline {
+    font-family: var(--sl-font-head);
+    font-weight: 600;
+    font-size: clamp(2rem, 3.1vw, 2.95rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0;
+    max-width: 18ch;
+}
+.school-login-page .sl-headline em {
+    font-style: italic;
+    color: var(--sl-blue);
+}
+/* accent rule tipis di bawah heading — kesan resmi/terstruktur */
+.school-login-page .sl-rule {
+    width: 60px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--sl-blue), rgba(142, 173, 208, 0.25));
+}
+.school-login-page .sl-desc {
+    font-size: 0.97rem;
+    line-height: 1.68;
+    color: rgba(246, 243, 236, 0.85);
+    max-width: 42ch;
+    margin: 0;
+}
+
+
+/* Fitur portal — kartu seragam & rapi */
+.school-login-page .sl-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.school-login-page .sl-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 56px;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(198, 214, 232, 0.16);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: rgba(246, 243, 236, 0.96);
+    backdrop-filter: blur(2px);
+}
+.school-login-page .sl-feature-ic {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: var(--sl-navy);
+    background: linear-gradient(150deg, var(--sl-blue), #a8c3e0);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.school-login-page .sl-feature-ic svg { width: 18px; height: 18px; }
+
+/* =====================================================================
+   KANAN — FORM LOGIN
+   ===================================================================== */
+.school-login-page .sl-panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 4vw, 3.25rem);
+    background:
+        radial-gradient(120% 80% at 100% 0%, rgba(142, 173, 208, 0.16), transparent 55%),
+        var(--sl-cream);
+    overflow-y: auto;
+}
+
+.school-login-page .sl-panel-inner {
+    width: 100%;
+    max-width: 430px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-login-page .sl-card {
+    width: 100%;
+    max-width: 430px;
+    background: var(--sl-white);
+    border: 1px solid var(--sl-line);
+    border-radius: var(--sl-radius);
+    box-shadow: var(--sl-shadow);
+    padding: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+.school-login-page .sl-card-head { margin-bottom: 1.6rem; }
+.school-login-page .sl-welcome {
+    font-family: var(--sl-font-head);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 2.6vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--sl-navy);
+    margin: 0 0 0.5rem;
+}
+.school-login-page .sl-welcome-sub {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--sl-muted);
+    margin: 0;
+}
+
+/* Status sesi & error global */
+.school-login-page .sl-status {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--sl-radius-sm);
+    background: rgba(47, 122, 77, 0.1);
+    border: 1px solid rgba(47, 122, 77, 0.28);
+    color: var(--sl-success);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1.1rem;
+}
+
+/* Form */
+.school-login-page .sl-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.school-login-page .sl-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.school-login-page .sl-label {
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--sl-navy);
+    letter-spacing: 0.01em;
+}
+
+.school-login-page .sl-input-wrap { position: relative; display: flex; align-items: center; }
+.school-login-page .sl-input-ic {
+    position: absolute;
+    left: 0.95rem;
+    width: 18px;
+    height: 18px;
+    color: #7c8aa0;
+    pointer-events: none;
+    transition: color 0.18s ease;
+}
+.school-login-page .sl-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--sl-ink);
+    background: var(--sl-white);
+    border: 1.5px solid #c4cdda;
+    border-radius: var(--sl-radius-sm);
+    padding: 0.86rem 1rem 0.86rem 2.7rem;
+    line-height: 1.3;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.school-login-page .sl-input::placeholder { color: #8692a4; opacity: 1; }
+.school-login-page .sl-input:hover { border-color: var(--sl-blue); }
+.school-login-page .sl-input:focus {
+    outline: none;
+    background: var(--sl-white);
+    border-color: var(--sl-navy);
+    box-shadow: 0 0 0 3px rgba(142, 173, 208, 0.45);
+}
+.school-login-page .sl-input-wrap:focus-within .sl-input-ic { color: var(--sl-navy); }
+
+/* field dengan tombol (password) */
+.school-login-page .sl-input--password { padding-right: 3rem; }
+.school-login-page .sl-toggle {
+    position: absolute;
+    right: 0.5rem;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: transparent;
+    color: #8b97ab;
+    cursor: pointer;
+    border-radius: 9px;
+    transition: color 0.18s ease, background 0.18s ease;
+}
+.school-login-page .sl-toggle:hover { color: var(--sl-navy); background: rgba(142, 173, 208, 0.18); }
+.school-login-page .sl-toggle:focus-visible {
+    outline: none;
+    color: var(--sl-navy);
+    box-shadow: 0 0 0 3px rgba(142, 173, 208, 0.45);
+}
+.school-login-page .sl-toggle svg { width: 19px; height: 19px; }
+
+/* pesan error per-field */
+.school-login-page .sl-error {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--sl-danger);
+    margin: 0;
+    list-style: none;
+    padding: 0;
+}
+.school-login-page .sl-input--invalid { border-color: var(--sl-danger); background: #fdf5f4; }
+.school-login-page .sl-input--invalid:focus { box-shadow: 0 0 0 4px rgba(179, 38, 30, 0.14); }
+
+/* baris remember + lupa password */
+.school-login-page .sl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.1rem;
+}
+.school-login-page .sl-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.86rem;
+    color: var(--sl-muted);
+    cursor: pointer;
+    user-select: none;
+}
+.school-login-page .sl-check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--sl-navy);
+    cursor: pointer;
+    border-radius: 5px;
+}
+.school-login-page .sl-check input:focus-visible {
+    outline: 2px solid var(--sl-blue);
+    outline-offset: 2px;
+}
+.school-login-page .sl-link {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--sl-navy);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.18s ease;
+}
+.school-login-page .sl-link:hover { color: var(--sl-navy-soft); text-decoration: underline; }
+.school-login-page .sl-link:focus-visible {
+    outline: 2px solid var(--sl-blue);
+    outline-offset: 2px;
+}
+
+/* tombol utama MASUK */
+.school-login-page .sl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.3rem;
+    padding: 0.92rem 1.2rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sl-white);
+    background: linear-gradient(135deg, var(--sl-navy) 0%, var(--sl-navy-deep) 100%);
+    border: none;
+    border-radius: var(--sl-radius-sm);
+    cursor: pointer;
+    box-shadow: var(--sl-shadow-soft);
+    transition: transform 0.16s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.school-login-page .sl-btn svg { width: 17px; height: 17px; }
+.school-login-page .sl-btn:hover { filter: brightness(1.08); box-shadow: 0 16px 34px -16px rgba(15, 39, 67, 0.6); }
+.school-login-page .sl-btn:active { transform: translateY(1px); box-shadow: var(--sl-shadow-soft); }
+.school-login-page .sl-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(142, 173, 208, 0.5);
+}
+
+/* footer card — info akun sekolah */
+.school-login-page .sl-help {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin: 1.4rem 0 0;
+    padding: 0.8rem 0.9rem;
+    border-radius: var(--sl-radius-sm);
+    background: rgba(142, 173, 208, 0.12);
+    border: 1px solid rgba(23, 54, 93, 0.12);
+    font-size: 0.83rem;
+    line-height: 1.5;
+    color: var(--sl-muted);
+}
+.school-login-page .sl-help-ic {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--sl-navy);
+}
+.school-login-page .sl-help a {
+    font-weight: 700;
+    color: var(--sl-navy);
+    text-decoration: none;
+}
+.school-login-page .sl-help a:hover { text-decoration: underline; }
+/* teks "hubungi administrator sekolah" — penekanan elegan, bukan link */
+.school-login-page .sl-help-contact {
+    font-weight: 700;
+    color: var(--sl-navy);
+}
+
+.school-login-page .sl-divider {
+    height: 1px;
+    background: var(--sl-line);
+    margin: 1.4rem 0 0;
+}
+.school-login-page .sl-copy {
+    text-align: center;
+    font-size: 0.74rem;
+    color: #9aa2b2;
+    margin: 1rem 0 0;
+    letter-spacing: 0.01em;
+}
+
+/* Brand footer (muncul di desktop di bawah panel kiri) */
+.school-login-page .sl-brand-foot {
+    font-size: 0.74rem;
+    color: rgba(198, 214, 232, 0.6);
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+/* Brand header kompak (khusus mobile) */
+.school-login-page .sl-brand-mobile {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.6rem;
+}
+.school-login-page .sl-brand-mobile .sl-logo {
+    width: 50px;
+    height: 50px;
+    background: transparent;
+    border: none;
+}
+.school-login-page .sl-brand-mobile .sl-logo svg { width: 30px; height: 30px; color: var(--sl-white); }
+.school-login-page .sl-brand-mobile h2 {
+    font-family: var(--sl-font-body);
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.2;
+    color: var(--sl-navy);
+    margin: 0;
+}
+.school-login-page .sl-brand-mobile p {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sl-blue);
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+
+/* Tablet & kecil: seimbangkan dua kolom */
+@media (max-width: 1024px) {
+    .school-login-page .sl-shell { grid-template-columns: 1fr 1fr; }
+    .school-login-page .sl-features { grid-template-columns: 1fr; }
+    .school-login-page .sl-headline { font-size: clamp(1.7rem, 3.4vw, 2.3rem); }
+}
+
+/* Mobile: tumpuk vertikal, branding ringkas */
+@media (max-width: 820px) {
+    .school-login-page .sl-shell { grid-template-columns: 1fr; min-height: 0; }
+    .school-login-page .sl-brand { display: none; }
+    .school-login-page .sl-panel {
+        min-height: 100vh;
+        min-height: 100dvh;
+        align-items: flex-start;
+        padding: 2.5rem 1.15rem;
+    }
+    .school-login-page .sl-card {
+        max-width: 100%;
+        margin: auto;
+        box-shadow: var(--sl-shadow-soft);
+    }
+    .school-login-page .sl-brand-mobile { display: flex; }
+}
+
+@media (max-width: 400px) {
+    .school-login-page .sl-card { padding: 1.35rem 1.15rem; }
+    .school-login-page .sl-row { gap: 0.6rem; }
+}
+
+/* Aksesibilitas: hormati reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    .school-login-page * {
+        transition: none !important;
+        animation: none !important;
+  }
+}
+
 @layer components {
     .announcement-content p,
     .announcement-content blockquote,

@@ -9,7 +9,7 @@
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -30,7 +30,7 @@
             padding: 0;
             overflow-x: hidden;
         }
-        
+
         /* SIDEBAR STYLING */
         .sidebar {
             width: 270px;
@@ -55,13 +55,18 @@
         .sidebar-brand-icon {
             width: 42px;
             height: 42px;
-            background-color: var(--sidebar-active-bg);
-            color: white;
+            background-color: transparent;
             border-radius: 10px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            flex: 0 0 auto;
+        }
+        .sidebar-brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         .sidebar-brand-text h5 {
             font-size: 1.05rem;
@@ -78,7 +83,7 @@
             overflow-y: auto;
             padding: 10px 0 20px 0;
         }
-        
+
         /* Custom Scrollbar untuk Sidebar */
         .sidebar-nav::-webkit-scrollbar {
             width: 5px;
@@ -197,16 +202,17 @@
 
     <!-- Tambahan CSS per Halaman -->
     @stack('styles')
+    @include('partials.favicon')
 </head>
 <body>
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebarMenu">
-        
+
         <!-- Sidebar Brand -->
         <div class="sidebar-brand">
             <div class="sidebar-brand-icon">
-                <i class="bi bi-mortarboard"></i>
+                <img src="{{ asset('images/methodist-logo.png') }}" alt="Logo SMAS Methodist Banda Aceh">
             </div>
             <div class="sidebar-brand-text">
                 <h5 class="fw-bold text-white mb-0">SMAS Methodist</h5>
@@ -216,7 +222,7 @@
 
         <!-- Sidebar Navigation -->
         <div class="sidebar-nav">
-            
+
             <div class="menu-category">Menu Utama</div>
             <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-grid-1x2"></i> Dashboard
@@ -265,7 +271,7 @@
                     <div style="color: #94a3b8; font-size: 0.75rem;">Administrator</div>
                 </div>
             </div>
-            
+
             <!-- Tombol Logout Bawah -->
             <form action="{{ Route::has('logout') ? route('logout') : '#' }}" method="POST" class="m-0">
                 @csrf
@@ -274,19 +280,19 @@
                 </button>
             </form>
         </div>
-        
+
     </aside>
 
     <!-- WRAPPER KONTEN UTAMA -->
     <div class="main-wrapper">
-        
+
         <!-- TOPBAR -->
         <header class="topbar">
             <!-- Tombol Toggle Sidebar untuk Mobile -->
             <button class="btn btn-light d-md-none" type="button" id="sidebarToggleBtn">
                 <i class="bi bi-list fs-4"></i>
             </button>
-            
+
             <div class="d-none d-md-block">
                 <!-- Breadcrumb atau judul halaman bisa diletakkan di sini jika perlu -->
             </div>
@@ -304,17 +310,17 @@
         <main class="main-content">
             @yield('content')
         </main>
-        
+
         <!-- FOOTER -->
         <footer class="bg-white border-top text-center py-3 mt-auto">
             <small class="text-muted">&copy; {{ date('Y') }} MALAS - Methodist Academic Learning. All rights reserved.</small>
         </footer>
-        
+
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Script Toggle Sidebar untuk Mobile -->
     <script>
         document.getElementById('sidebarToggleBtn').addEventListener('click', function() {
