@@ -772,13 +772,14 @@ return new class extends Migration
             END;
         ");
 
-        // 6. Berikan hak akses EXECUTE otomatis untuk semua user aplikasi
+        // 6. Berikan hak akses tabel & EXECUTE otomatis untuk semua user aplikasi
         $users = DB::select("SELECT User, Host FROM mysql.user WHERE User IN ('methodist_admin', 'methodist_guru', 'methodist_siswa')");
         foreach ($users as $u) {
             $target = "'{$u->User}'@'{$u->Host}'";
             if ($u->User === 'methodist_admin') {
-                DB::unprepared("GRANT EXECUTE ON methodist_aceh.* TO {$target};");
+                DB::unprepared("GRANT ALL PRIVILEGES ON methodist_aceh.* TO {$target};");
             } elseif ($u->User === 'methodist_guru') {
+                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON methodist_aceh.* TO {$target};");
                 $guruProcs = [
                     'sp_create_exam_question',
                     'sp_exam_participants',
@@ -804,6 +805,7 @@ return new class extends Migration
                     DB::unprepared("GRANT EXECUTE ON FUNCTION methodist_aceh.{$f} TO {$target};");
                 }
             } elseif ($u->User === 'methodist_siswa') {
+                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON methodist_aceh.* TO {$target};");
                 DB::unprepared("GRANT EXECUTE ON PROCEDURE methodist_aceh.sp_record_exam_grade TO {$target};");
                 DB::unprepared("GRANT EXECUTE ON PROCEDURE methodist_aceh.sp_public_check_grades TO {$target};");
                 DB::unprepared("GRANT EXECUTE ON FUNCTION methodist_aceh.fn_exam_final_score TO {$target};");
