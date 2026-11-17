@@ -1,7 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
                 <h2 class="font-bold text-xl text-slate-800 leading-tight">
                     Lembar Jawaban: {{ $session->student->user->name ?? 'Anonim' }}
                 </h2>
@@ -9,8 +10,8 @@
                     {{ $exam->title }} — {{ $exam->classSubjectTeacher?->subject?->name }}
                 </p>
             </div>
-            <a href="{{ route('guru.exams.results', $exam) }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">
-                &larr; Kembali ke Daftar Nilai
+            <a href="{{ route('guru.exams.results', $exam) }}" class="inline-flex items-center gap-2 rounded-full border border-[#E7EDF2] bg-white px-4 py-2 text-sm font-semibold text-[#123B60] shadow-sm transition hover:border-[#267BB5] hover:bg-[#E8F1F8]">
+                <span aria-hidden="true">&larr;</span> Kembali ke Daftar Nilai
             </a>
         </div>
     </x-slot>
@@ -24,7 +25,7 @@
             : null;
     @endphp
 
-    <div class="py-8">
+    <div class="min-h-screen bg-[#FAF9F6] py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
             
             <!-- Alert Notifikasi -->
@@ -75,7 +76,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-xs font-bold text-slate-500 uppercase mb-1">Total Nilai Akhir</p>
-                        <p class="text-4xl font-extrabold {{ $totalScore >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
+                        <p class="text-4xl font-extrabold {{ $totalScore >= $exam->pass_score ? 'text-[#123B60]' : 'text-rose-600' }}">
                             {{ number_format($totalScore, 2) }}
                         </p>
                     </div>
@@ -122,7 +123,7 @@
                     <div class="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
                         <h3 class="text-lg font-bold text-slate-800">Detail Jawaban Siswa</h3>
                         @if($essayCount > 0)
-                            <button type="submit" class="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl shadow-sm transition-colors">
+                            <button type="submit" class="text-xs font-bold text-white bg-[#123B60] hover:bg-[#0B2B48] px-4 py-2 rounded-xl shadow-sm transition-colors">
                                 Simpan Nilai Esai
                             </button>
                         @endif
@@ -203,7 +204,7 @@
                                             @endif
                                             @if(!blank($ans->answer_file))
                                                 <div class="mt-2">
-                                                    <a href="{{ Storage::url($ans->answer_file) }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                                                    <a href="{{ Storage::url($ans->answer_file) }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#123B60] hover:text-[#123B60] bg-[#E8F1F8] px-3 py-1.5 rounded-lg">
                                                         📎 Lihat Lampiran Jawaban Esai
                                                     </a>
                                                 </div>
@@ -225,7 +226,7 @@
                     <!-- Tombol Simpan Bawah (Hanya jika ada esai) -->
                     @if($essayCount > 0)
                         <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
-                            <button type="submit" class="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-6 py-2.5 rounded-xl shadow-sm transition-colors">
+                            <button type="submit" class="text-sm font-bold text-white bg-[#123B60] hover:bg-[#0B2B48] px-6 py-2.5 rounded-xl shadow-sm transition-colors">
                                 Simpan Nilai Esai
                             </button>
                         </div>
