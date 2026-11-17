@@ -16,7 +16,12 @@ class ClassroomController extends Controller
     public function index(Request $request)
     {
         $student = $request->user()->student;
-        $joined = $student->joinedClasses()->with('subject', 'teacher.user', 'schoolClass')->get();
+        $joined = $student->joinedClasses()
+            ->with('subject', 'teacher.user', 'schoolClass')
+            ->withCount(['materials', 'assignments', 'exams' => function ($query) {
+                $query->where('is_published', true);
+            }])
+            ->get();
 
         return view('siswa.classes.index', compact('joined'));
     }
@@ -42,8 +47,8 @@ class ClassroomController extends Controller
     {
         Access::authorizeCst($request->user(), $cst);
         $student = $request->user()->student;
-        $cst->load('subject', 'teacher.user', 'schoolClass', 'materials', 'assignments', 'exams');
-        $exams = $cst->exams->where('is_published', true);
+        $cst->load('subject', 'teacher.user', 'schoolClass', 'materials', 'assignments');
+        $exams = $cst->exams()->where('is_published', true)->withCount('questions')->orderByDesc('start_time')->get();
         $subs = AssignmentSubmission::where('students_id', $student->nis)
             ->whereIn('assignment_id', $cst->assignments->pluck('assignment_id'))->get()->keyBy('assignment_id');
         $sessions = $student->examSessions()->whereIn('exam_id', $exams->pluck('exam_id'))->get()->keyBy('exam_id');
@@ -64,7 +69,7 @@ class ClassroomController extends Controller
         }
 
         $request->validate([
-            'file' => ['required', 'file', 'max:10240', 'mimes:'.implode(',', $allowed)],
+            'file' => ['required', 'file', 'max:20480', 'mimes:'.implode(',', $allowed)],
         ]);        
         
         if (now()->gt($assignment->due_date)) {
