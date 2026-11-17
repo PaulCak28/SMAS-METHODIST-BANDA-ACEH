@@ -95,51 +95,19 @@
                             Cek Nilai Siswa
                         </h2>
                         <p class="mt-1.5 text-xs leading-relaxed text-slate-300 sm:text-sm">
-                            Pantau kemajuan akademik putra-putri Anda secara transparan cukup dengan memasukkan NISN dan Tanggal Lahir siswa.
+                            Pantau kemajuan akademik putra-putri Anda secara transparan cukup dengan memasukkan NIS dan Tanggal Lahir siswa.
                         </p>
 
-                        <form action="#" method="GET" class="mt-6 space-y-4">
-                            <div>
-                                <label for="nisn" class="block text-xs font-semibold uppercase tracking-wider text-slate-200">
-                                    Nomor Induk Siswa Nasional (NISN)
-                                </label>
-                                <div class="relative mt-1.5">
-                                    <input
-                                        id="nisn"
-                                        name="nisn"
-                                        type="text"
-                                        inputmode="numeric"
-                                        maxlength="10"
-                                        autocomplete="off"
-                                        placeholder="Contoh: 0071234567"
-                                        required
-                                        class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 backdrop-blur-md transition focus:border-softblue focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-softblue/40"
-                                    >
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="tgl_lahir" class="block text-xs font-semibold uppercase tracking-wider text-slate-200">
-                                    Tanggal Lahir Siswa
-                                </label>
-                                <div class="relative mt-1.5">
-                                    <input
-                                        id="tgl_lahir"
-                                        name="tgl_lahir"
-                                        type="date"
-                                        required
-                                        class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 backdrop-blur-md transition focus:border-softblue focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-softblue/40"
-                                    >
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="w-full rounded-xl bg-gradient-to-r from-softblue to-sky-400 px-5 py-3.5 text-sm font-bold text-[#101C35] shadow-lg transition-all duration-200 hover:brightness-105 hover:shadow-xl active:scale-[0.99]"
-                            >
-                                Periksa Hasil Belajar
-                            </button>
-                        </form>
+                        <p class="mt-4 text-sm leading-relaxed text-slate-300">
+                            Lihat riwayat ujian, nilai objektif, hasil koreksi esai, dan nilai akhir dengan verifikasi NIS serta tanggal lahir.
+                        </p>
+                        <a href="{{ route('cek-nilai-ujian.index') }}"
+                           class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-softblue to-sky-400 px-5 py-3.5 text-sm font-bold text-[#101C35] shadow-lg transition-all duration-200 hover:brightness-105 hover:shadow-xl active:scale-[0.99]">
+                            Buka Halaman Cek Nilai Ujian
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+                        </a>
                     </div>
                 </div>
 
