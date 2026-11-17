@@ -1,168 +1,168 @@
 @extends('layouts.admin')
 
+@section('title', 'Detail Monitoring Ujian - Portal Akademik')
+
 @section('content')
-<div class="container-fluid py-4">
-    {{-- Header Informasi Ujian --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div>
-                <a href="{{ route('admin.monitoring.index') }}" class="text-decoration-none text-muted small d-inline-block mb-2">
-                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Ujian
-                </a>
-                <h4 class="fw-bold mb-1">{{ $session->exam->title }}</h4>
-                <div class="text-muted small">
-                    <span class="me-3"><i class="bi bi-door-open me-1"></i> Kelas: {{ $session->cst->schoolClass->name ?? '-' }}</span>
-                    <span class="me-3"><i class="bi bi-book me-1"></i> Mapel: {{ $session->cst->subject->name ?? '-' }}</span>
-                    <span><i class="bi bi-key me-1"></i> Kode Kelas: <strong class="text-dark">{{ $session->token ?? '-' }}</strong></span>
-                </div>
-            </div>
 
-            <div class="d-flex align-items-center gap-2">
-                @if($session->is_open)
-                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-3 border border-success border-opacity-25">
-                        <i class="bi bi-record-circle-fill me-1"></i> Berlangsung
-                    </span>
-                @else
-                    <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-3 border border-secondary border-opacity-25">
-                        <i class="bi bi-stop-circle me-1"></i> Tidak Aktif
-                    </span>
-                @endif
-            </div>
+<div class="theme-portal rounded-4 shadow-sm">
+    {{-- HEADER INFORMASI UJIAN --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Monitoring Ujian {{ $session->class_name }}</div>
+            <h2 class="fw-bold mb-1 text-dark">{{ $session->exam_title }}</h2>
+            <p class="text-muted-portal mb-0">
+                Mata Pelajaran: <strong>{{ $session->subject_name }}</strong> · 
+                Token Ujian: <code class="text-primary fw-bold">{{ $session->token }}</code>
+            </p>
         </div>
+        <a href="{{ route('admin.monitoring.class.exams', $session->class_id ?? 1) }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Ujian
+        </a>
     </div>
 
-    {{-- Ringkasan Statistik Ujian (dari View v_exam_statistics) --}}
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Sesi Selesai / Total Sesi</div>
-                    <h4 class="fw-bold mb-0 mt-1">{{ $session->finished_sessions ?? 0 }} / {{ $session->total_sessions ?? 0 }}</h4>
-                </div>
+    <div class="p-4 pt-0">
+        
+        {{-- TABEL 1: DAFTAR PESERTA SISWA (MENAMPILKAN NIS & NILAI) --}}
+        <div class="portal-card overflow-hidden mb-5">
+            <div class="card-header-portal d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-people text-accent me-2"></i> Daftar Peserta Siswa ({{ count($participants) }} Siswa)
+                </h5>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Rata-rata Nilai</div>
-                    <h4 class="fw-bold mb-0 mt-1">{{ $session->avg_score !== null ? number_format($session->avg_score, 1) : '-' }}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Tingkat Kelulusan (KKM: {{ $session->pass_score ?? '-' }})</div>
-                    <h4 class="fw-bold mb-0 mt-1">{{ $session->pass_rate !== null ? number_format($session->pass_rate, 1) . '%' : '-' }}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Durasi Ujian</div>
-                    <h4 class="fw-bold mb-0 mt-1">{{ $session->duration_minutes ?? '-' }} Menit</h4>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    {{-- Tabel Peserta Ujian (dari Stored Procedure sp_exam_participants) --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-white border-bottom py-3 px-4">
-            <h6 class="fw-bold mb-0">Daftar Peserta Ujian</h6>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">NIS</th>
-                        <th>Nama Siswa</th>
-                        <th>Jam Mulai</th>
-                        <th>Jam Selesai</th>
-                        <th>Pelanggaran</th>
-                        <th>Nilai</th>
-                        <th class="pe-4">Status Sesi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($participants as $p)
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table mb-0">
+                    <thead class="text-muted-portal small border-bottom border-secondary bg-light">
                         <tr>
-                            <td class="ps-4 font-monospace">{{ $p->student->nisn ?? $p->nis }}</td>
-                            <td class="fw-medium">{{ $p->student->user->name ?? $p->student_name }}</td>
-                            <td>{{ $p->start_time }}</td>
-                            <td>{{ $p->finish_time }}</td>
-                            <td>
-                                @if(($p->violation_count ?? 0) > 0)
-                                    <span class="badge bg-danger-subtle text-danger px-2 py-1">
-                                        {{ $p->violation_count }}x
+                            <th class="ps-4 text-center" style="width: 60px;">No</th>
+                            <th style="width: 140px;">NIS</th>
+                            <th>Nama Siswa</th>
+                            <th class="text-center" style="width: 140px;">Status Sesi</th>
+                            <th class="text-center" style="width: 120px;">Mulai</th>
+                            <th class="text-center" style="width: 120px;">Selesai</th>
+                            <th class="text-center" style="width: 140px;">Pelanggaran</th>
+                            <th class="text-end pe-4" style="width: 120px;">Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($participants as $idx => $p)
+                            @php
+                                $statusBadge = match($p->session_status ?? 'belum_mulai') {
+                                    'selesai'   => 'bg-success-subtle text-success',
+                                    'mengerjakan', 'aktif' => 'bg-primary-subtle text-primary',
+                                    default     => 'bg-secondary-subtle text-secondary',
+                                };
+                            @endphp
+                            <tr>
+                                <td class="ps-4 text-center text-muted-portal">{{ $idx + 1 }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace">{{ $p->nis }}</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $p->student_name }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge {{ $statusBadge }} text-capitalize px-3 py-1 rounded-pill">
+                                        {{ str_replace('_', ' ', $p->session_status ?? 'belum_mulai') }}
                                     </span>
-                                @else
-                                    <span class="text-muted small">0</span>
-                                @endif
-                            </td>
-                            <td class="fw-semibold">
-                                {{ $p->score !== null ? number_format($p->score, 1) : '-' }}
-                            </td>
-                            <td class="pe-4">
-                                @if($p->session_status === 'selesai')
-                                    <span class="badge bg-success-subtle text-success">Selesai</span>
-                                @elseif($p->session_status === 'berlangsung')
-                                    <span class="badge bg-warning-subtle text-warning-emphasis">Berlangsung</span>
-                                @else
-                                    <span class="badge bg-secondary-subtle text-secondary">Belum Mulai</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">Belum ada siswa terdaftar di kelas ujian ini.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                                <td class="text-center small text-muted-portal font-monospace">
+                                    {{ $p->start_time }}
+                                </td>
+                                <td class="text-center small text-muted-portal font-monospace">
+                                    {{ $p->finish_time }}
+                                </td>
+                                <td class="text-center">
+                                    @if(($p->violation_count ?? 0) > 0)
+                                        <span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill fw-bold">
+                                            {{ $p->violation_count }}x (Terdeteksi)
+                                        </span>
+                                    @else
+                                        <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Aman (0)</span>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-dark">
+                                    {{ $p->score !== null ? number_format($p->score, 2) : '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted-portal">
+                                    Belum ada peserta siswa yang masuk ke sesi ujian ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    {{-- Tabel Rincian Pelanggaran (dari View v_violation_summary) --}}
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-header bg-white border-bottom py-3 px-4">
-            <h6 class="fw-bold mb-0">Rincian Pelanggaran Ujian</h6>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">NIS</th>
-                        <th>Nama Siswa</th>
-                        <th>Jenis Pelanggaran</th>
-                        <th>Total</th>
-                        <th class="pe-4">Terakhir Terjadi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($violations as $v)
+        {{-- TABEL 2: CATATAN PELANGGARAN SISWA (DI BAGIAN BAWAH) --}}
+        <div class="portal-card overflow-hidden">
+            <div class="card-header-portal d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i> Catatan Pelanggaran Siswa (Pindah Tab / Menyontek)
+                </h5>
+                <span class="badge bg-danger-subtle text-danger px-3 py-1">{{ count($violations) }} Catatan</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table mb-0">
+                    <thead class="text-muted-portal small border-bottom border-secondary bg-light">
                         <tr>
-                            <td class="ps-4 font-monospace">{{ $v->nis }}</td>
-                            <td class="fw-medium">{{ $v->student_name }}</td>
-                            <td>
-                                <span class="badge bg-danger-subtle text-danger text-uppercase">
-                                    {{ str_replace('_', ' ', $v->violation_type) }}
-                                </span>
-                            </td>
-                            <td class="fw-bold text-danger">{{ $v->total }}x</td>
-                            <td class="pe-4 text-muted small">
-                                {{ $v->last_occurred_at ? \Carbon\Carbon::parse($v->last_occurred_at)->format('d M Y H:i:s') : '-' }}
-                            </td>
+                            <th class="ps-4 text-center" style="width: 60px;">No</th>
+                            <th style="width: 140px;">NIS</th>
+                            <th>Nama Siswa & Keterangan</th>
+                            <th style="width: 180px;">Jenis Pelanggaran</th>
+                            <th class="text-end pe-4" style="width: 200px;">Waktu Kejadian</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">Tidak ada catatan pelanggaran pada ujian ini.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($violations as $vIdx => $v)
+                            <tr>
+                                <td class="ps-4 text-center text-muted-portal">{{ $vIdx + 1 }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace">{{ $v->nis }}</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $v->student_name ?? 'Siswa' }}</div>
+                                    <small class="text-muted-portal">
+                                        {{ $v->details ?? 'Terdeteksi meninggalkan halaman ujian (pindah tab browser).' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis px-2 py-1">
+                                        {{ $v->violation_type ?? $v->type ?? 'Pindah Tab / Keluar Fokus' }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4 small text-muted-portal font-monospace">
+                                    {{ $v->last_occurred_at ?? $v->created_at ?? '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted-portal">
+                                    <i class="bi bi-shield-check text-success fs-4 d-block mb-1"></i>
+                                    <span class="fw-semibold text-success">Bersih! Tidak ada catatan pelanggaran (menyontek / pindah tab) pada ujian ini.</span>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; min-height: 80vh; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .border-secondary { border-color: #e2e8f0 !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .card-header-portal { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .custom-table { --bs-table-bg: transparent; --bs-table-color: #1e293b; }
+</style>
+
 @endsection

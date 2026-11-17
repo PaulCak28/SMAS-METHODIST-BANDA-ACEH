@@ -1,151 +1,134 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Akun Pengguna')
+@section('title', 'Edit Akun - Portal Akademik')
 
 @section('content')
-<div class="mb-4 d-flex align-items-center gap-3">
-    <a href="{{ route('admin.accounts.index') }}" class="btn btn-white border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-        <i class="bi bi-arrow-left text-dark fs-5"></i>
-    </a>
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Edit Akun Pengguna</h4>
-        <p class="text-muted small mb-0">Perbarui data akun <strong>{{ $user->name }}</strong>.</p>
-    </div>
-</div>
 
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-                <form action="{{ route('admin.accounts.update', $user->user_id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-3">
-                        <label for="role" class="form-label fw-semibold">Role Pengguna <span class="text-danger">*</span></label>
-                        <select name="role" id="role" class="form-select @error('role') is-invalid @enderror" required>
-                            <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="guru" {{ old('role', $user->role) === 'guru' ? 'selected' : '' }}>Guru</option>
-                            <option value="siswa" {{ old('role', $user->role) === 'siswa' ? 'selected' : '' }}>Siswa</option>
-                        </select>
-                        @error('role')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="user_id" class="form-label fw-semibold">User ID / NIS / NIP <span class="text-danger">*</span></label>
-                        <input type="text"
-                               name="user_id"
-                               id="user_id"
-                               value="{{ old('user_id', $user->user_id) }}"
-                               maxlength="{{ old('role', $user->role) === 'siswa' ? 10 : 18 }}"
-                               class="form-control @error('user_id') is-invalid @enderror"
-                               required>
-                        @error('user_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="name" class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text"
-                               name="name"
-                               id="name"
-                               value="{{ old('name', $user->name) }}"
-                               maxlength="100"
-                               class="form-control @error('name') is-invalid @enderror"
-                               required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold">Alamat Email <span class="text-danger">*</span></label>
-                        <input type="email"
-                               name="email"
-                               id="email"
-                               value="{{ old('email', $user->email) }}"
-                               class="form-control @error('email') is-invalid @enderror"
-                               required>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="password" class="form-label fw-semibold">Password Baru</label>
-                        <input type="password"
-                               name="password"
-                               id="password"
-                               minlength="6"
-                               class="form-control @error('password') is-invalid @enderror"
-                               placeholder="Kosongkan jika tidak ingin mengubah password">
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.accounts.index') }}" class="btn btn-light rounded-3 px-4">Batal</a>
-                        <button type="submit" class="btn btn-primary rounded-3 px-4">
-                            <i class="bi bi-save me-1"></i> Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
-            </div>
+<div class="theme-portal rounded-4 shadow-sm">
+    <div class="d-flex align-items-center gap-3 mb-4 p-4 border-bottom">
+        <a href="{{ route('admin.accounts.index') }}" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="bi bi-arrow-left text-dark fs-5"></i>
+        </a>
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Manajemen Pengguna</div>
+            <h2 class="fw-bold mb-1 text-dark">Edit Akun: {{ $user->name }}</h2>
+            <p class="text-muted-portal mb-0">Perbarui informasi profil atau reset password pengguna.</p>
         </div>
     </div>
 
-    {{-- Ringkasan Nilai dari View v_student_grade_summary (jika akun siswa) --}}
-    @if($user->role === 'siswa')
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-header bg-white border-bottom p-4">
-                    <h6 class="fw-bold mb-0 text-dark">Rekap Nilai Akademik Siswa</h6>
+    <div class="p-4 pt-0">
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.accounts.update', $user->user_id) }}" method="POST" class="portal-card p-4 mb-4">
+            @csrf
+            @method('PUT')
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">User ID <span class="text-danger">*</span></label>
+                    <input type="text" name="user_id" value="{{ old('user_id', $user->user_id) }}" maxlength="18"
+                           class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="name" value="{{ old('name', $user->name) }}" maxlength="100"
+                           class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Alamat Email <span class="text-danger">*</span></label>
+                    <input type="email" name="email" value="{{ old('email', $user->email) }}" maxlength="255"
+                           class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Role Pengguna <span class="text-danger">*</span></label>
+                    <select name="role" class="form-select" required>
+                        @foreach(['admin' => 'Admin', 'guru' => 'Guru', 'siswa' => 'Siswa', 'orangtua' => 'Orang Tua'] as $val => $label)
+                            <option value="{{ $val }}" {{ old('role', $user->role) === $val ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Password Baru (Opsional)</label>
+                    <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah password">
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button type="submit" class="btn btn-portal-primary px-4">
+                    <i class="bi bi-save me-1"></i> Simpan Perubahan
+                </button>
+                <a href="{{ route('admin.accounts.index') }}" class="btn btn-outline-secondary px-4">Batal</a>
+            </div>
+        </form>
+
+        {{-- RINGKASAN NILAI SISWA (JIKA ROLE SISWA) --}}
+        @if($user->role === 'siswa')
+            <div class="portal-card overflow-hidden">
+                <div class="card-header-portal">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-journal-check text-accent me-2"></i> Ringkasan Nilai Mata Pelajaran Siswa
+                    </h5>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-    <thead class="table-light text-muted small">
-        <tr>
-            <th class="ps-4">Mata Pelajaran</th>
-            <th>Kelas</th>
-            <th class="pe-4 text-end">Nilai Rata-rata</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($gradeSummary ?? [] as $g)
-            <tr>
-                <td class="ps-4 fw-semibold text-dark">{{ $g->subject_name }}</td>
-                <td class="text-muted small">{{ $g->class_name }}</td>
-                <td class="pe-4 text-end fw-bold text-primary">
-                    {{ $g->final_score !== null ? number_format((float) $g->final_score, 2) : '-' }}
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="3" class="text-center py-4 text-muted">
-                    Belum ada mata pelajaran / nilai tercatat untuk siswa ini.
-                </td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+                    <table class="table table-hover align-middle custom-table mb-0">
+                        <thead class="text-muted-portal small border-bottom border-secondary bg-light">
+                            <tr>
+                                <th class="ps-4" style="width: 60px;">No</th>
+                                <th>Mata Pelajaran</th>
+                                <th>Kelas</th>
+                                <th class="text-end pe-4">Nilai Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($gradeSummary as $idx => $row)
+                                <tr>
+                                    <td class="ps-4 text-muted-portal">{{ $idx + 1 }}</td>
+                                    <td><div class="fw-semibold text-dark">{{ $row->subject_name }}</div></td>
+                                    <td><span class="badge bg-light text-dark border">{{ $row->class_name }}</span></td>
+                                    <td class="text-end pe-4">
+                                        <span class="badge bg-primary-subtle text-primary px-3 py-1 fw-bold fs-6">
+                                            {{ $row->final_score !== null ? number_format($row->final_score, 2) : '-' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted-portal">
+                                        Siswa ini belum memiliki catatan nilai mata pelajaran.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
 </div>
 
-<script>
-document.getElementById('role')?.addEventListener('change', function () {
-    const userIdInput = document.getElementById('user_id');
-    if (this.value === 'siswa') {
-        userIdInput.setAttribute('maxlength', '10');
-    } else {
-        userIdInput.setAttribute('maxlength', '18');
-    }
-});
-</script>
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .card-header-portal { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .custom-table { --bs-table-bg: transparent; --bs-table-color: #1e293b; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection

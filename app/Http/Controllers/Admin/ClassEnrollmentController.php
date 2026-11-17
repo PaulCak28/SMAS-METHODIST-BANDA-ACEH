@@ -19,94 +19,108 @@ class ClassEnrollmentController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search =$request->input('search');
 
-        $students = Student::with(['user', 'schoolClass', 'classEnrollments'])
-            ->has('classEnrollments') // Hanya tampilkan siswa yang sudah terdaftar di kelas mapel
-            ->when($search, function ($query, $search) {
-                // Dikelompokkan agar "has classEnrollments" tetap berlaku saat mencari
-                $query->where(function ($q) use ($search) {
-                    $q->where('nis', 'like', "%{$search}%")
-                        ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"));
+        $students = Student::on('mysql_admin')
+            ->with(['user', 'schoolClass', 'classEnrollments'])
+            ->has('classEnrollments')
+            ->when($search, function ($query, $search) {$query->where(function ($q) use ($search) {
+                    $q->where('nis', 'like', "\%{$search}%")
+                      ->orWhere('nisn', 'like', "%{$search}%")
+                      ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "\%{$search}%"));
                 });
             })
-            ->latest('nis')
+            ->orderBy('nis')
             ->paginate(15)
             ->withQueryString();
 
         // Daftar kelas-mapel untuk modal "Masukkan Satu Kelas"
-        $csts = ClassSubjectTeacher::with('subject', 'schoolClass')->orderBy('class_id')->get();
+        $csts = ClassSubjectTeacher::on('mysql_admin')
+            ->with(['subject', 'schoolClass', 'teacher.user'])
+            ->orderBy('class_id')
+            ->get();
 
-        // Untuk modal "Masukkan Satu Kelas": siswa per kelas induk & siswa yang sudah terdaftar per kelas-mapel
-        $studentsByClass = Student::with('user')
+        // Siswa per kelas induk & siswa yang sudah terdaftar per kelas-mapel
+        $studentsByClass = Student::on('mysql_admin')
+            ->with('user')
             ->whereNotNull('class_id')
             ->orderBy('nis')
             ->get()
             ->groupBy('class_id');
 
-        $enrolledByCst = ClassEnrollment::select('cst_id', 'students_id')
+        $enrolledByCst = ClassEnrollment::on('mysql_admin')
+            ->select('cst_id', 'students_id')
             ->get()
             ->groupBy('cst_id')
-            ->map(fn ($rows) => $rows->pluck('students_id')->values());
+            ->map(fn ($rows) =>$rows->pluck('students_id')->values());
 
-        return view('admin.enrollments.index', compact('students', 'search', 'csts', 'studentsByClass', 'enrolledByCst'));
+        return view('admin.enrollments.index', compact(
+            'students',
+            'search',
+            'csts',
+            'studentsByClass',
+            'enrolledByCst'
+        ));
     }
 
     /**
      * Menampilkan rincian seluruh kelas mapel yang diikuti oleh satu siswa tertentu.
      */
-    public function show($nis)
+    public function show(string $nis)
     {
-        $student = Student::with([
-            'user',
-            'schoolClass',
-            'classEnrollments.classSubjectTeacher.subject',
-            'classEnrollments.classSubjectTeacher.schoolClass',
-            'classEnrollments.classSubjectTeacher.teacher.user',
-        ])->where('nis', $nis)->firstOrFail();
+        $student = Student::on('mysql_admin')
+            ->with([
+                'user',
+                'schoolClass',
+                'classEnrollments.classSubjectTeacher.subject',
+                'classEnrollments.classSubjectTeacher.schoolClass',
+                'classEnrollments.classSubjectTeacher.teacher.user',
+            ])
+            ->where('nis', $nis)
+            ->firstOrFail();
 
-        // Data CST yang tersedia untuk pilihan modal tambah kelas
-        $csts = ClassSubjectTeacher::with('subject', 'schoolClass')->orderBy('class_id')->get();
+        $csts = ClassSubjectTeacher::on('mysql_admin')
+            ->with(['subject', 'schoolClass', 'teacher.user'])
+            ->orderBy('class_id')
+            ->get();
 
         return view('admin.enrollments.show', compact('student', 'csts'));
     }
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('nis')->get();
-        $csts = ClassSubjectTeacher::with('subject', 'schoolClass')->orderBy('class_id')->get();
+        $students = Student::on('mysql_admin')->with(['user', 'schoolClass'])->orderBy('nis')->get();$csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
 
         return view('admin.enrollments.create', compact('students', 'csts'));
     }
 
     public function store(Request $request)
     {
-        $v = $request->validate([
-            'students_id' => ['required', 'exists:students,nis'],
-            'cst_id' => [
+        $v =$request->validate([
+            'students_id' => ['required', 'exists:mysql_admin.students,nis'],
+            'cst_id'      => [
                 'required',
-                'exists:class_subject_teacher,cst_id',
-                // satu siswa hanya terdaftar sekali di satu kelas-mapel
-                Rule::unique('class_enrollments')->where(
-                    fn ($q) => $q->where('students_id', $request->students_id)
+                'exists:mysql_admin.class_subject_teacher,cst_id',
+                Rule::unique('mysql_admin.class_enrollments', 'cst_id')->where(
+                    fn ($q) => $q->where('students_id',$request->students_id)
                 ),
             ],
-            'status' => ['required', Rule::in(self::STATUSES)],
+            'status'      => ['required', Rule::in(self::STATUSES)],
             'enrolled_at' => 'nullable|date',
-            'left_at' => 'nullable|date|after_or_equal:enrolled_at',
+            'left_at'     => 'nullable|date|after_or_equal:enrolled_at',
+        ], [
+            'cst_id.unique' => 'Siswa tersebut sudah terdaftar pada kelas mata pelajaran ini.',
         ]);
 
-        $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
+        $cst = ClassSubjectTeacher::on('mysql_admin')->findOrFail($v['cst_id']);
 
-        DB::transaction(function () use ($v, $cst) {
-            // academic_year diambil dari cst, tidak diketik manual
-            ClassEnrollment::create($v + ['academic_year' => $cst->academic_year]);
-            $this->syncCurrentClass($v['students_id'], $cst,
-
-            $v['status']);
+        DB::connection('mysql_admin')->transaction(function () use ($v,$cst) {
+            ClassEnrollment::on('mysql_admin')->create($v + [
+                'academic_year' => $cst->academic_year,
+            ]);
+            $this->syncCurrentClass($v['students_id'], $cst,$v['status']);
         });
 
-        // Redirect kembali ke halaman show siswa yang bersangkutan jika ditambahkan dari halaman detail
         return redirect()
             ->route('admin.enrollments.show', $v['students_id'])
             ->with('success', 'Siswa berhasil dimasukkan ke kelas mapel.');
@@ -114,28 +128,27 @@ class ClassEnrollmentController extends Controller
 
     /**
      * Memasukkan siswa terpilih dari satu kelas induk ke satu kelas-mapel (cst).
-     * Hanya siswa dengan students.class_id = cst.class_id yang diproses, dan siswa yang
-     * sudah terdaftar di cst tersebut dilewati.
      */
     public function storeBulk(Request $request)
     {
-        $v = $request->validate([
-            'cst_id' => ['required', 'exists:class_subject_teacher,cst_id'],
-            'students_id' => ['required', 'array', 'min:1'],
-            'students_id.*' => ['exists:students,nis'],
+        $v =$request->validate([
+            'cst_id'        => ['required', 'exists:mysql_admin.class_subject_teacher,cst_id'],
+            'students_id'   => ['required', 'array', 'min:1'],
+            'students_id.*' => ['exists:mysql_admin.students,nis'],
         ], [
             'students_id.required' => 'Pilih minimal satu siswa.',
-            'students_id.min' => 'Pilih minimal satu siswa.',
+            'students_id.min'      => 'Pilih minimal satu siswa.',
         ]);
 
-        $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
+        $cst = ClassSubjectTeacher::on('mysql_admin')->findOrFail($v['cst_id']);
 
-        // Batasi ke siswa yang benar-benar berada di kelas induk kelas-mapel ini
-        $nisList = Student::where('class_id', $cst->class_id)
+        $nisList = Student::on('mysql_admin')
+            ->where('class_id', $cst->class_id)
             ->whereIn('nis', $v['students_id'])
             ->pluck('nis');
 
-        $alreadyEnrolled = ClassEnrollment::where('cst_id', $cst->cst_id)
+        $alreadyEnrolled = ClassEnrollment::on('mysql_admin')
+            ->where('cst_id', $cst->cst_id)
             ->whereIn('students_id', $nisList)
             ->pluck('students_id');
 
@@ -147,17 +160,16 @@ class ClassEnrollmentController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($toEnroll, $cst) {
-            foreach ($toEnroll as $nis) {
-                ClassEnrollment::create([
-                    'students_id' => $nis,
-                    'cst_id' => $cst->cst_id,
-                    'status' => 'aktif',
-                    'enrolled_at' => now()->toDateString(),
+        DB::connection('mysql_admin')->transaction(function () use ($toEnroll,$cst) {
+            foreach ($toEnroll as$nis) {
+                ClassEnrollment::on('mysql_admin')->create([
+                    'students_id'   => $nis,
+                    'cst_id'        => $cst->cst_id,
+                    'status'        => 'aktif',
+                    'enrolled_at'   => now()->toDateString(),
                     'academic_year' => $cst->academic_year,
                 ]);
             }
-            // students.class_id tidak perlu disinkronkan: siswa sudah berada di kelas induk ini.
         });
 
         $message = "{$toEnroll->count()} siswa berhasil dimasukkan ke kelas mapel.";
@@ -171,48 +183,48 @@ class ClassEnrollmentController extends Controller
             ->with('success', $message);
     }
 
-    public function edit(ClassEnrollment $enrollment)
+    public function edit(int $id)
     {
-        $enrollment->load('student.user');
-        $csts = ClassSubjectTeacher::with('subject', 'schoolClass')->orderBy('class_id')->get();
+        $enrollment = ClassEnrollment::on('mysql_admin')->with('student.user')->findOrFail($id);$csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
 
         return view('admin.enrollments.edit', compact('enrollment', 'csts'));
     }
 
-    public function update(Request $request, ClassEnrollment $enrollment)
+    public function update(Request $request, int$id)
     {
-        $v = $request->validate([
-            'cst_id' => [
+        $enrollment = ClassEnrollment::on('mysql_admin')->findOrFail($id);
+
+        $v =$request->validate([
+            'cst_id'      => [
                 'required',
-                'exists:class_subject_teacher,cst_id',
-                Rule::unique('class_enrollments')
-                    ->where(fn ($q) => $q->where('students_id', $enrollment->students_id))
+                'exists:mysql_admin.class_subject_teacher,cst_id',
+                Rule::unique('mysql_admin.class_enrollments', 'cst_id')
+                    ->where(fn ($q) => $q->where('students_id',$enrollment->students_id))
                     ->ignore($enrollment->enrollment_id, 'enrollment_id'),
             ],
-            'status' => ['required', Rule::in(self::STATUSES)],
+            'status'      => ['required', Rule::in(self::STATUSES)],
             'enrolled_at' => 'nullable|date',
-            'left_at' => 'nullable|date|after_or_equal:enrolled_at',
+            'left_at'     => 'nullable|date|after_or_equal:enrolled_at',
+        ], [
+            'cst_id.unique' => 'Siswa tersebut sudah terdaftar pada kelas mata pelajaran ini.',
         ]);
 
-        $cst = ClassSubjectTeacher::findOrFail($v['cst_id']);
+        $cst = ClassSubjectTeacher::on('mysql_admin')->findOrFail($v['cst_id']);
 
-        DB::transaction(function () use ($v, $cst, $enrollment) {
-            $enrollment->update($v + ['academic_year' => $cst->academic_year]);
-            $this->syncCurrentClass($enrollment->students_id, $cst, $v['status']);
+        DB::connection('mysql_admin')->transaction(function () use ($v,$cst, $enrollment) {$enrollment->update($v + ['academic_year' =>$cst->academic_year]);
+            $this->syncCurrentClass($enrollment->students_id, $cst,$v['status']);
         });
 
         return redirect()
             ->route('admin.enrollments.show', $enrollment->students_id)
-            ->with('success', 'Data kelas siswa berhasil diperbarui.');
+            ->with('success', 'Data enrollment kelas siswa berhasil diperbarui.');
     }
 
-    public function destroy(ClassEnrollment $enrollment)
+    public function destroy(int $id)
     {
-        $studentNis =
+        $enrollment = ClassEnrollment::on('mysql_admin')->findOrFail($id);
+        $studentNis =$enrollment->students_id;
 
-        $enrollment->students_id;
-
-        // students.class_id tidak diubah: hanya riwayat pendaftarannya yang dihapus
         $enrollment->delete();
 
         return redirect()
@@ -220,14 +232,12 @@ class ClassEnrollmentController extends Controller
             ->with('success', 'Siswa berhasil dikeluarkan dari kelas mapel.');
     }
 
-    /**
-     * Pendaftaran berstatus "aktif" menentukan kelas induk siswa saat ini
-     * (students.class_id), diambil dari class_id milik cst.
-     */
-    private function syncCurrentClass(int|string $nis, ClassSubjectTeacher $cst, string $status): void
+    private function syncCurrentClass(int|string $nis, ClassSubjectTeacher $cst, string$status): void
     {
         if ($status === 'aktif') {
-            Student::where('nis', $nis)->update(['class_id' => $cst->class_id]);
+            Student::on('mysql_admin')
+                ->where('nis', $nis)
+                ->update(['class_id' => $cst->class_id]);
         }
     }
 }

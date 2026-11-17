@@ -1,105 +1,130 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Enrollment Siswa')
+@section('title', 'Detail Enrollment Siswa - Portal Akademik')
 
 @section('content')
-<div class="mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div class="d-flex align-items-center gap-3">
-        <a href="{{ route('admin.enrollments.index') }}" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
-            <i class="bi bi-arrow-left text-dark fs-5"></i>
-        </a>
+
+<div class="theme-portal rounded-4 shadow-sm">
+
+    {{-- HEADER HALAMAN --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
         <div>
-            <h4 class="fw-bold mb-1 text-dark">Rincian Kelas Mapel Siswa</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 small">
-                    <li class="breadcrumb-item text-muted"><a href="{{ route('admin.enrollments.index') }}" class="text-decoration-none text-muted">Enrollment</a></li>
-                    <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">{{ $student->user->name ?? 'Siswa' }}</li>
-                </ol>
-            </nav>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Rincian Enrollment Siswa</div>
+            <h2 class="fw-bold mb-1 text-dark">{{ $student->user->name ?? 'Siswa #' . $student->nis }}</h2>
+            <p class="text-muted-portal mb-0">
+                NIS: <code>{{ $student->nis }}</code>
+                @if($student->schoolClass)
+                    · Kelas Induk: <strong>{{ $student->schoolClass->name }} ({{ $student->schoolClass->academic_year }})</strong>
+                @endif
+            </p>
         </div>
-    </div>
-    <div>
-        <button type="button" class="btn btn-primary shadow-sm rounded-3 px-3 fw-medium" data-bs-toggle="modal" data-bs-target="#addClassModal">
-            <i class="bi bi-plus-lg me-1"></i> Masukkan ke Kelas Baru
-        </button>
-    </div>
-</div>
-
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4 border-0 bg-success text-white" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
-<div class="row g-4">
-    {{-- KOLOM KIRI: PROFIL SINGKAT SISWA --}}
-    <div class="col-lg-4">
-        <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
-            <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center fw-bold fs-2 mb-3 shadow-sm" style="width: 70px; height: 70px;">
-                {{ substr($student->user->name ?? 'S', 0, 1) }}
-            </div>
-            <h5 class="fw-bold text-dark mb-1">{{ $student->user->name ?? 'Tanpa Nama' }}</h5>
-            <p class="text-muted small mb-3">NIS: <span class="fw-semibold text-dark font-monospace">{{ $student->nis }}</span></p>
-            
-            <div class="text-start border-top pt-3">
-                <div class="d-flex justify-content-between py-1 small">
-                    <span class="text-muted">Kelas Induk:</span>
-                    <span class="fw-semibold text-dark">{{ $student->schoolClass->name ?? '-' }}</span>
-                </div>
-                <div class="d-flex justify-content-between py-1 small">
-                    <span class="text-muted">Total Mapel Diikuti:</span>
-                    <span class="fw-bold text-primary">{{ $student->classEnrollments->count() }} Mapel</span>
-                </div>
-            </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-portal-primary btn-sm px-3 py-2 rounded-3"
+                    data-bs-toggle="modal" data-bs-target="#addStudentCstModal">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Mapel
+            </button>
+            <a href="{{ route('admin.enrollments.index') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+                <i class="bi bi-arrow-left me-1"></i> Kembali
+            </a>
         </div>
     </div>
 
-    {{-- KOLOM KANAN: TABEL DAFTAR KELAS MAPEL YANG DIIKUTI --}}
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white border-0 py-3 px-4">
-                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-journal-bookmark text-primary me-2"></i> Daftar Mata Pelajaran Aktif</h6>
+    <div class="p-4 pt-0">
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="portal-card overflow-hidden">
+            <div class="card-header-portal d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-journal-bookmark text-accent me-2"></i> Daftar Kelas Mata Pelajaran ({{ $student->classEnrollments->count() }})
+                </h5>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light text-muted small text-uppercase">
+                <table class="table table-hover align-middle custom-table mb-0">
+                    <thead class="text-muted-portal small border-bottom border-secondary bg-light">
                         <tr>
-                            <th class="ps-4 py-3">Mata Pelajaran</th>
-                            <th class="py-3">Guru Pengampu</th>
-                            <th class="py-3">Status</th>
-                            <th class="text-end pe-4 py-3">Aksi</th>
+                            <th class="ps-4 text-center" style="width: 60px;">No</th>
+                            <th>Mata Pelajaran</th>
+                            <th>Kelas & Tahun Ajaran</th>
+                            <th>Guru Pengampu</th>
+                            <th class="text-center">Status</th>
+                            <th>Tgl Masuk / Keluar</th>
+                            <th class="text-end pe-4">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($student->classEnrollments as $item)
+                        @forelse($student->classEnrollments as $idx => $enr)
+                            @php
+                                $cst = $enr->classSubjectTeacher;
+                                $badgeClass = match($enr->status) {
+                                    'aktif'         => 'bg-success-subtle text-success',
+                                    'naik_kelas', 'lulus' => 'bg-primary-subtle text-primary',
+                                    'tinggal_kelas', 'pindah' => 'bg-warning-subtle text-warning-emphasis',
+                                    'drop_out'      => 'bg-danger-subtle text-danger',
+                                    default         => 'bg-secondary-subtle text-secondary',
+                                };
+                            @endphp
                             <tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold text-dark">{{ $item->classSubjectTeacher->subject->name ?? '-' }}</div>
-                                    <small class="text-muted">Ruangan: {{ $item->classSubjectTeacher->schoolClass->name ?? '-' }}</small>
+                                <td class="ps-4 text-center text-muted-portal">{{ $idx + 1 }}</td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $cst->subject->name ?? '-' }}</div>
+                                    <small class="text-muted-portal">Kode: <code>{{ $cst->subject_code ?? '-' }}</code> · CST #{{ $enr->cst_id }}</small>
                                 </td>
                                 <td>
-                                    <div class="fw-medium text-dark">{{ $item->classSubjectTeacher->teacher->user->name ?? '-' }}</div>
+                                    <div class="fw-medium text-dark">{{ $cst->schoolClass->name ?? '-' }}</div>
+                                    <small class="text-muted-portal">{{ $enr->academic_year ?? ($cst->academic_year ?? '-') }}</small>
                                 </td>
-                                <td>
-                                    <span class="badge bg-success-subtle text-success border px-2 py-1 text-uppercase small">
-                                        {{ $item->status }}
+                                <td class="text-dark small">
+                                    {{ $cst->teacher->user->name ?? '-' }}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge {{ $badgeClass }} px-3 py-1 rounded-pill text-capitalize">
+                                        {{ str_replace('_', ' ', $enr->status) }}
                                     </span>
                                 </td>
+                                <td class="small text-muted-portal">
+                                    <div>Masuk: {{ $enr->enrolled_at ? \Carbon\Carbon::parse($enr->enrolled_at)->format('d M Y') : '-' }}</div>
+                                    @if($enr->left_at)
+                                        <div>Keluar: {{ \Carbon\Carbon::parse($enr->left_at)->format('d M Y') }}</div>
+                                    @endif
+                                </td>
                                 <td class="text-end pe-4">
-                                    <form action="{{ route('admin.enrollments.destroy', $item->enrollment_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Keluarkan siswa dari kelas mapel ini?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-light border text-danger shadow-sm" title="Hapus dari kelas">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex gap-1">
+                                        <a href="{{ route('admin.enrollments.edit', $enr->enrollment_id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form action="{{ route('admin.enrollments.destroy', $enr->enrollment_id) }}" method="POST"
+                                              onsubmit="return confirm('Keluarkan siswa dari mata pelajaran ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-5 text-muted small">
-                                    <i class="bi bi-journal-x display-5 d-block mb-2 opacity-50"></i>
-                                    Siswa ini belum dimasukkan ke kelas mata pelajaran apapun.
+                                <td colspan="7" class="text-center py-5 text-muted-portal">
+                                    Siswa ini belum terdaftar pada mata pelajaran apa pun.
                                 </td>
                             </tr>
                         @endforelse
@@ -110,35 +135,65 @@
     </div>
 </div>
 
-{{-- MODAL TAMBAH KELAS UNTUK SISWA INI --}}
-<div class="modal fade" id="addClassModal" tabindex="-1">
+{{-- MODAL TAMBAH KELAS MAPEL UNTUK SISWA INI --}}
+<div class="modal fade" id="addStudentCstModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="{{ route('admin.enrollments.store') }}" method="POST" class="modal-content border-0 shadow rounded-4">
+        <form action="{{ route('admin.enrollments.store') }}" method="POST" class="modal-content">
             @csrf
             <input type="hidden" name="students_id" value="{{ $student->nis }}">
-            
-            <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <h5 class="fw-bold text-dark">Masukkan ke Kelas Mapel Baru</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Tambah Kelas Mapel untuk {{ $student->user->name ?? $student->nis }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body px-4">
+
+            <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold text-dark">Pilih Kelas & Mapel<span class="text-danger">*</span></label>
-                    <select name="cst_id" class="form-select bg-light" required>
-                        <option value="" selected disabled>-- Pilih Kelas Mapel --</option>
+                    <label class="form-label fw-semibold">Kelas Mata Pelajaran <span class="text-danger">*</span></label>
+                    <select name="cst_id" class="form-select" required>
+                        <option value="">-- Pilih Kelas & Mapel --</option>
                         @foreach($csts as $cst)
                             <option value="{{ $cst->cst_id }}">
-                                {{ $cst->subject->name ?? '' }} (Ruangan: {{ $cst->schoolClass->name ?? '' }} - {{ $cst->academic_year }})
+                                {{ $cst->schoolClass->name ?? 'Kelas #' . $cst->class_id }} —
+                                {{ $cst->subject->name ?? $cst->subject_code }} ({{ $cst->academic_year }})
                             </option>
                         @endforeach
                     </select>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                    <select name="status" class="form-select" required>
+                        @foreach(['aktif', 'naik_kelas', 'tinggal_kelas', 'pindah', 'lulus', 'drop_out'] as $st)
+                            <option value="{{ $st }}">{{ ucwords(str_replace('_', ' ', $st)) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label fw-semibold">Tanggal Masuk</label>
+                    <input type="date" name="enrolled_at" value="{{ now()->toDateString() }}" class="form-control">
+                </div>
             </div>
-            <div class="modal-footer border-0 pt-0 pb-4 px-4">
-                <button type="button" class="btn btn-light border px-4 rounded-3" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary px-4 rounded-3">Simpan</button>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-portal-primary px-4">Simpan</button>
             </div>
         </form>
     </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; min-height: 80vh; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .border-secondary { border-color: #e2e8f0 !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .card-header-portal { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .custom-table { --bs-table-bg: transparent; --bs-table-color: #1e293b; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection
