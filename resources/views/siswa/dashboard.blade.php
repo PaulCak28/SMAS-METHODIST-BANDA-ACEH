@@ -1,881 +1,494 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold tracking-tight text-slate-800">
-            {{ __('Dashboard') }}
-        </h2>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-800">
+                    {{ __('Dashboard Siswa') }}
+                </h2>
+                <p class="text-xs text-slate-500">
+                    Methodist Learning Space &bull; SMAS Methodist Banda Aceh
+                </p>
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
+                <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-width="2" d="M16 3v4M8 3v4M3 10h18"/>
+                </svg>
+                <span>{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
+            </div>
+        </div>
     </x-slot>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --blue-primary: #2563EB;
-            --blue-dark: #153E82;
-            --blue-deep: #102C59;
-            --blue-soft: #EFF6FF;
-            --blue-light: #DBEAFE;
-            --navy: #14213D;
-            --muted: #64748B;
-            --border: #E7EDF5;
-            --background: #F5F8FD;
-        }
-
-        .student-dashboard {
-            min-height: 100vh;
-            padding: 48px 0 72px;
-            background: var(--background);
-            font-family: 'DM Sans', sans-serif;
-            overflow: hidden;
-        }
-
-        .student-wrap {
-            max-width: 1160px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* TOP INFORMATION */
-
-        .welcome-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 26px;
-        }
-
-        .welcome-breadcrumb {
-            color: #94A3B8;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .welcome-breadcrumb span {
-            color: #2563EB;
-        }
-
-        .welcome-date {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 14px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: white;
-            color: #64748B;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        /* HERO */
-
-        .student-hero {
-            position: relative;
-            display: grid;
-            grid-template-columns: 1.15fr .85fr;
-            align-items: center;
-            gap: 35px;
-            min-height: 390px;
-            padding: 48px;
-            overflow: hidden;
-            border-radius: 30px;
-            background:
-                radial-gradient(circle at 85% 15%, rgba(96,165,250,.28), transparent 30%),
-                linear-gradient(125deg, #102C59 0%, #174B98 55%, #2563EB 100%);
-            box-shadow: 0 22px 55px rgba(21, 62, 130, .16);
-        }
-
-        .student-hero::before {
-            content: '';
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            top: -190px;
-            right: 15%;
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 50%;
-        }
-
-        .student-hero::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            bottom: -220px;
-            left: 35%;
-            background: rgba(255,255,255,.06);
-            border-radius: 50%;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            padding: 9px 15px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,.17);
-            border-radius: 999px;
-            background: rgba(255,255,255,.10);
-            color: #DBEAFE;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .hero-badge-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #60A5FA;
-            box-shadow: 0 0 12px #60A5FA;
-        }
-
-        .hero-title {
-            margin: 0;
-            color: white;
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(34px, 4.5vw, 52px);
-            font-weight: 700;
-            line-height: 1.16;
-            letter-spacing: -.8px;
-        }
-
-        .hero-title em {
-            color: #93C5FD;
-            font-style: normal;
-            overflow-wrap: anywhere;
-        }
-
-        .hero-description {
-            max-width: 490px;
-            margin: 20px 0 27px;
-            color: #DCEBFF;
-            font-size: 13px;
-            line-height: 1.9;
-        }
-
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .hero-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 13px 21px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 800;
-            text-decoration: none;
-            transition: .25s ease;
-        }
-
-        .hero-button-primary {
-            background: white;
-            color: #174B98;
-            box-shadow: 0 8px 20px rgba(0,0,0,.12);
-        }
-
-        .hero-button-primary:hover {
-            background: #DBEAFE;
-            color: #153E82;
-            transform: translateY(-3px);
-        }
-
-        .hero-button-secondary {
-            border: 1px solid rgba(255,255,255,.25);
-            background: rgba(255,255,255,.08);
-            color: white;
-        }
-
-        .hero-button-secondary:hover {
-            background: rgba(255,255,255,.17);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        /* HERO VISUAL */
-
-        .hero-visual {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 270px;
-        }
-
-        .visual-main {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,.23);
-            border-radius: 34px;
-            background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-            box-shadow: 0 25px 50px rgba(0,0,0,.13);
-            backdrop-filter: blur(12px);
-            transform: rotate(-5deg);
-        }
-
-        .visual-main-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 90px;
-            height: 90px;
-            margin-bottom: 20px;
-            border-radius: 27px;
-            background: white;
-            color: #2563EB;
-            box-shadow: 0 14px 28px rgba(0,0,0,.15);
-        }
-
-        .visual-main-icon svg {
-            width: 48px;
-            height: 48px;
-        }
-
-        .visual-main strong {
-            color: white;
-            font-family: 'Playfair Display', serif;
-            font-size: 21px;
-            letter-spacing: .2px;
-        }
-
-        .visual-main small {
-            margin-top: 6px;
-            color: #DBEAFE;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .visual-decoration {
-            position: absolute;
-            width: 58px;
-            height: 58px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,.2);
-            border-radius: 18px;
-            background: rgba(255,255,255,.14);
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-
-        .visual-decoration svg {
-            width: 26px;
-            height: 26px;
-        }
-
-        .visual-decoration.one {
-            top: 7px;
-            right: 18px;
-            transform: rotate(12deg);
-        }
-
-        .visual-decoration.two {
-            bottom: 3px;
-            left: 5px;
-            transform: rotate(-12deg);
-        }
-
-        /* SECTION HEADER */
-
-        .section-heading {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 48px 0 20px;
-        }
-
-        .section-eyebrow {
-            margin-bottom: 7px;
-            color: #2563EB;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.8px;
-            text-transform: uppercase;
-        }
-
-        .section-title {
-            margin: 0;
-            color: var(--navy);
-            font-family: 'Playfair Display', serif;
-            font-size: 25px;
-            font-weight: 700;
-        }
-
-        .section-description {
-            margin-top: 7px;
-            color: #8492A6;
-            font-size: 12px;
-        }
-
-        /* QUICK ACCESS */
-
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 20px;
-        }
-
-        .quick-card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            min-height: 225px;
-            padding: 27px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            background: white;
-            box-shadow: 0 8px 28px rgba(15, 40, 80, .035);
-            text-decoration: none;
-            transition: transform .25s, border-color .25s, box-shadow .25s;
-        }
-
-        .quick-card:hover {
-            transform: translateY(-5px);
-            border-color: #BFDBFE;
-            box-shadow: 0 18px 38px rgba(37,99,235,.09);
-        }
-
-        .quick-card::after {
-            content: '';
-            position: absolute;
-            width: 155px;
-            height: 155px;
-            right: -70px;
-            bottom: -75px;
-            border-radius: 50%;
-            background: #EFF6FF;
-            transition: transform .3s;
-        }
-
-        .quick-card:hover::after {
-            transform: scale(1.3);
-        }
-
-        .quick-card-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .quick-icon {
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 17px;
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        .quick-icon svg {
-            width: 27px;
-            height: 27px;
-        }
-
-        .quick-arrow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #F1F5F9;
-            color: #64748B;
-            transition: .25s;
-        }
-
-        .quick-card:hover .quick-arrow {
-            background: #2563EB;
-            color: white;
-            transform: translateX(3px);
-        }
-
-        .quick-card h3 {
-            position: relative;
-            z-index: 1;
-            margin: 23px 0 8px;
-            color: var(--navy);
-            font-family: 'Playfair Display', serif;
-            font-size: 23px;
-            font-weight: 700;
-        }
-
-        .quick-card p {
-            position: relative;
-            z-index: 1;
-            max-width: 360px;
-            margin: 0;
-            color: #718096;
-            font-size: 12px;
-            line-height: 1.8;
-        }
-
-        .quick-link {
-            position: relative;
-            z-index: 1;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: 20px;
-            color: #2563EB;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        /* BOTTOM INFORMATION */
-
-        .bottom-grid {
-            display: grid;
-            grid-template-columns: 1.2fr .8fr;
-            gap: 20px;
-            margin-top: 25px;
-        }
-
-        .info-card {
-            position: relative;
-            overflow: hidden;
-            padding: 25px;
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            background: white;
-            box-shadow: 0 8px 28px rgba(15,40,80,.035);
-        }
-
-        .info-heading {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 19px;
-        }
-
-        .info-heading-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            flex-shrink: 0;
-            border-radius: 13px;
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        .info-heading-icon svg {
-            width: 21px;
-            height: 21px;
-        }
-
-        .info-heading h3 {
-            margin: 0;
-            color: var(--navy);
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .info-heading p {
-            margin-top: 4px;
-            color: #94A3B8;
-            font-size: 10px;
-        }
-
-        .info-text {
-            color: #64748B;
-            font-size: 12px;
-            line-height: 1.9;
-        }
-
-        .quote-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 190px;
-            border: 0;
-            background: linear-gradient(135deg, #EAF2FF, #F8FAFF);
-        }
-
-        .quote-mark {
-            color: #93C5FD;
-            font-family: 'Playfair Display', serif;
-            font-size: 58px;
-            line-height: .8;
-        }
-
-        .quote-text {
-            margin: 12px 0;
-            color: #1E3A8A;
-            font-family: 'Playfair Display', serif;
-            font-size: 17px;
-            font-weight: 700;
-            line-height: 1.6;
-        }
-
-        .quote-author {
-            color: #64748B;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .5px;
-        }
-
-        /* FOOTER */
-
-        .dashboard-footer {
-            margin-top: 40px;
-            padding-top: 22px;
-            border-top: 1px solid #E2E8F0;
-            text-align: center;
-        }
-
-        .dashboard-footer p {
-            color: #94A3B8;
-            font-size: 10px;
-            letter-spacing: .3px;
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 900px) {
-            .student-hero {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                padding: 38px;
-            }
-
-            .hero-visual {
-                min-height: 280px;
-            }
-
-            .bottom-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .student-dashboard {
-                padding: 28px 0 50px;
-            }
-
-            .student-wrap {
-                padding: 0 16px;
-            }
-
-            .student-hero {
-                min-height: auto;
-                padding: 28px 23px;
-                border-radius: 23px;
-            }
-
-            .hero-title {
-                font-size: 36px;
-            }
-
-            .hero-description {
-                font-size: 12px;
-            }
-
-            .hero-actions {
-                flex-direction: column;
-            }
-
-            .hero-button {
-                width: 100%;
-            }
-
-            .hero-visual {
-                min-height: 245px;
-            }
-
-            .visual-main {
-                width: 205px;
-                height: 205px;
-            }
-
-            .visual-main-icon {
-                width: 72px;
-                height: 72px;
-            }
-
-            .visual-main-icon svg {
-                width: 39px;
-                height: 39px;
-            }
-
-            .quick-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-
-            .quick-card {
-                min-height: 205px;
-                padding: 23px;
-            }
-
-            .section-heading {
-                margin-top: 36px;
-            }
-
-            .section-title {
-                font-size: 22px;
-            }
-
-            .info-card {
-                padding: 22px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .student-dashboard *,
-            .student-dashboard *::before,
-            .student-dashboard *::after {
-                transition: none !important;
-            }
-        }
-    </style>
-
-    <div class="student-dashboard">
-        <div class="student-wrap">
-
-            {{-- TOP BAR --}}
-            <div class="welcome-top">
-                <div class="welcome-breadcrumb">
-                    METHODIST LEARNING SPACE
-                    <span> / STUDENT PORTAL</span>
-                </div>
-
-                <div class="welcome-date">
-                    <svg width="15" height="15" fill="none" stroke="currentColor"
-                         stroke-width="1.8" viewBox="0 0 24 24">
-                        <rect x="3" y="5" width="18" height="16" rx="2"/>
-                        <path stroke-linecap="round" d="M16 3v4M8 3v4M3 10h18"/>
+    <div class="py-8 bg-slate-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+            {{-- ALERT NOTIFIKASI FEEDBACK --}}
+            @if (session('success'))
+                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 shadow-sm flex items-start gap-3">
+                    <svg class="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {{ now()->locale('id')->translatedFormat('l, d F Y') }}
-                </div>
-            </div>
-
-            {{-- HERO SECTION --}}
-            <section class="student-hero">
-
-                <div class="hero-content">
-                    <div class="hero-badge">
-                        <span class="hero-badge-dot"></span>
-                        {{ __('STUDENT LEARNING PORTAL') }}
-                    </div>
-
-                    <h1 class="hero-title">
-                        {{ __('Halo,') }}
-                        <em>{{ Auth::user()->name }}</em>.
-                        <br>
-                        {{ __('Siap belajar hari ini?') }}
-                    </h1>
-
-                    <p class="hero-description">
-                        {{ __('Selamat datang di ruang belajar digital Methodist. Akses kelas, materi pembelajaran, tugas, ujian, dan kuis melalui satu platform yang terintegrasi.') }}
-                    </p>
-
-                    <div class="hero-actions">
-                        <a href="{{ route('siswa.classes.index') }}"
-                           class="hero-button hero-button-primary">
-                            {{ __('Jelajahi E-Class') }}
-                            <span aria-hidden="true">→</span>
-                        </a>
-
-                        <a href="{{ route('siswa.exams.index') }}"
-                           class="hero-button hero-button-secondary">
-                            {{ __('Lihat E-Exam') }}
-                            <span aria-hidden="true">↗</span>
-                        </a>
+                    <div>
+                        <p class="font-bold">Berhasil!</p>
+                        <p class="mt-0.5 text-xs text-emerald-700">{{ session('success') }}</p>
                     </div>
                 </div>
+            @endif
 
-                {{-- HERO VISUAL --}}
-                <div class="hero-visual" aria-hidden="true">
+            @if (session('error'))
+                <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 shadow-sm flex items-start gap-3">
+                    <svg class="h-5 w-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="font-bold">Perhatian</p>
+                        <p class="mt-0.5 text-xs text-rose-700">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
 
-                    <div class="visual-main">
-                        <div class="visual-main-icon">
-                            <svg fill="none" stroke="currentColor"
-                                 stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
-                            </svg>
+            {{-- HERO BANNER IDENTITAS SISWA (MODERN GLASSMORPHISM & GRADIENT) --}}
+            <section class="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-[#0e172a] via-[#101C35] to-[#1e3a8a] p-6 text-white shadow-2xl sm:p-10">
+                {{-- Ambient Background Glow --}}
+                <div class="absolute -right-20 -top-20 -z-10 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
+                <div class="absolute -bottom-20 left-1/3 -z-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl"></div>
+
+                <div class="grid items-center gap-8 lg:grid-cols-12">
+                    
+                    {{-- Sapaan & Detail Profil Siswa --}}
+                    <div class="lg:col-span-8">
+                        <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-md">
+                            <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Siswa Aktif SMAS Methodist</span>
                         </div>
 
-                        <strong>Learn & Grow</strong>
-                        <small>Knowledge starts here</small>
+                        <h1 class="mt-4 font-serif text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                            Halo, <span class="text-sky-300">{{ $user->name }}</span>!
+                        </h1>
+
+                        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base">
+                            Selamat datang di portal akademik digitalmu. Pantau materi pelajaran, kerjakan tugas tepat waktu, dan ikuti ujian dengan jujur dan penuh semangat.
+                        </p>
+
+                        {{-- Metadata Siswa (NIS, Kelas, Wali Kelas) --}}
+                        <div class="mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
+                            <div class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3.5 py-2 backdrop-blur-md">
+                                <span class="text-slate-400">NIS:</span>
+                                <span class="font-mono font-bold text-white">{{ $student->nis ?? '-' }}</span>
+                            </div>
+
+                            <div class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3.5 py-2 backdrop-blur-md">
+                                <span class="text-slate-400">NISN:</span>
+                                <span class="font-mono font-bold text-white">{{ $student->nisn ?? '-' }}</span>
+                            </div>
+
+                            <div class="inline-flex items-center gap-2 rounded-xl border border-sky-400/40 bg-sky-500/20 px-3.5 py-2 backdrop-blur-md">
+                                <span class="text-sky-200">Kelas:</span>
+                                <span class="font-bold text-white">{{ $student->schoolClass->name ?? 'Belum Ditentukan' }}</span>
+                            </div>
+
+                            <div class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3.5 py-2 backdrop-blur-md">
+                                <span class="text-slate-400">Wali Kelas:</span>
+                                <span class="font-semibold text-white">
+                                    {{ $student->schoolClass?->homeroomTeacher?->user?->name ?? 'Belum Ditugaskan' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Tombol Aksi Cepat --}}
+                        <div class="mt-8 flex flex-wrap items-center gap-3">
+                            <a href="{{ route('siswa.classes.index') }}"
+                               class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-xs sm:text-sm font-bold text-[#101C35] shadow-lg shadow-black/20 transition hover:bg-slate-100 hover:shadow-xl hover:-translate-y-0.5">
+                                <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
+                                </svg>
+                                <span>Buka E-Class Saya</span>
+                            </a>
+
+                            <a href="{{ route('siswa.exams.index') }}"
+                               class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20 hover:-translate-y-0.5">
+                                <svg class="h-4 w-4 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span>Jadwal Ujian (E-Exam)</span>
+                            </a>
+                        </div>
                     </div>
 
-                    <div class="visual-decoration one">
-                        <svg fill="none" stroke="currentColor"
-                             stroke-width="1.6" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
+                    {{-- Kartu Ringkasan Samping (Visual Card) --}}
+                    <div class="lg:col-span-4">
+                        <div class="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-xl shadow-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 text-2xl font-bold text-white shadow-lg shadow-sky-500/30">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="truncate text-base font-bold text-white">{{ $user->name }}</h3>
+                                    <p class="truncate text-xs text-sky-200">{{ $user->email }}</p>
+                                    <span class="mt-1 inline-flex items-center rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-300">
+                                        {{ $student->gender === 'L' ? 'Laki-Laki' : ($student->gender === 'P' ? 'Perempuan' : 'Siswa') }}
+                                    </span>
+                                </div>
+                            </div>
 
-                    <div class="visual-decoration two">
-                        <svg fill="none" stroke="currentColor"
-                             stroke-width="1.6" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
-                            <path stroke-linecap="round" d="M19 16v5m-2.5-2.5h5"/>
-                        </svg>
+                            <div class="mt-5 border-t border-white/10 pt-4 space-y-2.5 text-xs text-slate-200">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Tahun Ajaran:</span>
+                                    <span class="font-semibold">{{ $student->schoolClass->academic_year ?? '2024/2025' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Status Akun:</span>
+                                    <span class="font-semibold text-emerald-300 capitalize">{{ $student->status ?? 'Aktif' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Tahun Masuk:</span>
+                                    <span class="font-semibold">{{ $student->entry_year ?? '-' }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
             </section>
 
-            {{-- QUICK ACCESS HEADING --}}
-            <div class="section-heading">
-                <div>
-                    <div class="section-eyebrow">YOUR LEARNING SPACE</div>
-                    <h2 class="section-title">{{ __('Akses Pembelajaran') }}</h2>
-                    <p class="section-description">
-                        {{ __('Semua kebutuhan akademikmu tersedia di sini.') }}
-                    </p>
+            {{-- 4 KARTU STATISTIK CEPAT (QUICK STATS GRID) --}}
+            <section class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
+                
+                {{-- Stat 1: Total Kelas --}}
+                <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl font-bold text-slate-800">{{ $totalJoined }}</p>
+                        <p class="text-xs font-medium text-slate-500">Kelas Diikuti</p>
+                    </div>
                 </div>
-            </div>
 
-            {{-- QUICK ACCESS CARDS --}}
-            <div class="quick-grid">
+                {{-- Stat 2: Tugas Menunggu --}}
+                <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl font-bold text-slate-800">{{ $pendingAssignments->count() }}</p>
+                        <p class="text-xs font-medium text-slate-500">Tugas Pending</p>
+                    </div>
+                </div>
 
-                {{-- E-CLASS --}}
-                <a href="{{ route('siswa.classes.index') }}"
-                   class="quick-card">
+                {{-- Stat 3: Ujian Tersedia --}}
+                <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl font-bold text-slate-800">{{ $upcomingExams->count() }}</p>
+                        <p class="text-xs font-medium text-slate-500">Ujian CBT</p>
+                    </div>
+                </div>
 
-                    <div class="quick-card-top">
-                        <div class="quick-icon">
-                            <svg fill="none" stroke="currentColor"
-                                 stroke-width="1.7" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
-                            </svg>
+                {{-- Stat 4: Tugas Terkumpul --}}
+                <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl font-bold text-slate-800">{{ $submittedCount }}</p>
+                        <p class="text-xs font-medium text-slate-500">Tugas Diserahkan</p>
+                    </div>
+                </div>
+
+            </section>
+
+            {{-- KONTEN UTAMA: 2 KOLOM (KOLOM KIRI 8 COLS, KOLOM KANAN 4 COLS) --}}
+            <div class="grid gap-8 lg:grid-cols-12">
+                
+                {{-- KOLOM KIRI (8 COLS): KELAS SAYA & TUGAS PENDING --}}
+                <div class="space-y-8 lg:col-span-8">
+                    
+                    {{-- Section: Mata Pelajaran Aktif (E-Class) --}}
+                    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div>
+                                <h3 class="font-serif text-xl font-bold text-slate-800">
+                                    Kelas Mata Pelajaran
+                                </h3>
+                                <p class="text-xs text-slate-500">
+                                    Rombongan belajar yang sedang kamu ikuti di semester ini.
+                                </p>
+                            </div>
+                            <a href="{{ route('siswa.classes.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 transition">
+                                <span>Lihat Semua</span>
+                                <span>&rarr;</span>
+                            </a>
                         </div>
 
-                        <span class="quick-arrow">↗</span>
+                        @if ($joinedClasses->isNotEmpty())
+                            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                                @foreach ($joinedClasses as $cst)
+                                    <article class="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/50 p-5 transition hover:-translate-y-1 hover:border-blue-400 hover:bg-white hover:shadow-lg">
+                                        <div>
+                                            <div class="flex items-start justify-between gap-2">
+                                                <span class="rounded-lg bg-blue-100 px-2.5 py-1 text-[11px] font-bold text-blue-800">
+                                                    {{ $cst->subject_code }}
+                                                </span>
+                                                <span class="text-[11px] font-semibold text-slate-400">
+                                                    {{ $cst->schoolClass->name ?? '' }}
+                                                </span>
+                                            </div>
+
+                                            <h4 class="mt-3 font-serif text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">
+                                                {{ $cst->subject->name ?? $cst->subject_code }}
+                                            </h4>
+
+                                            <p class="mt-1 text-xs text-slate-500 flex items-center gap-1.5">
+                                                <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                <span>{{ $cst->teacher?->user?->name ?? 'Guru Pengampu' }}</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="mt-5 border-t border-slate-200/80 pt-3">
+                                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                                <span>{{ $cst->materials_count }} Materi</span>
+                                                <span>&bull;</span>
+                                                <span>{{ $cst->assignments_count }} Tugas</span>
+                                                <span>&bull;</span>
+                                                <span>{{ $cst->exams_count }} Ujian</span>
+                                            </div>
+
+                                            <a href="{{ route('siswa.classes.show', $cst->cst_id) }}"
+                                               class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-white border border-slate-200 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-blue-600 hover:text-white hover:border-blue-600">
+                                                <span>Masuk Kelas</span>
+                                                <span>&rarr;</span>
+                                            </a>
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        @else
+                            {{-- Empty State: Belum Ada Kelas --}}
+                            <div class="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-8 text-center">
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
+                                    </svg>
+                                </div>
+                                <h4 class="mt-3 font-serif text-base font-bold text-slate-800">Belum Ada Kelas yang Diikuti</h4>
+                                <p class="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-slate-500">
+                                    Dapatkan kode gabung kelas dari guru mata pelajaranmu, lalu masukkan pada formulir di sebelah kanan untuk mulai belajar.
+                                </p>
+                            </div>
+                        @endif
+                    </section>
+
+                    {{-- Section: Tugas Mendekati Tenggat Waktu --}}
+                    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div>
+                                <h3 class="font-serif text-xl font-bold text-slate-800">
+                                    Tugas Perlu Dikerjakan
+                                </h3>
+                                <p class="text-xs text-slate-500">
+                                    Daftar penugasan aktif yang belum kamu kumpulkan.
+                                </p>
+                            </div>
+                            <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-800">
+                                {{ $pendingAssignments->count() }} Menunggu
+                            </span>
+                        </div>
+
+                        @if ($pendingAssignments->isNotEmpty())
+                            <div class="mt-4 divide-y divide-slate-100">
+                                @foreach ($pendingAssignments as $assignment)
+                                    @php
+                                        $isUrgent = $assignment->due_date && $assignment->due_date->isFuture() && $assignment->due_date->diffInHours(now()) <= 24;
+                                        $isOverdue = $assignment->due_date && $assignment->due_date->isPast();
+                                    @endphp
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700">
+                                                    {{ $assignment->classSubjectTeacher?->subject?->name ?? 'Mata Pelajaran' }}
+                                                </span>
+                                                @if ($isOverdue)
+                                                    <span class="rounded bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">Lewat Tenggat</span>
+                                                @elseif ($isUrgent)
+                                                    <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 animate-pulse">Segera Berakhir</span>
+                                                @endif
+                                            </div>
+                                            <h4 class="font-medium text-sm text-slate-800">
+                                                {{ $assignment->title }}
+                                            </h4>
+                                            <p class="text-xs text-slate-400">
+                                                Batas pengumpulan: <span class="font-semibold text-slate-600">{{ $assignment->due_date ? $assignment->due_date->translatedFormat('d M Y, H:i') : 'Tanpa batas' }}</span>
+                                            </p>
+                                        </div>
+
+                                        <a href="{{ route('siswa.classes.show', $assignment->cst_id) }}"
+                                           class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-blue-700 hover:bg-blue-600 hover:text-white transition">
+                                            <span>Kumpulkan Tugas</span>
+                                            <span>&rarr;</span>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            {{-- Semua Tugas Selesai --}}
+                            <div class="mt-6 rounded-2xl bg-emerald-50/50 border border-emerald-100 p-6 text-center">
+                                <span class="text-3xl">🎉</span>
+                                <h4 class="mt-2 font-serif text-sm font-bold text-emerald-900">Hebat! Semua Tugas Sudah Kamu Kumpulkan</h4>
+                                <p class="mt-1 text-xs text-emerald-700">Tidak ada penugasan tertunda saat ini. Manfaatkan waktu untuk mengulang materi di E-Class.</p>
+                            </div>
+                        @endif
+                    </section>
+
+                </div>
+
+                {{-- KOLOM KANAN (4 COLS): GABUNG KELAS, JADWAL CBT, & WARTA SEKOLAH --}}
+                <div class="space-y-8 lg:col-span-4">
+                    
+                    {{-- Widget 1: Formulir Cepat Gabung Kelas --}}
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-base font-bold text-slate-800">Gabung Kelas Baru</h3>
+                                <p class="text-[11px] text-slate-500">Masukkan kode kelas dari gurumu.</p>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('siswa.classes.join') }}" method="POST" class="mt-5 space-y-3">
+                            @csrf
+                            <div>
+                                <label for="join_code" class="block text-xs font-semibold text-slate-700">
+                                    Kode Kelas (8 Karakter)
+                                </label>
+                                <input
+                                    id="join_code"
+                                    name="join_code"
+                                    type="text"
+                                    maxlength="8"
+                                    placeholder="Contoh: 10AMAT1"
+                                    required
+                                    style="text-transform: uppercase;"
+                                    class="mt-1.5 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-center font-mono text-sm tracking-wider uppercase text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                >
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99]"
+                            >
+                                Gabung ke Rombel
+                            </button>
+                        </form>
                     </div>
 
-                    <h3>{{ __('E-Class') }}</h3>
-
-                    <p>
-                        {{ __('Temukan kelas yang kamu ikuti, pelajari materi, unduh bahan ajar, dan kumpulkan tugas dari guru.') }}
-                    </p>
-
-                    <span class="quick-link">
-                        {{ __('Masuk ke E-Class') }}
-                        <span>→</span>
-                    </span>
-                </a>
-
-                {{-- E-EXAM --}}
-                <a href="{{ route('siswa.exams.index') }}"
-                   class="quick-card">
-
-                    <div class="quick-card-top">
-                        <div class="quick-icon">
-                            <svg fill="none" stroke="currentColor"
-                                 stroke-width="1.7" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
+                    {{-- Widget 2: Ujian Daring (E-Exam Terdekat) --}}
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="font-serif text-base font-bold text-slate-800">Jadwal Ujian (CBT)</h3>
+                            <a href="{{ route('siswa.exams.index') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">
+                                Semua &rarr;
+                            </a>
                         </div>
 
-                        <span class="quick-arrow">↗</span>
+                        @if ($upcomingExams->isNotEmpty())
+                            <div class="mt-4 space-y-3">
+                                @foreach ($upcomingExams as $exam)
+                                    @php
+                                        $isOpen = $exam->isOpen();
+                                    @endphp
+                                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:bg-white hover:border-slate-200 hover:shadow-sm">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                                                {{ $exam->classSubjectTeacher?->subject?->name ?? 'Ujian' }}
+                                            </span>
+                                            @if ($isOpen)
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    Sedang Berlangsung
+                                                </span>
+                                            @else
+                                                <span class="rounded bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                                                    Terjadwal
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        <h4 class="mt-2 text-sm font-bold text-slate-800">{{ $exam->title }}</h4>
+                                        <p class="mt-1 text-xs text-slate-500">
+                                            Durasi: {{ $exam->duration_minutes }} menit &bull; Mulai: {{ $exam->start_time->translatedFormat('d M, H:i') }}
+                                        </p>
+
+                                        <a href="{{ route('siswa.exams.show', $exam->exam_id) }}"
+                                           class="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg {{ $isOpen ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300' }} py-1.5 text-xs font-bold transition">
+                                            <span>{{ $isOpen ? 'Mulai Kerjakan Ujian' : 'Lihat Informasi' }}</span>
+                                            <span>&rarr;</span>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="mt-4 p-5 text-center text-xs text-slate-400">
+                                <svg class="mx-auto h-8 w-8 text-slate-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Belum ada ujian yang dijadwalkan dalam waktu dekat.
+                            </div>
+                        @endif
                     </div>
 
-                    <h3>{{ __('E-Exam') }}</h3>
-
-                    <p>
-                        {{ __('Akses ujian dan kuis, periksa jadwal pengerjaan, dan kerjakan evaluasi pembelajaran secara online.') }}
-                    </p>
-
-                    <span class="quick-link">
-                        {{ __('Masuk ke E-Exam') }}
-                        <span>→</span>
-                    </span>
-                </a>
-
-            </div>
-
-            {{-- INFORMASI DAN MOTIVASI --}}
-            <div class="bottom-grid">
-
-                <section class="info-card">
-                    <div class="info-heading">
-                        <div class="info-heading-icon">
-                            <svg fill="none" stroke="currentColor"
-                                 stroke-width="1.7" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M12 18h.01M8.2 9a4 4 0 117.6 1.7c-.8 1.1-2.8 1.8-3.3 3.3M12 22a10 10 0 110-20 10 10 0 010 20z"/>
-                            </svg>
+                    {{-- Widget 3: Warta & Pengumuman Sekolah --}}
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="font-serif text-base font-bold text-slate-800">Warta Sekolah</h3>
+                            <a href="{{ route('announcements.index') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">
+                                Arsip &rarr;
+                            </a>
                         </div>
 
-                        <div>
-                            <h3>{{ __('Pusat Pembelajaran') }}</h3>
-                            <p>{{ __('Informasi penggunaan portal siswa') }}</p>
-                        </div>
+                        @if ($announcements->isNotEmpty())
+                            <div class="mt-4 space-y-3">
+                                @foreach ($announcements as $info)
+                                    <article class="border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
+                                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                                            <span class="font-semibold text-blue-600 capitalize">{{ $info->category }}</span>
+                                            <time>{{ optional($info->published_at)->translatedFormat('d M Y') }}</time>
+                                        </div>
+                                        <h4 class="mt-1 text-xs font-bold text-slate-800 hover:text-blue-600">
+                                            <a href="{{ route('announcements.show', $info->slug) }}">
+                                                {{ $info->title }}
+                                            </a>
+                                        </h4>
+                                    </article>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="mt-4 text-center text-xs text-slate-400">
+                                Belum ada warta pengumuman terbaru.
+                            </div>
+                        @endif
                     </div>
 
-                    <p class="info-text">
-                        {{ __('Gunakan E-Class untuk mengikuti pembelajaran, membaca materi, dan mengumpulkan tugas. Kunjungi E-Exam untuk melihat ujian dan kuis yang diberikan oleh guru. Pastikan kamu selalu memperhatikan informasi dan batas waktu setiap kegiatan.') }}
-                    </p>
-                </section>
-
-                <section class="info-card quote-card">
-                    <div class="quote-mark">“</div>
-
-                    <p class="quote-text">
-                        {{ __('Education is the most powerful weapon which you can use to change the world.') }}
-                    </p>
-
-                    <p class="quote-author">
-                        — NELSON MANDELA
-                    </p>
-                </section>
+                </div>
 
             </div>
-
-            {{-- FOOTER --}}
-            <footer class="dashboard-footer">
-                <p>
-                    METHODIST LEARNING SPACE
-                    <span class="mx-2">•</span>
-                    STUDENT PORTAL
-                </p>
-                <p class="mt-2">
-                    {{ __('Belajar hari ini, berkarya untuk masa depan.') }}
-                </p>
-            </footer>
 
         </div>
     </div>
 </x-app-layout>
-```
