@@ -1,57 +1,72 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Mata Pelajaran')
+@section('title', 'Edit Mata Pelajaran - Portal Akademik')
 
 @section('content')
-<div class="mb-4 d-flex align-items-center gap-3">
-    <a href="{{ route('admin.subjects.index') }}" class="btn btn-white border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
-        <i class="bi bi-arrow-left text-dark fs-5"></i>
-    </a>
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Edit Mata Pelajaran</h4>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0 small">
-                <li class="breadcrumb-item text-muted">Akademik</li>
-                <li class="breadcrumb-item text-muted">Mata Pelajaran</li>
-                <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">{{ $subject->code }}</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-7">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4 p-md-5">
-                
-                <form action="{{ route('admin.subjects.update', $subject->code) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark">Kode Mata Pelajaran</label>
-                        {{-- Menggunakan readonly agar tidak bisa diubah, dan class bg-light untuk menandai --}}
-                        <input type="text" name="code" class="form-control bg-light font-weight-bold text-muted" value="{{ $subject->code }}" readonly>
-                        <div class="form-text small mt-1 text-warning"><i class="bi bi-info-circle me-1"></i>Kode mata pelajaran bersifat tetap dan tidak dapat diubah.</div>
-                    </div>
-
-                    <div class="mb-5">
-                        <label class="form-label fw-semibold text-dark">Nama Mata Pelajaran <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control bg-light @error('name') is-invalid @enderror" value="{{ old('name', $subject->name) }}" required>
-                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <hr class="border-secondary mb-4 opacity-10">
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.subjects.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Batal</a>
-                        <button type="submit" class="btn btn-primary px-4 rounded-3 fw-medium">Simpan Perubahan</button>
-                    </div>
-
-                </form>
-                
-            </div>
+<div class="theme-portal rounded-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Akademik</div>
+            <h2 class="fw-bold mb-1 text-dark">Edit Mata Pelajaran</h2>
         </div>
+        <a href="{{ route('admin.subjects.index') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
+    </div>
+
+    <div class="p-4 pt-0">
+        @if(session('error'))
+            <div class="alert alert-danger rounded-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.subjects.update', $subject->code) }}" method="POST" class="portal-card p-4">
+            @csrf
+            @method('PUT')
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Kode Mata Pelajaran <span class="text-danger">*</span></label>
+                    <input type="text" name="code" value="{{ old('code', $subject->code) }}" maxlength="20"
+                           class="form-control text-uppercase" required>
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Nama Mata Pelajaran <span class="text-danger">*</span></label>
+                    <input type="text" name="name" value="{{ old('name', $subject->name) }}" maxlength="255"
+                           class="form-control" required>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-portal-primary px-4">
+                    <i class="bi bi-save me-1"></i> Perbarui Mata Pelajaran
+                </button>
+                <a href="{{ route('admin.subjects.index') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
     </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection

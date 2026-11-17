@@ -79,8 +79,6 @@
                         <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-display text-accent me-2"></i> Monitoring Sesi Ujian</h5>
                     </div>
                     <div class="p-3">
-                        <p class="text-muted-portal small mb-3">Pilih sesi ujian per kelas yang sedang berlangsung untuk memantau aktivitas peserta.</p>
-                        
                         <div class="table-responsive">
                             <table class="table table-hover table-borderless align-middle custom-table">
                                 <thead class="text-muted-portal small border-bottom border-secondary">

@@ -1,131 +1,162 @@
 @extends('layouts.admin')
-@section('title', 'Edit Data Siswa')
+
+@section('title', 'Edit Siswa - Portal Akademik')
 
 @section('content')
-<div class="mb-4 d-flex align-items-center gap-3">
-    <a href="{{ route('admin.students.index') }}" class="btn btn-white border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
-        <i class="bi bi-arrow-left text-dark fs-5"></i>
-    </a>
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Edit Data Siswa: {{ $student->user?->name }}</h4>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4 p-md-5">
-                <form action="{{ route('admin.students.update', $student->nis) }}" method="POST">
-                    @csrf @method('PUT')
-                    
-                    <h6 class="fw-bold text-primary mb-3">1. Informasi Akun & Identitas Utama</h6>
-                    <div class="row mb-3">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">NIS</label>
-                            <input type="text" class="form-control bg-light" value="{{ $student->nis }}" disabled>
-                            <small class="text-muted">NIS tidak dapat diubah (Primary Key).</small>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">NISN</label>
-                            <input type="text" name="nisn" class="form-control bg-light @error('nisn') is-invalid @enderror" value="{{ old('nisn', $student->nisn) }}">
-                            @error('nisn')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control bg-light @error('name') is-invalid @enderror" value="{{ old('name', $student->user?->name) }}" required>
-                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Email Login <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control bg-light @error('email') is-invalid @enderror" value="{{ old('email', $student->user?->email) }}" required>
-                            @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">No. Telepon / WhatsApp Siswa</label>
-                            <input type="text" name="phone" class="form-control bg-light @error('phone') is-invalid @enderror" value="{{ old('phone', $student->user?->phone) }}">
-                            @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Kelas Induk (Ruangan)</label>
-                            <select name="class_id" class="form-select bg-light @error('class_id') is-invalid @enderror">
-                                <option value="">-- Pilih Kelas Induk --</option>
-                                @foreach($classes as $c)
-                                    <option value="{{ $c->class_id }}" {{ old('class_id', $student->class_id) == $c->class_id ? 'selected' : '' }}>{{ $c->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('class_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                    </div>
-
-                    <h6 class="fw-bold text-primary mb-3 mt-4">2. Detail Pribadi & Alamat</h6>
-                    <div class="row mb-3">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Jenis Kelamin <span class="text-danger">*</span></label>
-                            <select name="gender" class="form-select bg-light @error('gender') is-invalid @enderror" required>
-                                <option value="L" {{ old('gender', $student->gender) == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                                <option value="P" {{ old('gender', $student->gender) == 'P' ? 'selected' : '' }}>Perempuan</option>
-                            </select>
-                            @error('gender')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Tempat Lahir</label>
-                            <input type="text" name="pob" class="form-control bg-light" value="{{ old('pob', $student->pob) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Tanggal Lahir</label>
-                            <input type="date" name="dob" class="form-control bg-light" value="{{ old('dob', optional($student->dob)->format('Y-m-d')) }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">Kecamatan (District)</label>
-                            <input type="text" name="district" class="form-control bg-light" value="{{ old('district', $student->district) }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">Kota / Kabupaten (City)</label>
-                            <input type="text" name="city" class="form-control bg-light" value="{{ old('city', $student->city) }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">Provinsi (Province)</label>
-                            <input type="text" name="province" class="form-control bg-light" value="{{ old('province', $student->province) }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">Tahun Masuk</label>
-                            <input type="number" name="entry_year" class="form-control bg-light" value="{{ old('entry_year', $student->entry_year) }}">
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="form-label fw-semibold">Alamat Lengkap</label>
-                            <textarea name="address" class="form-control bg-light" rows="2">{{ old('address', $student->address) }}</textarea>
-                        </div>
-                    </div>
-
-                    <h6 class="fw-bold text-primary mb-3 mt-4">3. Data Orang Tua & Status Akademik</h6>
-                    <div class="row mb-4">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Nama Orang Tua / Wali</label>
-                            <input type="text" name="parent_name" class="form-control bg-light" value="{{ old('parent_name', $student->parent_name) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">No. Telepon Orang Tua</label>
-                            <input type="text" name="parent_phone" class="form-control bg-light" value="{{ old('parent_phone', $student->parent_phone) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-semibold">Status Siswa</label>
-                            <select name="status" class="form-select bg-light" required>
-                                <option value="aktif" {{ old('status', $student->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                <option value="lulus" {{ old('status', $student->status) == 'lulus' ? 'selected' : '' }}>Lulus</option>
-                                <option value="pindah" {{ old('status', $student->status) == 'pindah' ? 'selected' : '' }}>Pindah</option>
-                                <option value="drop_out" {{ old('status', $student->status) == 'drop_out' ? 'selected' : '' }}>Drop Out</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <hr class="border-secondary mb-4 opacity-10">
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.students.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Batal</a>
-                        <button type="submit" class="btn btn-primary px-4 rounded-3 fw-medium">Simpan Perubahan</button>
-                    </div>
-                </form>
-            </div>
+<div class="theme-portal rounded-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Data Sekolah</div>
+            <h2 class="fw-bold mb-1 text-dark">Edit Data Siswa</h2>
+            <p class="text-muted-portal mb-0">NIS: <code>{{ $student->nis }}</code></p>
         </div>
+        <a href="{{ route('admin.students.index') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
+    </div>
+
+    <div class="p-4 pt-0">
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.students.update', $student->nis) }}" method="POST" class="portal-card p-4">
+            @csrf
+            @method('PUT')
+
+            <h6 class="fw-bold text-accent mb-3">1. Identitas Akun & Akademik</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">NIS</label>
+                    <input type="text" value="{{ $student->nis }}" class="form-control bg-light" disabled>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">NISN (10 Digit)</label>
+                    <input type="text" name="nisn" value="{{ old('nisn', $student->nisn) }}" maxlength="10" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Kelas</label>
+                    <select name="class_id" class="form-select">
+                        <option value="">-- Belum Ditempatkan --</option>
+                        @foreach($classes as $cls)
+                            <option value="{{ $cls->class_id }}" {{ (string) old('class_id', $student->class_id) === (string) $cls->class_id ? 'selected' : '' }}>
+                                {{ $cls->name }} ({{ $cls->academic_year }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="name" value="{{ old('name', $student->user->name ?? '') }}" maxlength="100" class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                    <input type="email" name="email" value="{{ old('email', $student->user->email ?? '') }}" class="form-control" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Jenis Kelamin <span class="text-danger">*</span></label>
+                    <select name="gender" class="form-select" required>
+                        <option value="L" {{ old('gender', $student->gender) === 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
+                        <option value="P" {{ old('gender', $student->gender) === 'P' ? 'selected' : '' }}>Perempuan (P)</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tahun Masuk</label>
+                    <input type="text" name="entry_year" value="{{ old('entry_year', $student->entry_year) }}" maxlength="4" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Status Siswa</label>
+                    <select name="status" class="form-select">
+                        @foreach(['aktif' => 'Aktif', 'lulus' => 'Lulus', 'pindah' => 'Pindah', 'drop_out' => 'Drop Out'] as $val => $label)
+                            <option value="{{ $val }}" {{ old('status', $student->status) === $val ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-accent mb-3">2. Biodata, Alamat & Orang Tua</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tempat Lahir</label>
+                    <input type="text" name="pob" value="{{ old('pob', $student->pob) }}" maxlength="50" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Lahir</label>
+                    <input type="date" name="dob"
+                           value="{{ old('dob', $student->dob ? \Carbon\Carbon::parse($student->dob)->format('Y-m-d') : '') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">No. HP Siswa</label>
+                    <input type="text" name="phone" value="{{ old('phone', $student->user->phone ?? '') }}" maxlength="20" class="form-control">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Alamat Lengkap</label>
+                    <input type="text" name="address" value="{{ old('address', $student->address) }}" maxlength="255" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Kecamatan</label>
+                    <input type="text" name="district" value="{{ old('district', $student->district) }}" maxlength="100" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Kota / Kabupaten</label>
+                    <input type="text" name="city" value="{{ old('city', $student->city) }}" maxlength="100" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Provinsi</label>
+                    <input type="text" name="province" value="{{ old('province', $student->province) }}" maxlength="100" class="form-control">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Orang Tua / Wali</label>
+                    <input type="text" name="parent_name" value="{{ old('parent_name', $student->parent_name) }}" maxlength="100" class="form-control">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">No. HP Orang Tua / Wali</label>
+                    <input type="text" name="parent_phone" value="{{ old('parent_phone', $student->parent_phone) }}" maxlength="20" class="form-control">
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-portal-primary px-4">
+                    <i class="bi bi-save me-1"></i> Perbarui Data Siswa
+                </button>
+                <a href="{{ route('admin.students.index') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
     </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection

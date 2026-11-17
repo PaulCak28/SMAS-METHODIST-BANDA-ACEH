@@ -1,290 +1,267 @@
 @extends('layouts.admin')
 
-@section('title', 'Enrollment Siswa')
+@section('title', 'Enrollment Siswa - Portal Akademik')
 
 @section('content')
-@php
-    // Daftar kelas-mapel (class_subject_teacher) untuk modal "Masukkan Satu Kelas".
-    // Dikirim dari ClassEnrollmentController@index.
-    $csts = $csts ?? collect();
-    $cstGroups = $csts->groupBy(fn ($cst) => $cst->schoolClass->name ?? 'Tanpa Kelas');
 
-    // Siswa per kelas induk (key: class_id) dan siswa yang sudah terdaftar per kelas-mapel (key: cst_id).
-    $studentsByClass = $studentsByClass ?? collect();
-    $enrolledByCst = $enrolledByCst ?? collect();
-    $studentPayload = $studentsByClass->map(fn ($list) => $list->map(fn ($s) => [
-        'nis' => $s->nis,
-        'name' => $s->user->name ?? 'Tanpa Nama',
-    ])->values());
-@endphp
+<div class="theme-portal rounded-4 shadow-sm">
 
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Enrollment Kelas Siswa</h4>
-        <p class="text-muted small mb-0">Kelola pendaftaran kelas mata pelajaran per siswa.</p>
+    {{-- HEADER HALAMAN --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Akademik</div>
+            <h2 class="fw-bold mb-1 text-dark">Enrollment Siswa ke Kelas Mata Pelajaran</h2>
+            <p class="text-muted-portal mb-0">
+                Daftar siswa yang telah terdaftar pada rombongan belajar mata pelajaran.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-primary px-3 py-2 rounded-3"
+                    data-bs-toggle="modal" data-bs-target="#bulkEnrollModal">
+                <i class="bi bi-people-fill me-1"></i> Masukkan Satu Kelas
+            </button>
+            <a href="{{ route('admin.enrollments.create') }}" class="btn btn-portal-primary px-4 py-2 rounded-3">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Enrollment
+            </a>
+        </div>
     </div>
-    <div class="d-flex flex-wrap gap-2">
-        <button type="button" class="btn btn-success shadow-sm rounded-3 fw-medium px-3" data-bs-toggle="modal" data-bs-target="#bulkEnrollModal">
-            <i class="bi bi-people-fill me-1"></i> Masukkan Satu Kelas
-        </button>
-        <a href="{{ route('admin.enrollments.create') }}" class="btn btn-primary shadow-sm rounded-3 fw-medium px-3">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Enrollment Baru
-        </a>
+
+    <div class="p-4 pt-0">
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- FORM PENCARIAN FULL-WIDTH RAPI --}}
+        <form method="GET" action="{{ route('admin.enrollments.index') }}" class="portal-card p-3 mb-4">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-8 col-lg-9">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ $search ?? request('search') }}"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Cari NIS, NISN, atau nama siswa...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-portal-primary flex-grow-1">
+                        <i class="bi bi-search me-1"></i> Cari
+                    </button>
+                    <a href="{{ route('admin.enrollments.index') }}" class="btn btn-outline-secondary px-3">
+                        Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        {{-- TABEL ENROLLMENT SISWA --}}
+        <div class="portal-card overflow-hidden">
+            <div class="card-header-portal d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-clipboard-check text-accent me-2"></i> Daftar Siswa Terdaftar ({{ $students->total() }} Siswa)
+                </h5>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table mb-0">
+                    <thead class="text-muted-portal small border-bottom border-secondary bg-light">
+                        <tr>
+                            <th class="ps-4 text-center" style="width: 60px;">No</th>
+                            <th style="width: 120px;">NIS</th>
+                            <th>Nama Siswa</th>
+                            <th style="width: 190px;">Kelas Induk</th>
+                            <th class="text-center" style="width: 170px;">Total Kelas Mapel</th>
+                            <th class="text-end pe-4 text-nowrap" style="width: 185px;">Rincian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($students as $index => $student)
+                            <tr>
+                                <td class="ps-4 text-center text-muted-portal">
+                                    {{ $students->firstItem() + $index }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace">{{ $student->nis }}</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $student->user->name ?? '-' }}</div>
+                                    @if(!empty($student->nisn))
+                                        <small class="text-muted-portal">NISN: {{ $student->nisn }}</small>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($student->schoolClass)
+                                        <span class="badge bg-info-subtle text-info-emphasis px-2 py-1 text-nowrap">
+                                            {{ $student->schoolClass->name }} ({{ $student->schoolClass->academic_year }})
+                                        </span>
+                                    @else
+                                        <span class="text-muted-portal small fst-italic">Belum ada kelas induk</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill text-nowrap">
+                                        {{ $student->classEnrollments->count() }} Mata Pelajaran
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4 text-nowrap">
+                                    <a href="{{ route('admin.enrollments.show', $student->nis) }}"
+                                       class="btn btn-sm btn-outline-primary px-3 text-nowrap">
+                                        <i class="bi bi-list-ul me-1"></i> Kelola Mapel
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted-portal">
+                                    Belum ada siswa yang terdaftar pada kelas mata pelajaran.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($students->hasPages())
+                <div class="p-3 border-top bg-light">
+                    {{ $students->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4 border-0 bg-success text-white" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+{{-- MODAL MASUKKAN SATU KELAS (BULK ENROLLMENT) --}}
+<div class="modal fade" id="bulkEnrollModal" tabindex="-1" aria-labelledby="bulkEnrollModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form action="{{ Route::has('admin.enrollments.bulk') ? route('admin.enrollments.bulk') : (Route::has('admin.enrollments.storeBulk') ? route('admin.enrollments.storeBulk') : url('/admin/enrollments/bulk')) }}" method="POST" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="bulkEnrollModalLabel">
+                    <i class="bi bi-people-fill text-accent me-2"></i>Masukkan Siswa Satu Kelas ke Kelas Mapel
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-    <div class="card-body p-4">
-        <form action="{{ route('admin.enrollments.index') }}" method="GET" class="row g-3">
-            <div class="col-md-9">
-                <div class="input-group input-group-lg">
-                    <span class="input-group-text bg-light border-end-0 text-muted px-3"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" class="form-control bg-light border-start-0 fs-6" placeholder="Cari nama siswa atau NIS..." value="{{ request('search') }}">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Pilih Kelas Mata Pelajaran (CST) <span class="text-danger">*</span></label>
+                    <select name="cst_id" id="bulkCstSelect" class="form-select" required>
+                        <option value="">-- Pilih Kelas & Mata Pelajaran --</option>
+                        @foreach($csts as $cst)
+                            <option value="{{ $cst->cst_id }}" data-class-id="{{ $cst->class_id }}">
+                                {{ $cst->schoolClass->name ?? 'Kelas #' . $cst->class_id }} —
+                                {{ $cst->subject->name ?? $cst->subject_code }}
+                                ({{ $cst->academic_year }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label fw-semibold mb-0">Daftar Siswa di Kelas Induk</label>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="toggleSelectAllBtn">
+                        Pilih Semua
+                    </button>
+                </div>
+
+                <div id="bulkStudentsContainer" class="border rounded-3 p-3 bg-light" style="min-height: 140px; max-height: 320px; overflow-y: auto;">
+                    <p class="text-muted small mb-0 fst-italic">Silakan pilih kelas mata pelajaran di atas terlebih dahulu.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-dark w-100 rounded-3 fw-medium btn-lg">Cari</button>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-portal-primary px-4">
+                    <i class="bi bi-check2-circle me-1"></i> Daftarkan Siswa Terpilih
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-4">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light text-muted small text-uppercase">
-                <tr>
-                    <th class="ps-4 py-3">NIS</th>
-                    <th class="py-3">Nama Siswa</th>
-                    <th class="py-3">Kelas Induk (Ruangan)</th>
-                    <th class="py-3 text-center">Jml Kelas Mapel</th>
-                    <th class="text-end pe-4 py-3">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($students as $student)
-                    <tr>
-                        <td class="ps-4 font-monospace text-muted">{{ $student->nis }}</td>
-                        <td>
-                            <div class="fw-bold text-dark fs-6">{{ $student->user->name ?? 'Tanpa Nama' }}</div>
-                        </td>
-                        <td>
-                            <span class="badge bg-secondary-subtle text-dark border">{{ $student->schoolClass->name ?? 'Belum ada' }}</span>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fw-bold">
-                                {{ $student->classEnrollments->count() }} Kelas
-                            </span>
-                        </td>
-                        <td class="text-end pe-4">
-                            <a href="{{ route('admin.enrollments.show', $student->nis) }}" class="btn btn-sm btn-light border shadow-sm text-primary px-3 rounded-3 fw-medium">
-                                <i class="bi bi-eye me-1"></i> Kelola Kelas <i class="bi bi-chevron-right ms-1 small"></i>
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i class="bi bi-people display-4 d-block mb-3 opacity-50"></i>
-                            <h6 class="fw-semibold text-dark">Belum ada data enrollment</h6>
-                            <p class="small mb-0">Silakan tambahkan pendaftaran kelas untuk siswa.</p>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    @if($students->hasPages())
-        <div class="card-footer bg-white border-top p-3">
-            {{ $students->links() }}
-        </div>
-    @endif
-</div>
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; min-height: 80vh; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .border-secondary { border-color: #e2e8f0 !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .card-header-portal { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .custom-table { --bs-table-bg: transparent; --bs-table-color: #1e293b; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
 
-{{-- Modal: masukkan seluruh siswa dalam satu kelas induk ke satu kelas mapel --}}
-<div class="modal fade" id="bulkEnrollModal" tabindex="-1" aria-labelledby="bulkEnrollModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 shadow">
-            <form action="{{ route('admin.enrollments.store-bulk') }}" method="POST">
-                @csrf
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <div>
-                        <h5 class="modal-title fw-bold text-dark" id="bulkEnrollModalLabel">Masukkan Satu Kelas</h5>
-                        <p class="text-muted small mb-0">Daftarkan seluruh siswa dalam satu kelas ke sebuah kelas mata pelajaran.</p>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-
-                <div class="modal-body px-4">
-                    @if($errors->hasAny(['cst_id', 'students_id']))
-                        <div class="alert alert-danger small rounded-3 py-2">
-                            {{ $errors->first('cst_id') ?: $errors->first('students_id') }}
-                        </div>
-                    @endif
-
-                    <div class="mb-3">
-                        <label for="bulk_cst_id" class="form-label fw-semibold">Kelas &amp; Mata Pelajaran <span class="text-danger">*</span></label>
-                        <select name="cst_id" id="bulk_cst_id" class="form-select bg-light" required>
-                            <option value="" disabled {{ old('cst_id') ? '' : 'selected' }}>Pilih kelas &amp; mata pelajaran...</option>
-                            @foreach($cstGroups as $className => $items)
-                                <optgroup label="{{ $className }}">
-                                    @foreach($items as $cst)
-                                        <option value="{{ $cst->cst_id }}" data-class-id="{{ $cst->class_id }}" {{ (string) old('cst_id') === (string) $cst->cst_id ? 'selected' : '' }}>
-                                            {{ $className }} — {{ $cst->subject->name ?? $cst->subject->subject_name ?? 'Mapel' }}
-                                            @if(!empty($cst->academic_year)) ({{ $cst->academic_year }}) @endif
-                                        </option>
-                                    @endforeach
-                                </optgroup>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div id="bulkStudentsWrapper" class="mb-3 d-none">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label fw-semibold mb-0">
-                                Siswa yang didaftarkan
-                                <span id="bulkCount" class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1"></span>
-                            </label>
-                            <div class="form-check mb-0">
-                                <input type="checkbox" class="form-check-input" id="bulkCheckAll" checked>
-                                <label class="form-check-label small" for="bulkCheckAll">Pilih semua</label>
-                            </div>
-                        </div>
-                        <div id="bulkStudentList" class="border rounded-3 bg-light p-2" style="max-height: 260px; overflow-y: auto;"></div>
-                    </div>
-
-                    <div id="bulkEmpty" class="alert alert-warning small rounded-3 py-2 d-none">
-                        Tidak ada siswa di kelas induk ini.
-                    </div>
-
-                    @if($csts->isEmpty())
-                        <div class="alert alert-warning small rounded-3 py-2 mb-0">
-                            Belum ada kelas mata pelajaran. Tambahkan dulu data kelas-mapel.
-                        </div>
-                    @else
-                        <div class="text-muted small">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Siswa terdaftar dengan status <strong>Aktif</strong>. Hilangkan centang untuk siswa yang tidak ingin didaftarkan.
-                        </div>
-                    @endif
-                </div>
-
-                <div class="modal-footer border-0 pt-0 px-4 pb-4">
-                    <button type="button" class="btn btn-light border px-4 rounded-3 fw-medium" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success px-4 rounded-3 fw-medium">
-                        <i class="bi bi-people-fill me-1"></i> Daftarkan Siswa Terpilih
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
+@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var students = @json($studentPayload);
-        var enrolled = @json($enrolledByCst);
+    const studentsByClass = @json($studentsByClass);
+    const enrolledByCst = @json($enrolledByCst);
 
-        var select = document.getElementById('bulk_cst_id');
-        var wrapper = document.getElementById('bulkStudentsWrapper');
-        var list = document.getElementById('bulkStudentList');
-        var count = document.getElementById('bulkCount');
-        var checkAll = document.getElementById('bulkCheckAll');
-        var empty = document.getElementById('bulkEmpty');
+    const cstSelect = document.getElementById('bulkCstSelect');
+    const container = document.getElementById('bulkStudentsContainer');
+    const toggleAllBtn = document.getElementById('toggleSelectAllBtn');
 
-        function enabledBoxes() {
-            return list.querySelectorAll('.bulk-student:not(:disabled)');
+    cstSelect.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const cstId = this.value;
+        const classId = selectedOption ? selectedOption.getAttribute('data-class-id') : null;
+
+        if (!cstId || !classId) {
+            container.innerHTML = '<p class="text-muted small mb-0 fst-italic">Silakan pilih kelas mata pelajaran di atas terlebih dahulu.</p>';
+            return;
         }
 
-        function updateCount() {
-            var boxes = enabledBoxes();
-            var checked = list.querySelectorAll('.bulk-student:not(:disabled):checked').length;
-            count.textContent = checked + ' dari ' + boxes.length + ' dipilih';
-            checkAll.checked = boxes.length > 0 && checked === boxes.length;
+        const classStudents = studentsByClass[classId] || [];
+        const enrolledSet = new Set((enrolledByCst[cstId] || []).map(String));
+
+        if (classStudents.length === 0) {
+            container.innerHTML = '<p class="text-muted small mb-0 fst-italic">Tidak ada siswa yang tergabung di kelas induk ini.</p>';
+            return;
         }
 
-        function render() {
-            var option = select.options[select.selectedIndex];
-            list.innerHTML = '';
-
-            if (!option || !option.dataset.classId) {
-                wrapper.classList.add('d-none');
-                empty.classList.add('d-none');
-                return;
-            }
-
-            var items = students[option.dataset.classId] || [];
-            var done = (enrolled[option.value] || []).map(String);
-
-            if (!items.length) {
-                wrapper.classList.add('d-none');
-                empty.classList.remove('d-none');
-                return;
-            }
-
-            empty.classList.add('d-none');
-            wrapper.classList.remove('d-none');
-
-            items.forEach(function (student, index) {
-                var already = done.indexOf(String(student.nis)) !== -1;
-
-                var row = document.createElement('div');
-                row.className = 'd-flex align-items-center gap-2 py-1 px-2';
-
-                var input = document.createElement('input');
-                input.type = 'checkbox';
-                input.className = 'form-check-input mt-0 flex-shrink-0 bulk-student';
-                input.name = 'students_id[]';
-                input.value = student.nis;
-                input.id = 'bulk_student_' + index;
-                input.checked = !already;
-                input.disabled = already;
-
-                var label = document.createElement('label');
-                label.className = 'small flex-grow-1 mb-0' + (already ? ' text-muted' : '');
-                label.htmlFor = input.id;
-                label.textContent = student.nis + ' — ' + student.name;
-
-                row.appendChild(input);
-                row.appendChild(label);
-
-                if (already) {
-                    var badge = document.createElement('span');
-                    badge.className = 'badge bg-secondary-subtle text-secondary border';
-                    badge.textContent = 'Sudah terdaftar';
-                    row.appendChild(badge);
-                }
-
-                list.appendChild(row);
-            });
-
-            updateCount();
-        }
-
-        select.addEventListener('change', render);
-        list.addEventListener('change', updateCount);
-        checkAll.addEventListener('change', function () {
-            enabledBoxes().forEach(function (box) { box.checked = checkAll.checked; });
-            updateCount();
+        let html = '<div class="list-group list-group-flush bg-white rounded-2 border">';
+        classStudents.forEach(st => {
+            const isEnrolled = enrolledSet.has(String(st.nis));
+            const name = st.user ? st.user.name : ('Siswa #' + st.nis);
+            html += `
+                <label class="list-group-item d-flex justify-content-between align-items-center ${isEnrolled ? 'bg-light text-muted' : ''}">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input bulk-student-cb" type="checkbox" name="students_id[]" value="${st.nis}"
+                               ${isEnrolled ? 'disabled' : 'checked'}>
+                        <span class="form-check-label ms-1">
+                            <strong>${name}</strong> <code class="ms-1">(${st.nis})</code>
+                        </span>
+                    </div>
+                    ${isEnrolled ? '<span class="badge bg-success-subtle text-success">Sudah Terdaftar</span>' : '<span class="badge bg-primary-subtle text-primary">Siap Didaftarkan</span>'}
+                </label>
+            `;
         });
+        html += '</div>';
+        container.innerHTML = html;
+    });
 
-        if (select.value) {
-            render();
-        }
-
-        @if($errors->hasAny(['cst_id', 'students_id']))
-            var modalElement = document.getElementById('bulkEnrollModal');
-            if (modalElement && window.bootstrap) {
-                new bootstrap.Modal(modalElement).show();
-            }
-        @endif
+    toggleAllBtn.addEventListener('click', function () {
+        const checkboxes = container.querySelectorAll('.bulk-student-cb:not(:disabled)');
+        if (!checkboxes.length) return;
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => cb.checked = !allChecked);
     });
 </script>
+@endpush
+
 @endsection

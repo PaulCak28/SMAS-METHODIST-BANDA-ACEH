@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\GradeLogController;
+use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ClassEnrollmentController;
@@ -250,14 +251,12 @@ Route::middleware('auth')->group(function () {
     // MONITORING
     // -----------------------------
 
-    Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
-
-        Route::get('/', [MonitoringController::class, 'index'])
-            ->name('index');
-
-        Route::get('/session/{id}', [MonitoringController::class, 'show'])
-            ->name('show');
-    });
+   Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
+    Route::get('/', [MonitoringController::class, 'index'])->name('index');
+    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams'); // Tambahan route kelas
+    Route::get('/monitoring/class/{classId}', [MonitoringController::class, 'classExams'])->name('admin.monitoring.class.exams');
+    Route::get('/exam/{id}', [MonitoringController::class, 'show'])->name('show');
+});
 
 
     // -----------------------------
@@ -375,6 +374,16 @@ Route::middleware('auth')->group(function () {
     ->group(function () {
         Route::get('/', [GradeLogController::class, 'index'])->name('index');
     });
+
+    //classes
+    Route::middleware(['auth'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
+            ->name('classes.index');
+    });
+
 
     //announcements
 Route::prefix('admin/announcements')

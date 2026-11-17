@@ -25,11 +25,17 @@
         {{-- FORM PENCARIAN & FILTER --}}
         <form method="GET" action="{{ route('admin.classes.index') }}" class="portal-card p-3 mb-4">
             <div class="row g-2 align-items-center">
-                <div class="col-md-5">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           class="form-control" placeholder="Cari nama kelas, tahun ajaran, NIP, atau nama wali kelas...">
+                <div class="col-12 col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Cari nama kelas, tahun ajaran, NIP, atau nama wali kelas...">
+                    </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-md-7 col-lg-3">
                     <select name="academic_year" class="form-select">
                         <option value="">-- Semua Tahun Ajaran --</option>
                         @foreach($academicYears ?? [] as $year)
@@ -39,11 +45,11 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4 d-flex gap-2">
-                    <button type="submit" class="btn btn-portal-primary px-4">
+                <div class="col-12 col-md-5 col-lg-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-portal-primary flex-grow-1">
                         <i class="bi bi-search me-1"></i> Filter
                     </button>
-                    <a href="{{ route('admin.classes.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.classes.index') }}" class="btn btn-outline-secondary px-3">
                         Reset
                     </a>
                 </div>
@@ -56,7 +62,6 @@
                 <h5 class="fw-bold mb-0 text-dark">
                     <i class="bi bi-building text-accent me-2"></i> Daftar Rombongan Belajar ({{ $classes->total() }} Kelas)
                 </h5>
-                <span class="badge bg-secondary-subtle text-secondary">Sumber: v_class_summary</span>
             </div>
 
             <div class="table-responsive">

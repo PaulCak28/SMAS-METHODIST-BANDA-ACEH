@@ -12,11 +12,29 @@ use Illuminate\Validation\Rule;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.teachers.index', [
-            'teachers' => Teacher::with('user')->paginate(15)
-        ]);
+        $query = Teacher::on('mysql_admin')->with('user');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nip', 'like', "%{$search}%")
+                  ->orWhere('specialization', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $teachers = $query->orderBy('nip')->paginate(15);
+
+        return view('admin.teachers.index', compact('teachers'));
     }
 
     public function create()
@@ -27,88 +45,84 @@ class TeacherController extends Controller
     public function store(Request $request)
     {
         $v = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
-            'nip' => 'required|string|max:18|unique:teachers,nip',
-            'specialization' => 'nullable|string|max:100',
+            'name'            => 'required|string|max:100',
+            'email'           => 'required|email|unique:mysql_admin.users,email',
+            'phone'           => 'nullable|string|max:20',
+            'nip'             => 'required|string|max:18|unique:mysql_admin.teachers,nip|unique:mysql_admin.users,user_id',
+            'specialization'  => 'nullable|string|max:100',
             'education_level' => 'nullable|string|max:30',
-            'address' => 'nullable|string|max:255',
-            'hire_date' => 'nullable|date',
-            'status' => ['nullable', Rule::in(['aktif', 'cuti', 'pensiun', 'resign'])],
+            'address'         => 'nullable|string|max:255',
+            'hire_date'       => 'nullable|date',
+            'status'          => ['nullable', Rule::in(['aktif', 'cuti', 'pensiun', 'resign'])],
         ]);
 
-        DB::transaction(function () use ($v) {
-
-            User::create([
-                'user_id' => $v['nip'],
-                'name' => $v['name'],
-                'email' => $v['email'],
-                'phone' => $v['phone'] ?? null,
+        DB::connection('mysql_admin')->transaction(function () use ($v) {
+            User::on('mysql_admin')->create([
+                'user_id'  => $v['nip'],
+                'name'     => $v['name'],
+                'email'    => $v['email'],
+                'phone'    => $v['phone'] ?? null,
                 'password' => Hash::make('password123'),
-                'role' => 'guru',
+                'role'     => 'guru',
             ]);
-            Teacher::create([
-                'nip' => $v['nip'],
-                'specialization' => $v['specialization'] ?? null,
+
+            Teacher::on('mysql_admin')->create([
+                'nip'             => $v['nip'],
+                'specialization'  => $v['specialization'] ?? null,
                 'education_level' => $v['education_level'] ?? null,
-                'address' => $v['address'] ?? null,
-                'hire_date' => $v['hire_date'] ?? null,
-                'status' => $v['status'] ?? 'aktif',
+                'address'         => $v['address'] ?? null,
+                'hire_date'       => $v['hire_date'] ?? null,
+                'status'          => $v['status'] ?? 'aktif',
             ]);
         });
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with(
-                'success',
-                'Guru berhasil ditambahkan. Password default: password123'
-            );
+            ->with('success', 'Guru berhasil ditambahkan. Password default: password123');
     }
 
-    public function edit(Teacher $teacher)
+    public function edit(string $nip)
     {
-        $teacher->load('user');
+        $teacher = Teacher::on('mysql_admin')->with('user')->findOrFail($nip);
 
         return view('admin.teachers.edit', compact('teacher'));
     }
 
-    public function update(Request $request, Teacher $teacher)
+    public function update(Request $request, string $nip)
     {
-        $v = $request->validate([
-            'name' => 'required|string|max:100',
+        $teacher = Teacher::on('mysql_admin')->with('user')->findOrFail($nip);
 
-            'email' => [
+        $v = $request->validate([
+            'name'            => 'required|string|max:100',
+            'email'           => [
                 'required',
                 'email',
-                'unique:users,email,' . $teacher->user?->user_id . ',user_id',
+                Rule::unique('mysql_admin.users', 'email')->ignore($teacher->nip, 'user_id'),
             ],
-
-            'phone' => 'nullable|string|max:20',
-
-
-            'specialization' => 'nullable|string|max:100',
+            'phone'           => 'nullable|string|max:20',
+            'specialization'  => 'nullable|string|max:100',
             'education_level' => 'nullable|string|max:30',
-            'address' => 'nullable|string|max:255',
-            'hire_date' => 'nullable|date',
-            'status' => ['nullable', Rule::in(['aktif', 'cuti', 'pensiun', 'resign'])],
+            'address'         => 'nullable|string|max:255',
+            'hire_date'       => 'nullable|date',
+            'status'          => ['nullable', Rule::in(['aktif', 'cuti', 'pensiun', 'resign'])],
         ]);
 
-        DB::transaction(function () use ($v, $teacher) {
-
+        DB::connection('mysql_admin')->transaction(function () use ($v, $teacher) {
             $teacher->update([
-                'specialization' => $v['specialization'] ?? null,
+                'specialization'  => $v['specialization'] ?? null,
                 'education_level' => $v['education_level'] ?? null,
-                'address' => $v['address'] ?? null,
-                'hire_date' => $v['hire_date'] ?? null,
-                'status' => $v['status'] ?? $teacher->status,
+                'address'         => $v['address'] ?? null,
+                'hire_date'       => $v['hire_date'] ?? null,
+                'status'          => $v['status'] ?? $teacher->status,
             ]);
 
-            $teacher->user()->update([
-                'name' => $v['name'],
-                'email' => $v['email'],
-                'phone' => $v['phone'] ?? null,
-            ]);
+            if ($teacher->user) {
+                $teacher->user->update([
+                    'name'  => $v['name'],
+                    'email' => $v['email'],
+                    'phone' => $v['phone'] ?? null,
+                ]);
+            }
         });
 
         return redirect()
@@ -116,10 +130,14 @@ class TeacherController extends Controller
             ->with('success', 'Data guru berhasil diperbarui.');
     }
 
-    public function destroy(Teacher $teacher)
+    public function destroy(string $nip)
     {
-        $teacher->user()?->delete();
-        $teacher->delete();
+        $teacher = Teacher::on('mysql_admin')->with('user')->findOrFail($nip);
+
+        DB::connection('mysql_admin')->transaction(function () use ($teacher) {
+            $teacher->delete();
+            $teacher->user?->delete();
+        });
 
         return redirect()
             ->route('admin.teachers.index')
