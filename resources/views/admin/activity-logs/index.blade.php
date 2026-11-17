@@ -6,35 +6,25 @@
         <div>
             <h4 class="mb-1 fw-bold">Log Aktivitas Perubahan Nilai</h4>
             <p class="text-muted small mb-0">
-                Riwayat audit otomatis dari trigger <code>trg_grades_ai</code>, <code>trg_grades_au</code>, dan <code>trg_grades_ad</code>.
+                Riwayat audit otomatis
             </p>
         </div>
-        <span class="badge bg-secondary">Read-Only Audit</span>
+        <span class="badge bg-secondary">Read-Only</span>
     </div>
 
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <form method="GET" action="{{ route('admin.activity-logs.index') }}" class="row g-2">
-                <div class="col-md-3">
-                    <select name="action" class="form-select">
-                        <option value="">-- Semua Aksi --</option>
-                        <option value="insert" {{ request('action') === 'insert' ? 'selected' : '' }}>Insert</option>
-                        <option value="update" {{ request('action') === 'update' ? 'selected' : '' }}>Update</option>
-                        <option value="delete" {{ request('action') === 'delete' ? 'selected' : '' }}>Delete</option>
-                    </select>
-                </div>
-                <div class="col-md-5">
-                    <input type="text" name="search" class="form-control"
-                           placeholder="Cari NIS Siswa, CST ID, Grade ID, atau DB User..."
-                           value="{{ request('search') }}">
-                </div>
-                <div class="col-md-4 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{{ route('admin.activity-logs.index') }}" class="btn btn-outline-secondary">Reset</a>
-                </div>
-            </form>
-        </div>
+   <div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ route('admin.activity-logs.index') }}" class="d-flex flex-column flex-md-row gap-2">
+            <input type="text" name="search" class="form-control flex-grow-1"
+                   placeholder="Cari NIS Siswa, NIP Guru, dsb..."
+                   value="{{ request('search') }}">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ route('admin.activity-logs.index') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
     </div>
+</div>
 
     <div class="card shadow-sm">
         <div class="table-responsive">
@@ -47,9 +37,7 @@
                         <th>Siswa (NIS)</th>
                         <th>CST ID</th>
                         <th>Tipe</th>
-                        <th>Skor Lama</th>
                         <th>Skor Baru</th>
-                        <th>Akun MySQL</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,9 +62,7 @@
                             </td>
                             <td><code>{{ $log->cst_id }}</code></td>
                             <td>{{ $log->grade_type }}</td>
-                            <td>{{ $log->old_score !== null ? number_format($log->old_score, 2) : '-' }}</td>
                             <td class="fw-bold">{{ $log->new_score !== null ? number_format($log->new_score, 2) : '-' }}</td>
-                            <td><code class="small">{{ $log->db_user }}</code></td>
                         </tr>
                     @empty
                         <tr>

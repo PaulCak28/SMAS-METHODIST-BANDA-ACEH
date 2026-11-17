@@ -19,18 +19,21 @@ class DashboardController extends Controller
             'Total Guru' => $dbStats->total_teachers,
             'Total Kelas' => $dbStats->total_classes,
             'Mata Pelajaran' => $dbStats->total_subjects,
-            'Total Ujian' => $dbStats->published_exams,
-            'Pengumuman' => $dbStats->total_announcements,
+            'Total Ujian' => $dbStats->published_exams ?? $dbStats->total_exams ?? 0,
+            'Pengumuman' => $dbStats->total_announcements ?? 0,
         ];
 
         $activeSessions = \App\Models\ExamSession::on('mysql_admin')
-            ->with('exam.classSubjectTeacher.schoolClass', 'exam.classSubjectTeacher.subject')
+            ->with([
+                'exam.classSubjectTeacher.schoolClass',
+                'exam.classSubjectTeacher.subject'
+            ])
             ->where('status', 'berlangsung')
             ->latest('started_at')
             ->take(5)
             ->get();
 
-        $sessionsRunning = $dbStats->active_sessions;
+        $sessionsRunning = $dbStats->active_sessions ?? $dbStats->sessions_running ?? 0;
 
         $pendingEssays = DB::connection('mysql_admin')->table('v_essay_pending')->count();
 
@@ -52,6 +55,16 @@ class DashboardController extends Controller
             ->orderBy('name')
             ->get();
 
+        // TAMBAHAN: Ambil data Log Aktivitas Nilai dari tabel log hasil trigger
+        // (Sesuaikan 'grade_logs' jika nama tabel di migrasi Anda berbeda, misal 'grade_audit_logs')
+        $recentGradeLogs = DB::connection('mysql_admin')
+            ->table('grade_logs as gl')
+            ->leftJoin('users as u', 'u.user_id', '=', 'gl.students_id')
+            ->select('gl.*', 'u.name as student_name')
+            ->orderByDesc('gl.changed_at')
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'sessionsRunning',
@@ -60,7 +73,8 @@ class DashboardController extends Controller
             'studentsNoClass',
             'recentAnnouncements',
             'violations',
-            'classes'
+            'classes',
+            'recentGradeLogs'
         ));
     }
 }
