@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
@@ -16,7 +17,8 @@ class AccountController extends Controller
         $search = $request->input('search');
         $role = $request->input('role');
 
-        $users = User::select('users.*')
+        $users = User::on('mysql_admin')
+            ->select('users.*')
             ->selectRaw("
                 CASE
                     WHEN users.role = 'siswa' THEN (
@@ -52,11 +54,14 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'  => 'required|string|max:18|unique:users,user_id',
+            'user_id'  => 'required|string|max:18|unique:mysql_admin.users,user_id',
             'name'     => 'required|string|max:100',
-            'email'    => 'required|email|max:255|unique:users,email',
+            'email'    => 'required|email|max:255|unique:mysql_admin.users,email',
             'role'     => 'required|in:admin,guru,siswa,orangtua',
             'password' => 'required|min:6',
+        ], [
+            'user_id.unique' => 'User ID ini sudah terdaftar.',
+            'email.unique'   => 'Email ini sudah digunakan.',
         ]);
 
         if ($request->role === 'siswa' && strlen($request->user_id) > 10) {
@@ -64,9 +69,9 @@ class AccountController extends Controller
         }
 
         try {
-            DB::beginTransaction();
+            DB::connection('mysql_admin')->beginTransaction();
 
-            User::create([
+            User::on('mysql_admin')->create([
                 'user_id'  => $request->user_id,
                 'name'     => $request->name,
                 'email'    => $request->email,
@@ -75,55 +80,58 @@ class AccountController extends Controller
             ]);
 
             if ($request->role === 'guru') {
-                DB::table('teachers')->insert([
+                DB::connection('mysql_admin')->table('teachers')->insert([
                     'nip'        => $request->user_id,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             } elseif ($request->role === 'siswa') {
-                DB::table('students')->insert([
+                DB::connection('mysql_admin')->table('students')->insert([
                     'nis' => $request->user_id,
                 ]);
             }
 
-            DB::commit();
+            DB::connection('mysql_admin')->commit();
 
             return redirect()->route('admin.accounts.index')->with('success', 'Akun berhasil ditambahkan.');
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::connection('mysql_admin')->rollBack();
 
             return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())->withInput();
         }
     }
 
     public function edit($id)
-{
-    $user = User::where('user_id', $id)->firstOrFail();
+    {
+        $user = User::on('mysql_admin')->where('user_id', $id)->firstOrFail();
 
-    $gradeSummary = $user->role === 'siswa'
-        ? DB::connection('mysql_admin')->table('cst_students as cs')
-            ->join('class_subject_teacher as cst', 'cst.cst_id', '=', 'cs.cst_id')
-            ->join('subjects as s', 's.code', '=', 'cst.subject_code')
-            ->join('classes as c', 'c.class_id', '=', 'cst.class_id')
-            ->where('cs.students_id', $user->user_id)
-            ->select('s.name as subject_name', 'c.name as class_name')
-            ->selectRaw('fn_student_average(cs.students_id, cs.cst_id) AS final_score')
-            ->get()
-        : collect();
+        $gradeSummary = $user->role === 'siswa'
+            ? DB::connection('mysql_admin')->table('cst_students as cs')
+                ->join('class_subject_teacher as cst', 'cst.cst_id', '=', 'cs.cst_id')
+                ->join('subjects as s', 's.code', '=', 'cst.subject_code')
+                ->join('classes as c', 'c.class_id', '=', 'cst.class_id')
+                ->where('cs.students_id', $user->user_id)
+                ->select('s.name as subject_name', 'c.name as class_name')
+                ->selectRaw('fn_student_average(cs.students_id, cs.cst_id) AS final_score')
+                ->get()
+            : collect();
 
-    return view('admin.accounts.edit', compact('user', 'gradeSummary'));
-}
+        return view('admin.accounts.edit', compact('user', 'gradeSummary'));
+    }
 
     public function update(Request $request, $id)
     {
-        $user = User::where('user_id', $id)->firstOrFail();
+        $user = User::on('mysql_admin')->where('user_id', $id)->firstOrFail();
 
         $request->validate([
-            'user_id'  => 'required|string|max:18|unique:users,user_id,' . $user->user_id . ',user_id',
+            'user_id'  => ['required', 'string', 'max:18', Rule::unique('mysql_admin.users', 'user_id')->ignore($user->user_id, 'user_id')],
             'name'     => 'required|string|max:100',
-            'email'    => 'required|email|max:255|unique:users,email,' . $user->user_id . ',user_id',
+            'email'    => ['required', 'email', 'max:255', Rule::unique('mysql_admin.users', 'email')->ignore($user->user_id, 'user_id')],
             'role'     => 'required|in:admin,guru,siswa,orangtua',
             'password' => 'nullable|min:6',
+        ], [
+            'user_id.unique' => 'User ID ini sudah terdaftar.',
+            'email.unique'   => 'Email ini sudah digunakan.',
         ]);
 
         if ($request->role === 'siswa' && strlen($request->user_id) > 10) {
@@ -131,7 +139,7 @@ class AccountController extends Controller
         }
 
         try {
-            DB::beginTransaction();
+            DB::connection('mysql_admin')->beginTransaction();
 
             $oldRole = $user->role;
             $oldId   = $user->user_id;
@@ -147,14 +155,13 @@ class AccountController extends Controller
 
             $user->save();
 
-            // Pastikan record relasi di teachers / students tetap sinkron jika role berubah
             if ($request->role === 'guru') {
-                DB::table('teachers')->updateOrInsert(
+                DB::connection('mysql_admin')->table('teachers')->updateOrInsert(
                     ['nip' => $user->user_id],
                     ['updated_at' => now(), 'created_at' => now()]
                 );
             } elseif ($request->role === 'siswa') {
-                DB::table('students')->updateOrInsert(
+                DB::connection('mysql_admin')->table('students')->updateOrInsert(
                     ['nis' => $user->user_id],
                     ['nis' => $user->user_id]
                 );
@@ -162,17 +169,17 @@ class AccountController extends Controller
 
             if ($oldRole !== $request->role) {
                 if ($oldRole === 'guru') {
-                    DB::table('teachers')->where('nip', $oldId)->delete();
+                    DB::connection('mysql_admin')->table('teachers')->where('nip', $oldId)->delete();
                 } elseif ($oldRole === 'siswa') {
-                    DB::table('students')->where('nis', $oldId)->delete();
+                    DB::connection('mysql_admin')->table('students')->where('nis', $oldId)->delete();
                 }
             }
 
-            DB::commit();
+            DB::connection('mysql_admin')->commit();
 
             return redirect()->route('admin.accounts.index')->with('success', 'Akun berhasil diperbarui.');
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::connection('mysql_admin')->rollBack();
 
             return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage())->withInput();
         }
@@ -180,28 +187,28 @@ class AccountController extends Controller
 
     public function destroy(string $id)
     {
-        $user = User::where('user_id', $id)->firstOrFail();
+        $user = User::on('mysql_admin')->where('user_id', $id)->firstOrFail();
 
         if ($user->user_id === Auth::id()) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         try {
-            DB::beginTransaction();
+            DB::connection('mysql_admin')->beginTransaction();
 
             if ($user->role === 'guru') {
-                DB::table('teachers')->where('nip', $user->user_id)->delete();
+                DB::connection('mysql_admin')->table('teachers')->where('nip', $user->user_id)->delete();
             } elseif ($user->role === 'siswa') {
-                DB::table('students')->where('nis', $user->user_id)->delete();
+                DB::connection('mysql_admin')->table('students')->where('nis', $user->user_id)->delete();
             }
 
             $user->delete();
 
-            DB::commit();
+            DB::connection('mysql_admin')->commit();
 
             return redirect()->route('admin.accounts.index')->with('success', 'Akun berhasil dihapus.');
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::connection('mysql_admin')->rollBack();
 
             return back()->with('error', 'Gagal menghapus akun: ' . $e->getMessage());
         }
