@@ -24,7 +24,7 @@
     $navLinks = [
         ['label' => 'Beranda', 'href' => url('/')],
         ['label' => 'Fitur', 'href' => url('/') . '#fitur'],
-        ['label' => 'Cek Nilai', 'href' => url('/') . '#cek-nilai'],
+        ['label' => 'Cek Nilai', 'href' => route('cek-nilai-ujian.index')],
         ['label' => 'Pengumuman', 'href' => url('/') . '#pengumuman'],
         ['label' => 'Kontak', 'href' => '#kontak'],
     ];

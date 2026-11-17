@@ -37,6 +37,13 @@ Route::get('/pengumuman', [AnnouncementController::class, 'index'])
 Route::get('/pengumuman/{announcement:slug}', [AnnouncementController::class, 'show'])
     ->name('announcements.show');
 
+Route::get('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examForm'])
+    ->name('cek-nilai-ujian.index');
+
+Route::post('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examResults'])
+    ->middleware('throttle:5,1')
+    ->name('cek-nilai-ujian.show');
+
 
 // =========================================================
 // ROUTE YANG MEMERLUKAN LOGIN
