@@ -156,8 +156,12 @@
                         </button>
                     </div>
 
-                    <form x-bind:action="isEdit ? editUrl : '{{ route('guru.exams.questions.store', $exam) }}'" method="POST" class="space-y-5">
-                        @csrf
+                        <form
+                            x-bind:action="isEdit ? editUrl : '{{ route('guru.exams.questions.store', $exam) }}'"
+                            method="POST"
+                            enctype="multipart/form-data"
+                            class="space-y-5"
+                        >                        @csrf
                         <template x-if="isEdit">
                             <input type="hidden" name="_method" value="PUT">
                         </template>
@@ -186,10 +190,36 @@
                             </select>
                         </div>
 
-                        <!-- Pertanyaan Soal (WYSIWYG) -->
+                        <!-- Pertanyaan Soal -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Pertanyaan Soal</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                Pertanyaan Soal
+                            </label>
+
                             <textarea name="question_text" id="editor" class="w-full rounded-xl border-slate-300 text-xs">{{ old('question_text') }}</textarea>
+                        </div>
+
+                        <!-- Upload Gambar Soal -->
+                        <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-100 space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">
+                                Gambar Soal (Opsional)
+                            </label>
+
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/jpeg,image/png,image/webp"
+                                class="block w-full text-xs text-slate-600
+                                    file:mr-3 file:py-2 file:px-4
+                                    file:rounded-lg file:border-0
+                                    file:bg-indigo-600 file:text-white
+                                    file:font-semibold hover:file:bg-indigo-700"
+                            >
+
+                            <p class="text-[11px] text-slate-500">
+                                Format JPG, PNG, atau WEBP. Maksimal 5 MB.
+                                Kosongkan jika tidak ingin mengganti gambar saat mengedit soal.
+                            </p>
                         </div>
 
                         <!-- UI Opsi Jawaban -->
@@ -389,9 +419,19 @@
                                 </div>
 
                                 <!-- Pertanyaan -->
-                                <div class="prose prose-slate max-w-none text-xs text-slate-800">
-                                    {!! $q->question_text !!}
+                            <div class="prose prose-slate max-w-none text-xs text-slate-800">
+                                {!! $q->question_text !!}
+                            </div>
+
+                            @if ($q->image_path)
+                                <div class="mt-3">
+                                    <img
+                                        src="{{ asset('storage/' . $q->image_path) }}"
+                                        alt="Gambar soal"
+                                        class="max-w-full max-h-64 rounded-xl border border-slate-200 object-contain"
+                                    >
                                 </div>
+                            @endif
                             </div>
                         @empty
                             <p class="text-center text-xs text-slate-400 py-8">Belum ada soal yang ditambahkan.</p>
