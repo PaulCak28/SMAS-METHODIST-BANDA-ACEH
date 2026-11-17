@@ -412,6 +412,33 @@
     </section>
 
     {{-- PENGUMUMAN & BERITA SEKOLAH --}}
+    @php
+        $hasDynamicAnnouncements = isset($announcements) && count($announcements) > 0;
+        $sampleAnnouncements = [
+            [
+                'category' => 'Pengumuman',
+                'date' => '28 Okt 2026',
+                'title' => 'Jadwal Penilaian Akhir Semester (PAS) Berbasis E-Exam',
+                'desc' => 'Informasi lengkap pelaksanaan PAS digital untuk seluruh tingkatan kelas X, XI, dan XII SMAS Methodist.',
+                'gradient' => 'from-navy via-[#1f4068] to-softblue',
+            ],
+            [
+                'category' => 'Berita',
+                'date' => '27 Okt 2026',
+                'title' => 'Prestasi Gemilang Siswa SMAS Methodist di Tingkat Provinsi',
+                'desc' => 'Apresiasi kepada siswa yang berhasil menorehkan prestasi membanggakan pada ajang kompetisi sains tahun ini.',
+                'gradient' => 'from-softblue via-sky-600 to-navy',
+            ],
+            [
+                'category' => 'Akademik',
+                'date' => '25 Okt 2026',
+                'title' => 'Sosialisasi E-Learning & Pembagian Akun Siswa Baru',
+                'desc' => 'Panduan pengenalan sistem pembelajaran daring terpadu bagi siswa dan wali murid SMAS Methodist Banda Aceh.',
+                'gradient' => 'from-slate-800 via-navy to-softblue',
+            ],
+        ];
+    @endphp
+
     <section id="pengumuman" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         
         <div class="flex flex-col justify-between gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-end">
@@ -427,7 +454,7 @@
                 </p>
             </div>
 
-            <a href="{{ route('announcements.index') }}" 
+            <a href="{{ Route::has('announcements.index') ? route('announcements.index') : '#pengumuman' }}" 
                class="group inline-flex items-center gap-1.5 text-sm font-bold text-navy transition hover:text-softblue">
                 <span>Lihat Semua Kabar</span>
                 <span class="transition group-hover:translate-x-1">&rarr;</span>
@@ -435,20 +462,67 @@
         </div>
 
         <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            @forelse ($announcements as $announcement)
-                @include('partials.announcement-card', ['announcement' => $announcement])
-            @empty
-                {{-- Tampilan Kosong yang Bersih --}}
-                <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-navy">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-4 font-serif text-lg font-bold text-navy">Belum Ada Pengumuman Terbit</h3>
-                    <p class="mt-1 text-xs text-slate-500">Pengumuman dan berita terbaru sekolah akan muncul di sini.</p>
-                </div>
-            @endforelse
+            @if ($hasDynamicAnnouncements)
+                @foreach ($announcements as $announcement)
+                    <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        @if (!empty($announcement->image_url))
+                            <img src="{{ $announcement->image_url }}" alt="{{ $announcement->title }}" class="h-44 w-full object-cover">
+                        @else
+                            <div class="flex h-44 items-center justify-center bg-gradient-to-br from-navy via-slate-800 to-softblue p-4 text-center">
+                                <span class="text-xs font-bold tracking-widest text-white/80 uppercase">SMAS Methodist Banda Aceh</span>
+                            </div>
+                        @endif
+                        <div class="flex flex-1 flex-col p-6">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="rounded-full bg-blue-50 px-3 py-1 font-semibold text-navy">{{ $announcement->category_label ?? 'Pengumuman' }}</span>
+                                <time class="text-slate-400">{{ optional($announcement->published_at)->translatedFormat('d M Y') ?? date('d M Y') }}</time>
+                            </div>
+                            <h3 class="mt-3 font-serif text-lg font-bold text-navy group-hover:text-softblue">
+                                {{ $announcement->title }}
+                            </h3>
+                            <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-600">
+                                {{ $announcement->excerpt ?? '' }}
+                            </p>
+                            <div class="mt-auto pt-4">
+                                @if (Route::has('announcements.show'))
+                                    <a href="{{ route('announcements.show', $announcement->slug) }}" class="inline-flex items-center gap-1 text-xs font-bold text-navy hover:text-softblue">
+                                        Baca selengkapnya &rarr;
+                                    </a>
+                                @else
+                                    <span class="inline-flex items-center gap-1 text-xs font-bold text-navy">
+                                        Baca selengkapnya &rarr;
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            @else
+                @foreach ($sampleAnnouncements as $item)
+                    <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <div class="h-44 bg-gradient-to-br {{ $item['gradient'] }} relative p-5 flex flex-col justify-end">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-white/75">Warta Sekolah</span>
+                        </div>
+                        <div class="flex flex-1 flex-col p-6">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="rounded-full bg-blue-50 px-3 py-1 font-semibold text-navy">{{ $item['category'] }}</span>
+                                <time class="text-slate-400">{{ $item['date'] }}</time>
+                            </div>
+                            <h3 class="mt-3 font-serif text-lg font-bold text-navy group-hover:text-softblue">
+                                {{ $item['title'] }}
+                            </h3>
+                            <p class="mt-2 text-xs leading-relaxed text-slate-600">
+                                {{ $item['desc'] }}
+                            </p>
+                            <div class="mt-auto pt-4">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold text-navy group-hover:text-softblue">
+                                    Baca selengkapnya &rarr;
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            @endif
         </div>
     </section>
 
