@@ -133,7 +133,8 @@
                         @forelse($exam->questions as $index => $q)
                             @php
                                 $ans = $answers->get($q->exam_question_id);
-                                $answerValue = $ans && is_array($ans->answer) ? reset($ans->answer) : ($ans->answer ?? null);
+                                $answer = $ans?->answer;
+                                $answerValue = is_array($answer) ? (array_values($answer)[0] ?? null) : $answer;
                                 $displayAnswer = $answerValue;
                                 if ($q->question_type === 'pilihan_ganda' && $answerValue !== null) {
                                     $optionValues = (array) $q->options;
@@ -176,7 +177,7 @@
                                             </span>
                                             <input type="number" step="0.01" min="0" max="{{ $q->score_weight }}"
                                                    name="scores[{{ $q->exam_question_id }}]" 
-                                                   value="{{ $ans->score ?? 0 }}"
+                                                   value="{{ old('scores.'.$q->exam_question_id, $ans?->score ?? 0) }}"
                                                    class="w-24 rounded-lg border-amber-300 py-1 text-xs font-bold text-center focus:ring-amber-500 focus:border-amber-500 bg-white shadow-sm">
                                         </div>
                                     @endif
