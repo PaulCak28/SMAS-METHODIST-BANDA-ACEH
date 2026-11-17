@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
+use App\Http\Controllers\Admin\GradeLogController;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ClassEnrollmentController;
@@ -367,6 +368,15 @@ Route::middleware('auth')->group(function () {
             ->name('destroy');
     });
 
+    //grade logs
+    Route::prefix('admin/activity-logs')
+    ->name('admin.activity-logs.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
+        Route::get('/', [GradeLogController::class, 'index'])->name('index');
+    });
+
+    //announcements
 Route::prefix('admin/announcements')
         ->name('admin.announcements.')
         ->middleware(['auth', 'role:admin'])
