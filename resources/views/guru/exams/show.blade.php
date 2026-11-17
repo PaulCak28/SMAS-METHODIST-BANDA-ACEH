@@ -1,7 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
                 <h2 class="font-bold text-xl text-slate-800 leading-tight">
                     Kelola Soal: {{ $exam->title }}
                 </h2>
@@ -9,8 +10,8 @@
                     {{ $exam->classSubjectTeacher?->schoolClass?->name }} — {{ $exam->classSubjectTeacher?->subject?->name }}
                 </p>
             </div>
-            <a href="{{ route('guru.exams.index') }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">
-                &larr; Kembali ke Daftar
+            <a href="{{ route('guru.exams.index') }}" class="inline-flex items-center gap-2 rounded-full border border-[#E7EDF2] bg-white px-4 py-2 text-sm font-semibold text-[#123B60] shadow-sm transition hover:border-[#267BB5] hover:bg-[#E8F1F8]">
+                <span aria-hidden="true">&larr;</span> Kembali ke Daftar
             </a>
         </div>
     </x-slot>
@@ -38,7 +39,7 @@
         }
     </style>
 
-    <div class="py-8" 
+    <div class="min-h-screen bg-[#FAF9F6] py-8"
          x-data="{
             isEdit: false,
             editUrl: '',
@@ -181,7 +182,7 @@
                         <!-- Tipe Soal (Bobot Dihapus) -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Soal</label>
-                            <select name="question_type" x-model="type" required class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs">
+                            <select name="question_type" x-model="type" required class="w-full rounded-xl border-slate-300 shadow-sm focus:border-[#267BB5] focus:ring-[#267BB5] text-xs">
                                 <option value="pilihan_ganda">Pilihan Ganda Biasa</option>
                                 <option value="pilihan_ganda_kompleks">Pilihan Ganda Kompleks</option>
                                 <option value="benar_salah">Benar / Salah</option>
@@ -200,7 +201,7 @@
                         </div>
 
                         <!-- Upload Gambar Soal -->
-                        <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-100 space-y-2">
+                        <div class="p-4 rounded-xl bg-[#E8F1F8] border border-[#D9EAF5] space-y-2">
                             <label class="block text-xs font-bold text-slate-700">
                                 Gambar Soal (Opsional)
                             </label>
@@ -212,8 +213,8 @@
                                 class="block w-full text-xs text-slate-600
                                     file:mr-3 file:py-2 file:px-4
                                     file:rounded-lg file:border-0
-                                    file:bg-indigo-600 file:text-white
-                                    file:font-semibold hover:file:bg-indigo-700"
+                                    file:bg-[#123B60] file:text-white
+                                    file:font-semibold hover:file:bg-[#0B2B48]"
                             >
 
                             <p class="text-[11px] text-slate-500">
@@ -229,7 +230,7 @@
                             <div x-show="type === 'pilihan_ganda'" class="space-y-3">
                                 <div class="flex items-center justify-between">
                                     <label class="text-xs font-bold text-slate-700">Pilihan Jawaban</label>
-                                    <button type="button" @click="addOption()" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100">
+                                    <button type="button" @click="addOption()" class="text-[11px] font-semibold text-[#123B60] bg-[#E8F1F8] px-2.5 py-1 rounded-lg hover:bg-[#D9EAF5]">
                                         + Tambah Opsi
                                     </button>
                                 </div>
@@ -239,7 +240,7 @@
                                             <!-- Kata required diganti pakai logika :required -->
                                             <input type="text" x-model="options[index]" placeholder="Isi jawaban..." :required="type === 'pilihan_ganda'" class="w-full rounded-lg border-slate-300 text-xs">
                                             <label class="flex items-center gap-1 cursor-pointer text-[11px] font-semibold text-slate-700 flex-none">
-                                                <input type="radio" name="radio_single_key" :value="index + 1" x-model.number="singleKey" class="text-indigo-600 focus:ring-indigo-500">
+                                                <input type="radio" name="radio_single_key" :value="index + 1" x-model.number="singleKey" class="text-[#123B60] focus:ring-[#267BB5]">
                                                 <span>Kunci</span>
                                             </label>
                                             <button type="button" @click="removeOption(index)" x-show="options.length > 2" class="text-rose-500 text-xs font-bold px-1">&times;</button>
@@ -252,7 +253,7 @@
                             <div x-show="type === 'pilihan_ganda_kompleks'" class="space-y-3" x-cloak>
                                 <div class="flex items-center justify-between">
                                     <label class="text-xs font-bold text-slate-700">Pilihan Jawaban (Multi Kunci)</label>
-                                    <button type="button" @click="addOption()" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100">
+                                    <button type="button" @click="addOption()" class="text-[11px] font-semibold text-[#123B60] bg-[#E8F1F8] px-2.5 py-1 rounded-lg hover:bg-[#D9EAF5]">
                                         + Tambah Opsi
                                     </button>
                                 </div>
@@ -261,7 +262,7 @@
                                         <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-slate-200">
                                             <input type="text" x-model="options[index]" placeholder="Isi jawaban..." class="w-full rounded-lg border-slate-300 text-xs">
                                             <label class="flex items-center gap-1 cursor-pointer text-[11px] font-semibold text-slate-700 flex-none">
-                                                <input type="checkbox" :value="index + 1" x-model.number="multiKeys" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                                <input type="checkbox" :value="index + 1" x-model.number="multiKeys" class="rounded text-[#123B60] focus:ring-[#267BB5]">
                                                 <span>Kunci</span>
                                             </label>
                                             <button type="button" @click="removeOption(index)" x-show="options.length > 2" class="text-rose-500 text-xs font-bold px-1">&times;</button>
@@ -274,7 +275,7 @@
                             <div x-show="type === 'benar_salah'" class="space-y-3" x-cloak>
                                 <div class="flex items-center justify-between">
                                     <label class="text-xs font-bold text-slate-700">Daftar Pernyataan</label>
-                                    <button type="button" @click="addBs()" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100">
+                                    <button type="button" @click="addBs()" class="text-[11px] font-semibold text-[#123B60] bg-[#E8F1F8] px-2.5 py-1 rounded-lg hover:bg-[#D9EAF5]">
                                         + Tambah Pernyataan
                                     </button>
                                 </div>
@@ -297,7 +298,7 @@
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between">
                                         <label class="text-[11px] font-bold text-slate-600 uppercase">Target Kanan</label>
-                                        <button type="button" @click="addMatchRight()" class="text-[11px] font-semibold text-indigo-600">+ Tambah</button>
+                                        <button type="button" @click="addMatchRight()" class="text-[11px] font-semibold text-[#123B60]">+ Tambah</button>
                                     </div>
                                     <template x-for="(rText, rIdx) in matchRight" :key="rIdx">
                                         <div class="flex items-center gap-2">
@@ -310,7 +311,7 @@
                                 <div class="space-y-2 pt-2 border-t border-slate-200">
                                     <div class="flex items-center justify-between">
                                         <label class="text-[11px] font-bold text-slate-600 uppercase">Premis Kiri</label>
-                                        <button type="button" @click="addMatchLeft()" class="text-[11px] font-semibold text-indigo-600">+ Tambah</button>
+                                        <button type="button" @click="addMatchLeft()" class="text-[11px] font-semibold text-[#123B60]">+ Tambah</button>
                                     </div>
                                     <template x-for="(lItem, lIdx) in matchLeft" :key="lIdx">
                                         <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200">
@@ -334,7 +335,7 @@
                         </div>
 
                         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500">
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-[#123B60] text-xs font-semibold text-white shadow-sm hover:bg-[#267BB5]">
                                 <span x-text="isEdit ? 'Simpan Perubahan Soal' : 'Simpan Soal Baru'"></span>
                             </button>
                         </div>
@@ -370,7 +371,7 @@
                                 </span>
                             @else
                                 @if($objectiveCount > 0)
-                                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-xl">
+                                    <span class="text-xs font-bold text-[#123B60] bg-[#E8F1F8] px-3 py-1 rounded-xl">
                                         {{ $objectivePoints }} Poin Objektif
                                     </span>
                                 @endif
@@ -390,7 +391,7 @@
                             <div class="p-4 border border-slate-200 rounded-xl space-y-3 bg-slate-50/50">
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-1.5 flex-wrap">
-                                        <span class="inline-flex items-center justify-center rounded-md bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">
+                                        <span class="inline-flex items-center justify-center rounded-md bg-[#D9EAF5] px-2 py-0.5 text-xs font-bold text-[#0B2B48]">
                                             #{{ $index + 1 }}
                                         </span>
                                         <span class="inline-flex items-center rounded-md bg-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
@@ -404,7 +405,7 @@
                                     <div class="flex items-center gap-1.5">
                                         <button type="button" 
                                                 @click='loadEditData(@json($q), "{{ route("guru.exams.questions.update", [$exam, $q]) }}")'
-                                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 rounded-lg">
+                                                class="text-xs font-semibold text-[#123B60] hover:text-[#123B60] bg-[#E8F1F8] px-2 py-1 rounded-lg">
                                             Edit
                                         </button>
 

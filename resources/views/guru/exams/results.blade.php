@@ -1,7 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
                 <h2 class="font-bold text-xl text-slate-800 leading-tight">
                     Hasil Ujian: {{ $exam->title }}
                 </h2>
@@ -9,13 +10,13 @@
                     {{ $exam->classSubjectTeacher?->schoolClass?->name }} — {{ $exam->classSubjectTeacher?->subject?->name }}
                 </p>
             </div>
-            <a href="{{ route('guru.exams.index') }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">
-                &larr; Kembali ke Daftar
+            <a href="{{ route('guru.exams.index') }}" class="inline-flex items-center gap-2 rounded-full border border-[#E7EDF2] bg-white px-4 py-2 text-sm font-semibold text-[#123B60] shadow-sm transition hover:border-[#267BB5] hover:bg-[#E8F1F8]">
+                <span aria-hidden="true">&larr;</span> Kembali ke Daftar
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
+    <div class="min-h-screen bg-[#FAF9F6] py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
 
             {{-- RINGKASAN STATISTIK UJIAN (Dari View v_exam_statistics) --}}
@@ -36,7 +37,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
                         <div class="text-xs font-semibold text-slate-500">Rata-rata Nilai</div>
-                        <div class="text-2xl font-bold text-indigo-600 mt-1">{{ $examStats->avg_score ?? '0.00' }}</div>
+                        <div class="text-2xl font-bold text-[#123B60] mt-1">{{ $examStats->avg_score ?? '0.00' }}</div>
                     </div>
                     <div class="bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-200">
                         <div class="text-xs font-semibold text-slate-500">Nilai Tertinggi / Terendah</div>
@@ -60,7 +61,7 @@
             <div class="bg-white p-6 shadow-sm ring-1 ring-slate-200 rounded-2xl">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-slate-800">Daftar Nilai Siswa</h3>
-                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl">
+                    <span class="text-xs font-bold text-[#123B60] bg-[#E8F1F8] px-3 py-1.5 rounded-xl">
                         Total Peserta: {{ $sessions->count() }} Siswa
                     </span>
                 </div>
@@ -143,7 +144,7 @@
 
                                     <!-- NILAI AKHIR & STATUS REMEDIAL -->
                                     <td class="px-4 py-3 text-center">
-                                        <div class="font-bold text-lg {{ $finalScore >= $exam->pass_score ? 'text-indigo-600' : 'text-rose-600' }}">
+                                        <div class="font-bold text-lg {{ $finalScore >= $exam->pass_score ? 'text-[#123B60]' : 'text-rose-600' }}">
                                             {{ number_format($finalScore, 2) }}
                                         </div>
                                         
@@ -166,7 +167,7 @@
 
                                     <!-- AKSI -->
                                     <td class="px-4 py-3 text-center">
-                                        <a href="{{ route('guru.exams.session', $session->exam_session_id) }}" class="text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-lg transition-colors inline-block">
+                                        <a href="{{ route('guru.exams.session', $session->exam_session_id) }}" class="text-[11px] font-bold text-white bg-[#123B60] hover:bg-[#0B2B48] px-3 py-2 rounded-lg transition-colors inline-block">
                                             Cek Detail Jawaban
                                         </a>
                                     </td>
