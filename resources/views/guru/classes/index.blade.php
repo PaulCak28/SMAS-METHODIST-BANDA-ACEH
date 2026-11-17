@@ -1,143 +1,986 @@
 
 <x-app-layout>
+
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 leading-tight">
-            E-Class Guru
-        </h2>
-    </x-slot>
-
-    <div class="min-h-screen bg-slate-50 py-8">
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-
-            {{-- HERO SECTION --}}
-            <div class="overflow-hidden rounded-3xl bg-gradient-to-r from-sky-600 to-blue-500 p-7 text-white shadow-lg">
-                <p class="text-sm font-medium text-sky-100">
-                    Ruang belajar digital
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-blue-600">
+                    Methodist Learning Space
                 </p>
-
-                <h1 class="mt-1 text-3xl font-bold">
-                    Kelas yang Saya Ajar
-                </h1>
-
-                <p class="mt-2 text-sm text-sky-100">
-                    Kelola siswa, materi pembelajaran, tugas, dan aktivitas kelas dalam satu tempat.
-                </p>
-
-                <div class="mt-5 inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold">
-                    <span>📚</span>
-                    {{ $classes->count() }} kelas aktif
-                </div>
+                <h2 class="text-xl font-bold text-slate-800">
+                    E-Class Guru
+                </h2>
             </div>
 
-            {{-- DAFTAR KELAS --}}
-            @if ($classes->isEmpty())
+            <span class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                Teacher Workspace
+            </span>
+        </div>
+    </x-slot>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-                    <div class="text-5xl">📚</div>
+    @php
+        $subjectThemes = [
+            'matematika' => [
+                'symbol' => '∑',
+                'category' => 'MATHEMATICS',
+                'description' => 'Discover the beauty of numbers',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
+            ],
+            'bahasa indonesia' => [
+                'symbol' => 'Aa',
+                'category' => 'LANGUAGE & LITERATURE',
+                'description' => 'The art of words and expression',
+                'background' => 'linear-gradient(135deg,#8F344A,#D97786)',
+                'light' => '#FBECEF',
+                'accent' => '#A63D55',
+            ],
+            'bahasa inggris' => [
+                'symbol' => 'Ab',
+                'category' => 'ENGLISH LANGUAGE',
+                'description' => 'Connect with the world',
+                'background' => 'linear-gradient(135deg,#373B8D,#777CE0)',
+                'light' => '#EEEEFF',
+                'accent' => '#5559B7',
+            ],
+            'biologi' => [
+                'symbol' => '✿',
+                'category' => 'BIOLOGY',
+                'description' => 'Explore the wonders of life',
+                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
+                'light' => '#E7F5EE',
+                'accent' => '#26835F',
+            ],
+            'fisika' => [
+                'symbol' => '⚛',
+                'category' => 'PHYSICS',
+                'description' => 'Explore the laws of the universe',
+                'background' => 'linear-gradient(135deg,#513B8B,#9A82DC)',
+                'light' => '#F0ECFA',
+                'accent' => '#7255B2',
+            ],
+            'kimia' => [
+                'symbol' => '⚗',
+                'category' => 'CHEMISTRY',
+                'description' => 'Discover matter and reactions',
+                'background' => 'linear-gradient(135deg,#98551A,#E5A64D)',
+                'light' => '#FBF1E2',
+                'accent' => '#B77927',
+            ],
+            'sejarah' => [
+                'symbol' => '◷',
+                'category' => 'HISTORY',
+                'description' => 'Understand stories of the past',
+                'background' => 'linear-gradient(135deg,#854522,#D88D5A)',
+                'light' => '#F8EDE5',
+                'accent' => '#A65C30',
+            ],
+            'informatika' => [
+                'symbol' => '</>',
+                'category' => 'INFORMATICS',
+                'description' => 'Shape the digital future',
+                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
+                'light' => '#E5F5F8',
+                'accent' => '#16839C',
+            ],
+            'agama' => [
+                'symbol' => '✧',
+                'category' => 'RELIGIOUS EDUCATION',
+                'description' => 'Knowledge, faith and character',
+                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
+                'light' => '#F6EFE4',
+                'accent' => '#987342',
+            ],
+            'ekonomi' => [
+                'symbol' => '↗',
+                'category' => 'ECONOMICS',
+                'description' => 'Understand the world of economics',
+                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
+                'light' => '#E5F4F3',
+                'accent' => '#23858B',
+            ],
+        ];
 
-                    <h3 class="mt-3 text-lg font-bold text-slate-800">
-                        Belum Ada Kelas
-                    </h3>
+        $defaultTheme = [
+            'symbol' => '▤',
+            'category' => 'ACADEMIC CLASS',
+            'description' => 'A space to learn and grow',
+            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
+            'light' => '#E8F1F8',
+            'accent' => '#267BB5',
+        ];
 
-                    <p class="mt-1 text-sm text-slate-500">
-                        Kelas yang ditugaskan kepada Anda akan muncul di sini.
+        $totalClasses = $classes->count();
+        $totalStudents = $classes->sum('joined_students_count');
+        $totalMaterials = $classes->sum('materials_count');
+        $totalAssignments = $classes->sum('assignments_count');
+    @endphp
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap');
+
+        .eclass-page {
+            --navy: #123B60;
+            --blue: #267BB5;
+            --ivory: #FAF9F6;
+            --border: #E6ECF1;
+
+            min-height: 100vh;
+            padding: 34px 0 65px;
+            background: var(--ivory);
+            color: #263747;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .eclass-page * {
+            box-sizing: border-box;
+        }
+
+        .eclass-wrap {
+            width: min(1440px, 100%);
+            margin: auto;
+            padding: 0 28px;
+        }
+
+        .eclass-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* HERO */
+
+        .eclass-hero {
+            position: relative;
+            isolation: isolate;
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            align-items: center;
+            gap: 30px;
+            min-height: 350px;
+            overflow: hidden;
+            padding: 43px 48px;
+            border: 1px solid #DFE9F0;
+            border-radius: 30px;
+            background: linear-gradient(115deg,#FAFAF8,#E7F0F7);
+            box-shadow: 0 15px 45px rgba(18,59,96,.05);
+        }
+
+        .eclass-hero::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 350px;
+            height: 350px;
+            top: -180px;
+            right: -80px;
+            border: 1px solid rgba(38,123,181,.18);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(38,123,181,.035),
+                0 0 0 65px rgba(38,123,181,.025);
+        }
+
+        .eclass-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid #D2E3EF;
+            border-radius: 50px;
+            background: #E8F1F8;
+            color: #185B87;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .15em;
+        }
+
+        .eclass-hero h1 {
+            margin-top: 20px;
+            color: var(--navy);
+            font-family: 'Playfair Display',serif;
+            font-size: clamp(38px,5vw,59px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.8px;
+        }
+
+        .eclass-hero h1 span {
+            color: var(--blue);
+        }
+
+        .eclass-hero p.description {
+            max-width: 550px;
+            margin-top: 17px;
+            color: #66798A;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .eclass-hero-visual {
+            position: relative;
+            display: flex;
+            min-height: 250px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eclass-hero-art {
+            position: relative;
+            display: flex;
+            width: 100%;
+            min-height: 240px;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            padding: 30px;
+            border-radius: 25px;
+            background: linear-gradient(140deg,#123B60,#267BB5);
+            box-shadow: 0 20px 40px rgba(18,59,96,.18);
+            color: white;
+        }
+
+        .eclass-hero-art::after {
+            content: "M";
+            position: absolute;
+            right: 12px;
+            bottom: -75px;
+            color: rgba(255,255,255,.10);
+            font-family: 'Playfair Display',serif;
+            font-size: 270px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .eclass-hero-art > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .eclass-hero-art .art-symbol {
+            font-family: 'Playfair Display',serif;
+            font-size: 78px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* SUMMARY */
+
+        .eclass-summary {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .eclass-summary-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 21px;
+            border: 1px solid var(--border);
+            border-radius: 19px;
+            background: #fff;
+            box-shadow: 0 7px 22px rgba(18,59,96,.035);
+            transition: .25s ease;
+        }
+
+        .eclass-summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(18,59,96,.07);
+        }
+
+        .summary-icon {
+            display: grid;
+            width: 47px;
+            height: 47px;
+            flex-shrink: 0;
+            place-items: center;
+            border-radius: 15px;
+            background: #E8F1F8;
+            color: #267BB5;
+            font-size: 21px;
+        }
+
+        .summary-number {
+            color: #123B60;
+            font-family: 'Playfair Display',serif;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .summary-label {
+            margin-top: 2px;
+            color: #8593A0;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* SECTION */
+
+        .eclass-section {
+            margin-top: 54px;
+        }
+
+        .eclass-section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .eclass-section-label {
+            color: #267BB5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+        }
+
+        .eclass-section-title {
+            margin-top: 6px;
+            color: #123B60;
+            font-family: 'Playfair Display',serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .eclass-section-description {
+            margin-top: 5px;
+            color: #81909E;
+            font-size: 12px;
+        }
+
+        .eclass-count {
+            flex-shrink: 0;
+            padding: 9px 15px;
+            border: 1px solid #D8E6EF;
+            border-radius: 50px;
+            background: #EAF2F8;
+            color: #185B87;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* CLASS GRID */
+
+        .eclass-grid {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 21px;
+        }
+
+        .eclass-card {
+            display: block;
+            overflow: hidden;
+            border: 1px solid #E5EBF0;
+            border-radius: 22px;
+            background: #fff;
+            color: inherit;
+            text-decoration: none;
+            box-shadow: 0 7px 25px rgba(18,59,96,.035);
+            transition: .3s ease;
+        }
+
+        .eclass-card:hover {
+            transform: translateY(-6px);
+            border-color: #BBD7E9;
+            box-shadow: 0 18px 38px rgba(18,59,96,.10);
+        }
+
+        .eclass-card-cover {
+            position: relative;
+            display: flex;
+            min-height: 175px;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 24px;
+            color: white;
+        }
+
+        .eclass-card-cover::before {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            top: -110px;
+            right: -40px;
+            border: 1px solid rgba(255,255,255,.24);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 25px rgba(255,255,255,.06),
+                0 0 0 55px rgba(255,255,255,.035);
+        }
+
+        .eclass-card-cover::after {
+            content: "";
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            bottom: -75px;
+            left: 30%;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 50%;
+        }
+
+        .eclass-cover-content {
+            position: relative;
+            z-index: 1;
+            max-width: 75%;
+        }
+
+        .eclass-cover-category {
+            color: rgba(255,255,255,.78);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .15em;
+        }
+
+        .eclass-cover-name {
+            margin-top: 10px;
+            font-family: 'Playfair Display',serif;
+            font-size: 23px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .eclass-cover-description {
+            margin-top: 8px;
+            color: rgba(255,255,255,.83);
+            font-size: 10px;
+        }
+
+        .eclass-cover-symbol {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            width: 69px;
+            height: 69px;
+            flex-shrink: 0;
+            place-items: center;
+            border: 1px solid rgba(255,255,255,.36);
+            border-radius: 21px;
+            background: rgba(255,255,255,.17);
+            color: white;
+            font-family: 'Playfair Display',serif;
+            font-size: 29px;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+
+        .eclass-card-body {
+            padding: 22px;
+        }
+
+        .eclass-class-label {
+            color: #99A4AE;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .13em;
+        }
+
+        .eclass-class-name {
+            margin-top: 6px;
+            color: #183B59;
+            font-family: 'Playfair Display',serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .eclass-class-meta {
+            margin-top: 5px;
+            color: #8794A0;
+            font-size: 11px;
+        }
+
+        .eclass-card-stats {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 9px;
+            margin-top: 21px;
+        }
+
+        .eclass-card-stat {
+            padding: 13px 7px;
+            border-radius: 13px;
+            background: #F5F8FA;
+            text-align: center;
+        }
+
+        .eclass-card-stat strong {
+            display: block;
+            color: #123B60;
+            font-family: 'Playfair Display',serif;
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .eclass-card-stat span {
+            display: block;
+            margin-top: 3px;
+            color: #84919E;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .eclass-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 19px;
+            padding-top: 15px;
+            border-top: 1px solid #EDF1F4;
+        }
+
+        .eclass-year {
+            color: #8794A0;
+            font-size: 10px;
+        }
+
+        .eclass-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #176A9E;
+            font-size: 11px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .eclass-card:hover .eclass-open {
+            gap: 11px;
+            color: #123B60;
+        }
+
+        /* EMPTY STATE */
+
+        .eclass-empty {
+            padding: 65px 20px;
+            border: 1px dashed #C9DCE9;
+            border-radius: 24px;
+            background: white;
+            text-align: center;
+        }
+
+        .eclass-empty-icon {
+            display: grid;
+            width: 75px;
+            height: 75px;
+            margin: auto;
+            place-items: center;
+            border-radius: 24px;
+            background: #E8F1F8;
+            color: #267BB5;
+            font-size: 33px;
+        }
+
+        .eclass-empty h3 {
+            margin-top: 20px;
+            color: #123B60;
+            font-family: 'Playfair Display',serif;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .eclass-empty p {
+            max-width: 390px;
+            margin: 10px auto 0;
+            color: #82909D;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .eclass-footer {
+            margin-top: 60px;
+            padding-top: 22px;
+            border-top: 1px solid #E5EAEF;
+            color: #9AA5AE;
+            font-size: 10px;
+            text-align: center;
+            letter-spacing: .07em;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1050px) {
+            .eclass-grid {
+                grid-template-columns: repeat(2,minmax(0,1fr));
+            }
+
+            .eclass-hero {
+                padding: 35px;
+            }
+        }
+
+        @media(max-width: 760px) {
+            .eclass-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .eclass-hero-visual {
+                min-height: 210px;
+            }
+
+            .eclass-hero-art {
+                min-height: 210px;
+            }
+
+            .eclass-summary {
+                grid-template-columns: repeat(3,minmax(0,1fr));
+                gap: 10px;
+            }
+
+            .eclass-summary-card {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+        }
+
+        @media(max-width: 560px) {
+            .eclass-page {
+                padding: 22px 0 45px;
+            }
+
+            .eclass-wrap {
+                padding: 0 15px;
+            }
+
+            .eclass-hero {
+                padding: 26px 21px;
+                border-radius: 23px;
+            }
+
+            .eclass-hero h1 {
+                font-size: 39px;
+            }
+
+            .eclass-hero p.description {
+                font-size: 12px;
+            }
+
+            .eclass-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .eclass-summary-card {
+                flex-direction: row;
+                align-items: center;
+                padding: 14px 17px;
+            }
+
+            .eclass-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .eclass-section {
+                margin-top: 42px;
+            }
+
+            .eclass-section-title {
+                font-size: 24px;
+            }
+
+            .eclass-section-heading {
+                align-items: flex-start;
+            }
+
+            .eclass-card-cover {
+                min-height: 155px;
+            }
+        }
+
+        @media(prefers-reduced-motion: reduce) {
+            .eclass-card,
+            .eclass-summary-card {
+                transition: none;
+            }
+        }
+    </style>
+
+    <main class="eclass-page">
+        <div class="eclass-wrap">
+
+            {{-- HERO SECTION --}}
+
+            <section class="eclass-hero">
+
+                <div>
+                    <span class="eclass-eyebrow">
+                        ✦ TEACHER LEARNING SPACE
+                    </span>
+
+                    <h1>
+                        Every Class,<br>
+                        <span>A New Possibility.</span>
+                    </h1>
+
+                    <p class="description">
+                        Selamat datang di ruang pembelajaran digital Anda.
+                        Kelola materi, tugas, siswa, dan aktivitas akademik
+                        dengan pengalaman mengajar yang lebih terorganisasi.
                     </p>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-3">
+
+                        <span class="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 text-xs font-bold text-blue-900">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                            {{ $totalClasses }} Active Classes
+                        </span>
+
+                        <span class="text-xs text-slate-500">
+                            Teaching with purpose and passion.
+                        </span>
+
+                    </div>
                 </div>
 
-            @else
+                <div class="eclass-hero-visual">
 
-                <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    <div class="eclass-hero-art">
 
-                    @foreach ($classes as $class)
+                        <p class="text-[10px] font-bold tracking-[.2em] text-sky-100">
+                            METHODIST LEARNING SPACE
+                        </p>
 
-                        <a href="{{ route('guru.classes.show', $class->cst_id) }}"
-                           class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                        <div class="art-symbol">M.</div>
 
-                            {{-- HEADER KARTU --}}
-                            <div class="border-b border-sky-100 bg-gradient-to-r from-sky-50 to-blue-50 p-5">
+                        <h2 class="eclass-serif mt-3 text-2xl font-bold">
+                            Learn. Grow. Achieve.
+                        </h2>
 
-                                <div class="flex items-start justify-between gap-3">
+                        <p class="mt-2 text-xs text-sky-100">
+                            Inspiring excellence through education.
+                        </p>
 
-                                    <div>
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-sky-600">
-                                            Mata Pelajaran
-                                        </span>
+                    </div>
 
-                                        <h3 class="mt-1 text-xl font-bold text-slate-800 transition group-hover:text-sky-700">
-                                            {{ $class->subject->name ?? $class->subject_code }}
+                </div>
+
+            </section>
+
+            {{-- SUMMARY CARDS --}}
+
+            <section class="eclass-summary">
+
+                <article class="eclass-summary-card">
+                    <div class="summary-icon">▤</div>
+                    <div>
+                        <p class="summary-number">{{ $totalClasses }}</p>
+                        <p class="summary-label">Total Classes</p>
+                    </div>
+                </article>
+
+                <article class="eclass-summary-card">
+                    <div class="summary-icon">♙</div>
+                    <div>
+                        <p class="summary-number">{{ $totalStudents }}</p>
+                        <p class="summary-label">Enrolled Students</p>
+                    </div>
+                </article>
+
+                <article class="eclass-summary-card">
+                    <div class="summary-icon">▧</div>
+                    <div>
+                        <p class="summary-number">{{ $totalMaterials }}</p>
+                        <p class="summary-label">Learning Materials</p>
+                    </div>
+                </article>
+
+            </section>
+
+            {{-- CLASS LIST --}}
+
+            <section class="eclass-section">
+
+                <div class="eclass-section-heading">
+
+                    <div>
+                        <p class="eclass-section-label">
+                            Your Teaching Space
+                        </p>
+
+                        <h2 class="eclass-section-title">
+                            Classes You Teach
+                        </h2>
+
+                        <p class="eclass-section-description">
+                            Pilih kelas untuk mengelola kegiatan pembelajaran.
+                        </p>
+                    </div>
+
+                    <span class="eclass-count">
+                        {{ $totalClasses }} Classes
+                    </span>
+
+                </div>
+
+                @if ($classes->isEmpty())
+
+                    <div class="eclass-empty">
+
+                        <div class="eclass-empty-icon">
+                            ▤
+                        </div>
+
+                        <h3>
+                            Your Classroom Awaits
+                        </h3>
+
+                        <p>
+                            Saat ini belum ada kelas yang ditugaskan kepada Anda.
+                            Kelas yang nantinya Anda ampu akan muncul di halaman ini.
+                        </p>
+
+                    </div>
+
+                @else
+
+                    <div class="eclass-grid">
+
+                        @foreach ($classes as $class)
+
+                            @php
+                                $subjectName = $class->subject->name
+                                    ?? $class->subject_code
+                                    ?? 'Mata Pelajaran';
+
+                                $subjectLower = strtolower($subjectName);
+
+                                $theme = $defaultTheme;
+
+                                foreach ($subjectThemes as $key => $value) {
+                                    if (str_contains($subjectLower, $key)) {
+                                        $theme = $value;
+                                        break;
+                                    }
+                                }
+                            @endphp
+
+                            <a href="{{ route('guru.classes.show', $class->cst_id) }}"
+                               class="eclass-card">
+
+                                {{-- SUBJECT COVER --}}
+
+                                <div class="eclass-card-cover"
+                                     style="background: {{ $theme['background'] }}">
+
+                                    <div class="eclass-cover-content">
+
+                                        <p class="eclass-cover-category">
+                                            {{ $theme['category'] }}
+                                        </p>
+
+                                        <h3 class="eclass-cover-name">
+                                            {{ $subjectName }}
                                         </h3>
 
-                                        <p class="mt-1 text-sm text-slate-600">
-                                            {{ $class->schoolClass->name ?? 'Kelas '.$class->class_id }}
+                                        <p class="eclass-cover-description">
+                                            {{ $theme['description'] }}
                                         </p>
+
                                     </div>
 
-                                    <span class="rounded-xl bg-white p-3 text-2xl shadow-sm">
-                                        📘
-                                    </span>
-
-                                </div>
-                            </div>
-
-                            {{-- STATISTIK --}}
-                            <div class="p-5">
-
-                                <div class="grid grid-cols-3 gap-2 text-center">
-
-                                    <div class="rounded-xl bg-sky-50 p-3">
-                                        <p class="text-xl font-bold text-sky-700">
-                                            {{ $class->joined_students_count ?? 0 }}
-                                        </p>
-                                        <p class="text-xs text-slate-500">
-                                            Siswa
-                                        </p>
-                                    </div>
-
-                                    <div class="rounded-xl bg-blue-50 p-3">
-                                        <p class="text-xl font-bold text-blue-700">
-                                            {{ $class->materials_count ?? 0 }}
-                                        </p>
-                                        <p class="text-xs text-slate-500">
-                                            Materi
-                                        </p>
-                                    </div>
-
-                                    <div class="rounded-xl bg-indigo-50 p-3">
-                                        <p class="text-xl font-bold text-indigo-700">
-                                            {{ $class->assignments_count ?? 0 }}
-                                        </p>
-                                        <p class="text-xs text-slate-500">
-                                            Tugas
-                                        </p>
+                                    <div class="eclass-cover-symbol">
+                                        {{ $theme['symbol'] }}
                                     </div>
 
                                 </div>
 
-                                {{-- FOOTER KARTU --}}
-                                <div class="mt-4 flex items-center justify-between gap-2 text-sm">
+                                {{-- CARD CONTENT --}}
 
-                                    <span class="text-slate-500">
-                                        {{ $class->academic_year ?? '-' }}
+                                <div class="eclass-card-body">
+
+                                    <p class="eclass-class-label">
+                                        CLASSROOM
+                                    </p>
+
+                                    <h3 class="eclass-class-name">
+                                        {{ $class->schoolClass->name ?? 'Kelas '.$class->class_id }}
+                                    </h3>
+
+                                    <p class="eclass-class-meta">
+                                        {{ $class->academic_year ?? 'Tahun akademik belum tersedia' }}
                                         ·
                                         {{ ucfirst($class->semester ?? '-') }}
-                                    </span>
+                                    </p>
 
-                                    <span class="font-semibold text-sky-700 transition group-hover:text-blue-700">
-                                        Buka kelas →
-                                    </span>
+                                    {{-- STATISTICS --}}
+
+                                    <div class="eclass-card-stats">
+
+                                        <div class="eclass-card-stat">
+                                            <strong>
+                                                {{ $class->joined_students_count ?? 0 }}
+                                            </strong>
+                                            <span>Students</span>
+                                        </div>
+
+                                        <div class="eclass-card-stat">
+                                            <strong>
+                                                {{ $class->materials_count ?? 0 }}
+                                            </strong>
+                                            <span>Materials</span>
+                                        </div>
+
+                                        <div class="eclass-card-stat">
+                                            <strong>
+                                                {{ $class->assignments_count ?? 0 }}
+                                            </strong>
+                                            <span>Assignments</span>
+                                        </div>
+
+                                    </div>
+
+                                    {{-- FOOTER --}}
+
+                                    <div class="eclass-card-footer">
+
+                                        <span class="eclass-year">
+                                            Academic Classroom
+                                        </span>
+
+                                        <span class="eclass-open">
+                                            Open Classroom <span>→</span>
+                                        </span>
+
+                                    </div>
 
                                 </div>
 
-                            </div>
+                            </a>
 
-                        </a>
+                        @endforeach
 
-                    @endforeach
+                    </div>
 
-                </div>
+                @endif
 
-            @endif
+            </section>
+
+            {{-- FOOTER --}}
+
+            <footer class="eclass-footer">
+
+                <p class="eclass-serif text-base font-bold text-[#123B60]">
+                    Methodist Learning Space
+                </p>
+
+                <p class="mt-2">
+                    EMPOWERING MINDS · INSPIRING EXCELLENCE · BUILDING THE FUTURE
+                </p>
+
+                <p class="mt-3">
+                    © {{ date('Y') }} Methodist School. All rights reserved.
+                </p>
+
+            </footer>
 
         </div>
-    </div>
+    </main>
+
 </x-app-layout>

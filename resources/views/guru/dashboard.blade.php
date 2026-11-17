@@ -3,653 +3,1500 @@
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-blue-600">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold tracking-tight text-slate-800">
-                    Dashboard Guru
+                <h2 class="text-xl font-bold text-slate-800">
+                    Teacher Dashboard
                 </h2>
             </div>
-            <span class="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-sky-50 px-4 py-2 text-xs font-semibold text-sky-700 sm:mt-0">
+
+            <div class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
                 <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                 Teacher Workspace
-            </span>
+            </div>
         </div>
     </x-slot>
 
     @php
+        /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD STATISTICS
+        |--------------------------------------------------------------------------
+        */
+
         $totalClasses = $overview->count();
         $totalStudents = $overview->sum('student_count');
         $totalAssignments = $overview->sum('assignment_count');
         $totalExams = $overview->sum('exam_count');
         $totalUngraded = $overview->sum('ungraded_essays');
 
+        /*
+        |--------------------------------------------------------------------------
+        | SUBJECT VISUAL THEMES
+        |--------------------------------------------------------------------------
+        */
+
         $subjectThemes = [
-            'matematika' => ['icon' => '∑', 'name' => 'Mathematics', 'color' => 'blue'],
-            'bahasa indonesia' => ['icon' => 'Aa', 'name' => 'Language', 'color' => 'rose'],
-            'bahasa inggris' => ['icon' => 'Ab', 'name' => 'English', 'color' => 'indigo'],
-            'biologi' => ['icon' => '✿', 'name' => 'Biology', 'color' => 'emerald'],
-            'fisika' => ['icon' => '⚛', 'name' => 'Physics', 'color' => 'violet'],
-            'kimia' => ['icon' => '⚗', 'name' => 'Chemistry', 'color' => 'amber'],
-            'sejarah' => ['icon' => '◷', 'name' => 'History', 'color' => 'orange'],
-            'informatika' => ['icon' => '</>', 'name' => 'Technology', 'color' => 'cyan'],
+            'matematika' => [
+                'icon' => '∑',
+                'label' => 'MATHEMATICS',
+                'description' => 'Explore numbers and logic',
+                'background' => 'linear-gradient(135deg,#164E86,#4299D5)',
+            ],
+            'bahasa indonesia' => [
+                'icon' => 'Aa',
+                'label' => 'LANGUAGE & LITERATURE',
+                'description' => 'Discover the power of words',
+                'background' => 'linear-gradient(135deg,#9F3447,#E87986)',
+            ],
+            'bahasa inggris' => [
+                'icon' => 'Ab',
+                'label' => 'ENGLISH LANGUAGE',
+                'description' => 'Connect with the world',
+                'background' => 'linear-gradient(135deg,#4338A8,#818CF8)',
+            ],
+            'biologi' => [
+                'icon' => '✿',
+                'label' => 'BIOLOGY',
+                'description' => 'Discover the world of life',
+                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
+            ],
+            'fisika' => [
+                'icon' => '⚛',
+                'label' => 'PHYSICS',
+                'description' => 'Understand the universe',
+                'background' => 'linear-gradient(135deg,#5B3C99,#A78BFA)',
+            ],
+            'kimia' => [
+                'icon' => '⚗',
+                'label' => 'CHEMISTRY',
+                'description' => 'Explore matter and reactions',
+                'background' => 'linear-gradient(135deg,#A45D14,#F2B84B)',
+            ],
+            'sejarah' => [
+                'icon' => '◷',
+                'label' => 'HISTORY',
+                'description' => 'Learn from the past',
+                'background' => 'linear-gradient(135deg,#9A4B21,#E99A61)',
+            ],
+            'informatika' => [
+                'icon' => '</>',
+                'label' => 'INFORMATICS',
+                'description' => 'Create the digital future',
+                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
+            ],
+            'agama' => [
+                'icon' => '✧',
+                'label' => 'RELIGIOUS EDUCATION',
+                'description' => 'Build knowledge and character',
+                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
+            ],
+            'ekonomi' => [
+                'icon' => '↗',
+                'label' => 'ECONOMICS',
+                'description' => 'Understand the world of finance',
+                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
+            ],
+        ];
+
+        $defaultTheme = [
+            'icon' => '▤',
+            'label' => 'ACADEMIC CLASS',
+            'description' => 'Explore and grow together',
+            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
         ];
     @endphp
 
     <style>
-        .teacher-page {
-            --navy: #102f50;
-            --blue: #087bbd;
-            --cyan: #38bdf8;
-            background: #f4f8fc;
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap');
+
+        :root {
+            --academy-navy: #123B60;
+            --academy-blue: #267BB5;
+            --academy-light: #E8F1F8;
+            --academy-ivory: #FAF9F6;
+            --academy-text: #263747;
+            --academy-muted: #788797;
+            --academy-border: #E7EDF2;
+        }
+
+        .academy-page {
+            background: var(--academy-ivory);
+            color: var(--academy-text);
             min-height: 100vh;
-            padding: 30px 0 60px;
+            padding: 34px 0 65px;
+            font-family: 'DM Sans', sans-serif;
         }
 
-        .teacher-wrap {
+        .academy-page * {
+            box-sizing: border-box;
+        }
+
+        .academy-wrap {
             width: min(1440px, 100%);
-            margin: auto;
-            padding: 0 24px;
+            margin: 0 auto;
+            padding: 0 28px;
         }
 
-        .teacher-hero {
-            position: relative;
-            overflow: hidden;
-            border-radius: 28px;
-            background: linear-gradient(115deg, #102f50 0%, #075985 58%, #0284c7 100%);
-            padding: 36px;
-            color: white;
-            box-shadow: 0 18px 45px rgba(15, 63, 105, .16);
+        .academy-serif {
+            font-family: 'Playfair Display', serif;
         }
 
-        .teacher-hero::before,
-        .teacher-hero::after {
-            content: "";
-            position: absolute;
-            border: 1px solid rgba(255,255,255,.13);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .teacher-hero::before {
-            width: 330px;
-            height: 330px;
-            right: -80px;
-            top: -180px;
-        }
-
-        .teacher-hero::after {
-            width: 240px;
-            height: 240px;
-            right: 100px;
-            bottom: -180px;
-        }
-
-        .teacher-hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 720px;
-        }
-
-        .teacher-eyebrow {
+        .academy-eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(255,255,255,.2);
-            background: rgba(255,255,255,.1);
-            border-radius: 99px;
-            padding: 7px 13px;
-            font-size: 11px;
+            gap: 9px;
+            padding: 8px 15px;
+            border-radius: 100px;
+            background: #E6F0F7;
+            color: #185B87;
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: .12em;
+            letter-spacing: .14em;
+        }
+
+        /* HERO */
+
+        .academy-hero {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            align-items: center;
+            gap: 30px;
+            min-height: 440px;
+            padding: 48px;
+            border: 1px solid #E4EAF0;
+            border-radius: 30px;
+            background: linear-gradient(115deg, #FAFAF8 0%, #EAF2F8 100%);
+            box-shadow: 0 16px 50px rgba(18,59,96,.055);
+        }
+
+        .academy-hero::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 390px;
+            height: 390px;
+            right: -115px;
+            top: -195px;
+            border: 1px solid rgba(38,123,181,.16);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 30px rgba(38,123,181,.035),
+                0 0 0 65px rgba(38,123,181,.025);
+        }
+
+        .academy-hero::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 230px;
+            height: 230px;
+            left: 43%;
+            bottom: -165px;
+            border: 1px solid rgba(38,123,181,.12);
+            border-radius: 50%;
+        }
+
+        .academy-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .academy-hero-title {
+            margin-top: 25px;
+            color: var(--academy-navy);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(39px, 5vw, 65px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.08;
+        }
+
+        .academy-hero-title span {
+            color: var(--academy-blue);
+        }
+
+        .academy-hero-description {
+            max-width: 540px;
+            margin-top: 21px;
+            color: #66788A;
+            font-size: 14px;
+            line-height: 1.95;
+        }
+
+        .academy-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 13px 22px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .25s ease;
+        }
+
+        .academy-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .academy-button-primary {
+            color: #fff;
+            background: var(--academy-navy);
+            box-shadow: 0 8px 20px rgba(18,59,96,.18);
+        }
+
+        .academy-button-primary:hover {
+            color: #fff;
+            background: #0B2B48;
+        }
+
+        .academy-button-secondary {
+            color: var(--academy-navy);
+            background: #E4EDF3;
+        }
+
+        .academy-button-secondary:hover {
+            color: var(--academy-navy);
+            background: #D5E5F0;
+        }
+
+        /* HERO VISUAL */
+
+        .academy-visual {
+            position: relative;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .academy-visual-main {
+            position: absolute;
+            inset: 10px 15px 10px 15px;
+            overflow: hidden;
+            border-radius: 28px;
+            background:
+                linear-gradient(145deg, rgba(18,59,96,.82), rgba(38,123,181,.72)),
+                linear-gradient(135deg, #123B60, #7AB6D9);
+            box-shadow: 0 22px 42px rgba(18,59,96,.15);
+        }
+
+        .academy-visual-main::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: -120px;
+            right: -70px;
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 25px rgba(255,255,255,.05),
+                0 0 0 55px rgba(255,255,255,.035);
+        }
+
+        .academy-visual-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            height: 100%;
+            min-height: 320px;
+            flex-direction: column;
+            justify-content: center;
+            padding: 35px;
+            color: #fff;
+        }
+
+        .academy-visual-symbol {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(75px, 10vw, 125px);
+            font-weight: 700;
+            line-height: 1;
+            color: rgba(255,255,255,.92);
+        }
+
+        .academy-visual-caption {
+            margin-top: 15px;
+            color: #D9EBF7;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .18em;
+        }
+
+        .academy-float {
+            position: absolute;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 17px;
+            border: 1px solid #E8EDF0;
+            border-radius: 17px;
+            background: rgba(255,255,255,.96);
+            box-shadow: 0 12px 35px rgba(18,59,96,.12);
+        }
+
+        .academy-float-top {
+            top: 0;
+            right: -5px;
+        }
+
+        .academy-float-bottom {
+            bottom: 0;
+            left: -8px;
+        }
+
+        .academy-float-icon {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            place-items: center;
+            border-radius: 13px;
+            background: #E8F1F8;
+            color: #267BB5;
+            font-size: 20px;
+        }
+
+        .academy-float small {
+            display: block;
+            color: #8793A0;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .09em;
+        }
+
+        .academy-float strong {
+            display: block;
+            margin-top: 3px;
+            color: #183B59;
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+        }
+
+        /* SECTION */
+
+        .academy-section {
+            margin-top: 58px;
+        }
+
+        .academy-section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 21px;
+        }
+
+        .academy-section-label {
+            color: var(--academy-blue);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .17em;
             text-transform: uppercase;
         }
 
-        .teacher-stat {
-            border: 1px solid #e6edf5;
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 6px 22px rgba(15, 41, 69, .035);
-            transition: .25s ease;
+        .academy-section-title {
+            margin-top: 6px;
+            color: var(--academy-navy);
+            font-family: 'Playfair Display', serif;
+            font-size: 27px;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
-        .teacher-stat:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 28px rgba(15, 41, 69, .08);
+        .academy-section-description {
+            margin-top: 6px;
+            color: var(--academy-muted);
+            font-size: 12px;
+            line-height: 1.7;
         }
 
-        .teacher-stat-icon {
-            width: 44px;
-            height: 44px;
+        /* STATISTICS */
+
+        .academy-stats {
             display: grid;
-            place-items: center;
-            border-radius: 14px;
-            font-size: 20px;
-            font-weight: 800;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 17px;
         }
 
-        .teacher-panel {
-            border: 1px solid #e7edf4;
-            border-radius: 22px;
-            background: white;
-            padding: 23px;
-            box-shadow: 0 5px 22px rgba(15, 41, 69, .035);
-        }
-
-        .teacher-class-card {
-            display: block;
-            overflow: hidden;
-            border: 1px solid #e6edf5;
+        .academy-stat {
+            padding: 22px;
+            border: 1px solid var(--academy-border);
             border-radius: 20px;
-            background: white;
+            background: #fff;
+            box-shadow: 0 7px 25px rgba(18,59,96,.035);
             transition: .25s ease;
         }
 
-        .teacher-class-card:hover {
-            transform: translateY(-5px);
-            border-color: #bae6fd;
-            box-shadow: 0 15px 30px rgba(15, 41, 69, .09);
+        .academy-stat:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(18,59,96,.08);
         }
 
-        .teacher-class-cover {
-            position: relative;
-            min-height: 125px;
+        .academy-stat-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            overflow: hidden;
-            padding: 20px;
+            gap: 10px;
         }
 
-        .teacher-class-cover::after {
+        .academy-stat-icon {
+            display: grid;
+            width: 43px;
+            height: 43px;
+            place-items: center;
+            border-radius: 14px;
+            background: #E8F1F8;
+            color: #267BB5;
+            font-size: 20px;
+        }
+
+        .academy-stat-number {
+            margin-top: 19px;
+            color: var(--academy-navy);
+            font-family: 'Playfair Display', serif;
+            font-size: 37px;
+            font-weight: 700;
+        }
+
+        .academy-stat-label {
+            margin-top: 3px;
+            color: #7A8997;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* CLASS CARDS */
+
+        .academy-class-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .academy-class-card {
+            overflow: hidden;
+            border: 1px solid var(--academy-border);
+            border-radius: 22px;
+            background: #fff;
+            transition: .28s ease;
+        }
+
+        .academy-class-card:hover {
+            transform: translateY(-5px);
+            border-color: #BBD7E9;
+            box-shadow: 0 17px 35px rgba(18,59,96,.09);
+        }
+
+        .academy-class-cover {
+            position: relative;
+            display: flex;
+            min-height: 145px;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 22px;
+            color: white;
+        }
+
+        .academy-class-cover::before {
             content: "";
             position: absolute;
-            width: 150px;
-            height: 150px;
+            width: 155px;
+            height: 155px;
             right: -35px;
-            top: -75px;
+            top: -85px;
             border: 1px solid rgba(255,255,255,.25);
             border-radius: 50%;
-            box-shadow: 0 0 0 20px rgba(255,255,255,.05),
-                        0 0 0 40px rgba(255,255,255,.04);
+            box-shadow:
+                0 0 0 22px rgba(255,255,255,.06),
+                0 0 0 45px rgba(255,255,255,.035);
         }
 
-        .teacher-class-symbol {
+        .academy-class-cover-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .academy-class-cover-label {
+            color: rgba(255,255,255,.8);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .17em;
+        }
+
+        .academy-class-cover-title {
+            margin-top: 9px;
+            font-family: 'Playfair Display', serif;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .academy-class-symbol {
             position: relative;
             z-index: 1;
             display: grid;
+            width: 66px;
+            height: 66px;
+            flex-shrink: 0;
             place-items: center;
-            width: 70px;
-            height: 70px;
             border: 1px solid rgba(255,255,255,.35);
-            border-radius: 22px;
+            border-radius: 20px;
             background: rgba(255,255,255,.16);
-            color: white;
-            font-size: 27px;
-            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
             backdrop-filter: blur(8px);
         }
 
-        .teacher-section-title {
-            color: #102f50;
-            font-size: 18px;
+        .academy-class-body {
+            padding: 21px;
+        }
+
+        .academy-class-name {
+            color: #183B59;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .academy-class-meta {
+            margin-top: 5px;
+            color: #8995A0;
+            font-size: 11px;
+        }
+
+        .academy-class-numbers {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding: 17px 0;
+            border-top: 1px solid #EEF1F3;
+            border-bottom: 1px solid #EEF1F3;
+        }
+
+        .academy-class-number {
+            color: #193E5D;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .academy-class-number-label {
+            margin-top: 3px;
+            color: #8995A0;
+            font-size: 10px;
+        }
+
+        .academy-class-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .academy-class-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #176A9E;
+            font-size: 11px;
             font-weight: 800;
-            letter-spacing: -.02em;
+            text-decoration: none;
         }
 
-        .teacher-muted {
-            color: #718096;
+        .academy-class-link:hover {
+            color: #123B60;
         }
 
-        .teacher-list-row {
+        /* PANELS */
+
+        .academy-two-columns {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .academy-panel {
+            min-width: 0;
+            padding: 25px;
+            border: 1px solid var(--academy-border);
+            border-radius: 22px;
+            background: white;
+            box-shadow: 0 7px 25px rgba(18,59,96,.035);
+        }
+
+        .academy-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 17px;
+        }
+
+        .academy-panel-icon {
+            display: grid;
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            place-items: center;
+            border-radius: 14px;
+            background: #E8F1F8;
+            color: #267BB5;
+            font-size: 19px;
+        }
+
+        .academy-list-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 14px;
-            border-bottom: 1px solid #edf1f5;
-            padding: 13px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #EDF1F4;
         }
 
-        .teacher-list-row:last-child {
+        .academy-list-row:last-child {
             border-bottom: 0;
         }
 
-        @media (max-width: 640px) {
-            .teacher-page { padding-top: 20px; }
-            .teacher-wrap { padding: 0 15px; }
-            .teacher-hero { padding: 25px 21px; border-radius: 22px; }
-            .teacher-panel { padding: 17px; }
-            .teacher-stat { padding: 16px; }
-            .teacher-class-cover { min-height: 105px; }
-            .teacher-class-symbol { width: 58px; height: 58px; }
+        .academy-list-title {
+            overflow: hidden;
+            color: #263F55;
+            font-size: 12px;
+            font-weight: 700;
+            text-overflow: ellipsis;
+        }
+
+        .academy-list-subtitle {
+            margin-top: 5px;
+            color: #8A97A3;
+            font-size: 10px;
+        }
+
+        .academy-list-value {
+            flex-shrink: 0;
+            color: #1C6596;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        .academy-empty {
+            padding: 25px 15px;
+            border-radius: 14px;
+            background: #F6F9FB;
+            color: #8493A0;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .academy-student-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 9px 12px;
+            border: 1px solid #E6EDF3;
+            border-radius: 10px;
+            background: #F8FAFC;
+            color: #526579;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .academy-footer {
+            margin-top: 60px;
+            padding-top: 23px;
+            border-top: 1px solid #E5EAEF;
+            color: #9AA5AE;
+            font-size: 10px;
+            text-align: center;
+            letter-spacing: .05em;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1100px) {
+            .academy-class-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .academy-hero {
+                padding: 35px;
+            }
+        }
+
+        @media(max-width: 800px) {
+            .academy-hero {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .academy-visual {
+                min-height: 280px;
+            }
+
+            .academy-visual-content {
+                min-height: 280px;
+            }
+
+            .academy-two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .academy-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media(max-width: 560px) {
+            .academy-page {
+                padding: 22px 0 45px;
+            }
+
+            .academy-wrap {
+                padding: 0 15px;
+            }
+
+            .academy-hero {
+                padding: 27px 21px;
+                border-radius: 23px;
+            }
+
+            .academy-hero-title {
+                font-size: 40px;
+                letter-spacing: -1.4px;
+            }
+
+            .academy-hero-description {
+                font-size: 12px;
+            }
+
+            .academy-visual {
+                min-height: 250px;
+            }
+
+            .academy-visual-content {
+                min-height: 250px;
+                padding: 24px;
+            }
+
+            .academy-float {
+                padding: 10px 12px;
+            }
+
+            .academy-float-top {
+                right: -3px;
+            }
+
+            .academy-float-bottom {
+                left: -3px;
+            }
+
+            .academy-section {
+                margin-top: 42px;
+            }
+
+            .academy-section-title {
+                font-size: 23px;
+            }
+
+            .academy-class-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .academy-stat {
+                padding: 16px;
+            }
+
+            .academy-stat-number {
+                font-size: 31px;
+            }
+
+            .academy-panel {
+                padding: 18px;
+            }
+
+            .academy-section-heading {
+                align-items: start;
+            }
+        }
+
+        @media(prefers-reduced-motion: reduce) {
+            .academy-stat,
+            .academy-class-card,
+            .academy-button {
+                transition: none;
+            }
         }
     </style>
 
-    <div class="teacher-page">
-        <div class="teacher-wrap space-y-8">
+    <main class="academy-page">
+        <div class="academy-wrap">
 
-            {{-- HERO --}}
-            <section class="teacher-hero">
-                <div class="teacher-hero-content">
-                    <div class="teacher-eyebrow">
-                        <span>✦</span>
-                        Welcome to your workspace
-                    </div>
+            {{-- ==========================================
+                 HERO SECTION
+            =========================================== --}}
 
-                    <h1 class="mt-5 text-3xl font-black leading-tight tracking-tight sm:text-5xl">
-                        Halo, {{ Auth::user()->name }}!
+            <section class="academy-hero">
+
+                <div class="academy-hero-content">
+
+                    <span class="academy-eyebrow">
+                        ✦ EMPOWERING EDUCATION
+                    </span>
+
+                    <h1 class="academy-hero-title">
+                        Inspiring Minds,<br>
+                        <span>Building The Future.</span>
                     </h1>
 
-                    <p class="mt-4 max-w-xl text-sm leading-7 text-sky-100 sm:text-base">
-                        Selamat datang di ruang kerja guru Methodist Learning Space.
-                        Kelola kelas, bagikan materi, pantau perkembangan siswa,
-                        dan ciptakan pengalaman belajar yang lebih menyenangkan.
+                    <p class="academy-hero-description">
+                        Selamat datang, {{ Auth::user()->name }}.
+                        Kelola pengalaman pembelajaran, bimbing perkembangan
+                        siswa, dan ciptakan lingkungan akademik yang inspiratif
+                        melalui Methodist Learning Space.
                     </p>
 
                     <div class="mt-7 flex flex-wrap gap-3">
+
                         <a href="{{ route('guru.classes.index') }}"
-                           class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-sky-800 shadow-lg transition hover:-translate-y-1 hover:bg-sky-50">
-                            <span>▤</span>
-                            Kelola E-Class
+                           class="academy-button academy-button-primary">
+                            Explore My Classes
                             <span>→</span>
                         </a>
 
                         <a href="{{ route('guru.exams.index') }}"
-                           class="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/20">
-                            <span>✎</span>
-                            Kelola E-Exam
+                           class="academy-button academy-button-secondary">
+                            Manage Examinations
                         </a>
+
+                    </div>
+
+                    <div class="mt-8 flex flex-wrap gap-7">
+
+                        <div>
+                            <p class="academy-serif text-3xl font-bold text-[#123B60]">
+                                {{ $totalClasses }}
+                            </p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Classes
+                            </p>
+                        </div>
+
+                        <div class="h-12 w-px bg-slate-200"></div>
+
+                        <div>
+                            <p class="academy-serif text-3xl font-bold text-[#123B60]">
+                                {{ $totalStudents }}
+                            </p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Students
+                            </p>
+                        </div>
+
+                        <div class="h-12 w-px bg-slate-200"></div>
+
+                        <div>
+                            <p class="academy-serif text-3xl font-bold text-[#123B60]">
+                                {{ $totalAssignments + $totalExams }}
+                            </p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Learning Activities
+                            </p>
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="relative z-10 mt-8 flex flex-wrap gap-2 text-xs font-semibold text-sky-100">
-                    <span class="rounded-full bg-white/10 px-3 py-2">✦ Teaching</span>
-                    <span class="rounded-full bg-white/10 px-3 py-2">✦ Learning</span>
-                    <span class="rounded-full bg-white/10 px-3 py-2">✦ Growing Together</span>
+                {{-- HERO VISUAL --}}
+
+                <div class="academy-visual">
+
+                    <div class="academy-visual-main">
+                        <div class="academy-visual-content">
+
+                            <p class="text-xs font-bold tracking-[.2em] text-sky-100">
+                                METHODIST LEARNING SPACE
+                            </p>
+
+                            <div class="academy-visual-symbol">
+                                M.
+                            </div>
+
+                            <p class="academy-serif mt-3 text-2xl font-semibold">
+                                Learn. Grow. Achieve.
+                            </p>
+
+                            <p class="mt-2 max-w-xs text-xs leading-6 text-sky-100">
+                                Creating meaningful learning experiences
+                                for a brighter future.
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="academy-float academy-float-top">
+                        <div class="academy-float-icon">
+                            ♧
+                        </div>
+                        <div>
+                            <small>ACADEMIC EXCELLENCE</small>
+                            <strong>Quality Education</strong>
+                        </div>
+                    </div>
+
+                    <div class="academy-float academy-float-bottom">
+                        <div class="academy-float-icon">
+                            ♙
+                        </div>
+                        <div>
+                            <small>OUR COMMUNITY</small>
+                            <strong>Growing Together</strong>
+                        </div>
+                    </div>
+
                 </div>
+
             </section>
 
-            {{-- STATISTICS --}}
-            <section>
-                <div class="mb-4 flex items-end justify-between gap-3">
+            {{-- ==========================================
+                 STATISTICS
+            =========================================== --}}
+
+            <section class="academy-section">
+
+                <div class="academy-section-heading">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-[.16em] text-sky-600">
-                            Overview
+                        <p class="academy-section-label">At a glance</p>
+                        <h2 class="academy-section-title">
+                            Your Teaching Overview
+                        </h2>
+                        <p class="academy-section-description">
+                            Ringkasan aktivitas pembelajaran Anda.
                         </p>
-                        <h2 class="teacher-section-title mt-1">Ringkasan Aktivitas</h2>
                     </div>
-                    <span class="hidden text-xs text-slate-400 sm:block">
-                        Statistik pembelajaran Anda
-                    </span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                    <div class="teacher-stat">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="teacher-stat-icon bg-sky-50 text-sky-700">▤</div>
-                            <span class="text-xs font-semibold text-sky-600">E-Class</span>
+                <div class="academy-stats">
+
+                    <article class="academy-stat">
+                        <div class="academy-stat-top">
+                            <div class="academy-stat-icon">▤</div>
+                            <span class="text-[10px] font-bold tracking-wider text-blue-600">
+                                E-CLASS
+                            </span>
                         </div>
-                        <p class="mt-5 text-3xl font-black text-slate-800">
+
+                        <p class="academy-stat-number">
                             {{ $totalClasses }}
                         </p>
-                        <p class="mt-1 text-xs font-medium text-slate-500">Kelas yang diampu</p>
-                    </div>
 
-                    <div class="teacher-stat">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="teacher-stat-icon bg-indigo-50 text-indigo-700">♙</div>
-                            <span class="text-xs font-semibold text-indigo-600">Students</span>
+                        <p class="academy-stat-label">
+                            Classes You Teach
+                        </p>
+                    </article>
+
+                    <article class="academy-stat">
+                        <div class="academy-stat-top">
+                            <div class="academy-stat-icon">♙</div>
+                            <span class="text-[10px] font-bold tracking-wider text-blue-600">
+                                STUDENTS
+                            </span>
                         </div>
-                        <p class="mt-5 text-3xl font-black text-slate-800">
+
+                        <p class="academy-stat-number">
                             {{ $totalStudents }}
                         </p>
-                        <p class="mt-1 text-xs font-medium text-slate-500">Total siswa</p>
-                    </div>
 
-                    <div class="teacher-stat">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="teacher-stat-icon bg-amber-50 text-amber-700">✎</div>
-                            <span class="text-xs font-semibold text-amber-600">Assignments</span>
+                        <p class="academy-stat-label">
+                            Total Enrolled Students
+                        </p>
+                    </article>
+
+                    <article class="academy-stat">
+                        <div class="academy-stat-top">
+                            <div class="academy-stat-icon">✎</div>
+                            <span class="text-[10px] font-bold tracking-wider text-blue-600">
+                                ASSIGNMENTS
+                            </span>
                         </div>
-                        <p class="mt-5 text-3xl font-black text-slate-800">
+
+                        <p class="academy-stat-number">
                             {{ $totalAssignments }}
                         </p>
-                        <p class="mt-1 text-xs font-medium text-slate-500">Tugas dibuat</p>
-                    </div>
 
-                    <div class="teacher-stat">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="teacher-stat-icon bg-emerald-50 text-emerald-700">✓</div>
-                            <span class="text-xs font-semibold text-emerald-600">E-Exam</span>
+                        <p class="academy-stat-label">
+                            Created Assignments
+                        </p>
+                    </article>
+
+                    <article class="academy-stat">
+                        <div class="academy-stat-top">
+                            <div class="academy-stat-icon">✓</div>
+                            <span class="text-[10px] font-bold tracking-wider text-blue-600">
+                                E-EXAM
+                            </span>
                         </div>
-                        <p class="mt-5 text-3xl font-black text-slate-800">
+
+                        <p class="academy-stat-number">
                             {{ $totalExams }}
                         </p>
-                        <p class="mt-1 text-xs font-medium text-slate-500">Ujian dibuat</p>
-                    </div>
+
+                        <p class="academy-stat-label">
+                            Created Examinations
+                        </p>
+                    </article>
+
                 </div>
+
             </section>
 
-            {{-- CLASS LIST --}}
-            <section>
-                <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+            {{-- ==========================================
+                 MY CLASSES
+            =========================================== --}}
+
+            <section class="academy-section">
+
+                <div class="academy-section-heading">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-[.16em] text-sky-600">
-                            My Teaching Space
-                        </p>
-                        <h2 class="teacher-section-title mt-1">Kelas yang Saya Ampu</h2>
-                        <p class="mt-1 text-sm teacher-muted">
-                            Pantau kelas dan aktivitas pembelajaran siswa.
+                        <p class="academy-section-label">Teaching space</p>
+                        <h2 class="academy-section-title">
+                            My Classes
+                        </h2>
+                        <p class="academy-section-description">
+                            Ruang pembelajaran yang Anda kelola.
                         </p>
                     </div>
 
                     <a href="{{ route('guru.classes.index') }}"
-                       class="rounded-xl bg-sky-50 px-4 py-2.5 text-xs font-bold text-sky-700 transition hover:bg-sky-100">
-                        Lihat Semua Kelas →
+                       class="text-xs font-bold text-blue-700 hover:text-blue-900">
+                        View All Classes →
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div class="academy-class-grid">
+
                     @forelse($overview as $class)
+
                         @php
                             $subjectLower = strtolower($class->subject_name ?? '');
-                            $theme = collect($subjectThemes)->first(
-                                fn ($item, $key) => str_contains($subjectLower, $key)
-                            ) ?? ['icon' => '▤', 'name' => 'Learning', 'color' => 'sky'];
 
-                            $coverColors = [
-                                'blue' => 'background:linear-gradient(135deg,#1d4ed8,#38bdf8)',
-                                'rose' => 'background:linear-gradient(135deg,#be123c,#fb7185)',
-                                'indigo' => 'background:linear-gradient(135deg,#4338ca,#818cf8)',
-                                'emerald' => 'background:linear-gradient(135deg,#047857,#34d399)',
-                                'violet' => 'background:linear-gradient(135deg,#6d28d9,#a78bfa)',
-                                'amber' => 'background:linear-gradient(135deg,#b45309,#fbbf24)',
-                                'orange' => 'background:linear-gradient(135deg,#c2410c,#fb923c)',
-                                'cyan' => 'background:linear-gradient(135deg,#0e7490,#22d3ee)',
-                                'sky' => 'background:linear-gradient(135deg,#075985,#38bdf8)',
-                            ];
+                            $theme = $defaultTheme;
 
-                            $classGrades = $gradeSummaries->get($class->cst_id, collect());
+                            foreach ($subjectThemes as $key => $value) {
+                                if (str_contains($subjectLower, $key)) {
+                                    $theme = $value;
+                                    break;
+                                }
+                            }
                         @endphp
 
-                        <article class="teacher-class-card">
-                            <div class="teacher-class-cover"
-                                 style="{{ $coverColors[$theme['color']] ?? $coverColors['sky'] }}">
-                                <div class="relative z-10 text-white">
-                                    <p class="text-[10px] font-bold uppercase tracking-[.2em] text-white/75">
-                                        {{ $theme['name'] }}
+                        <article class="academy-class-card">
+
+                            <div class="academy-class-cover"
+                                 style="background: {{ $theme['background'] }}">
+
+                                <div class="academy-class-cover-info">
+
+                                    <p class="academy-class-cover-label">
+                                        {{ $theme['label'] }}
                                     </p>
-                                    <h3 class="mt-2 text-xl font-black">
+
+                                    <h3 class="academy-class-cover-title">
                                         {{ $class->subject_name }}
                                     </h3>
+
+                                    <p class="mt-1 text-[10px] text-white/80">
+                                        {{ $theme['description'] }}
+                                    </p>
+
                                 </div>
 
-                                <div class="teacher-class-symbol">
+                                <div class="academy-class-symbol">
                                     {{ $theme['icon'] }}
                                 </div>
+
                             </div>
 
-                            <div class="p-5">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div>
-                                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                            Kelas
-                                        </p>
-                                        <h4 class="mt-1 text-lg font-extrabold text-slate-800">
-                                            {{ $class->class_name }}
-                                        </h4>
-                                    </div>
-                                    <span class="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold text-emerald-700">
-                                        Aktif
-                                    </span>
-                                </div>
+                            <div class="academy-class-body">
 
-                                <div class="mt-5 grid grid-cols-3 gap-2 border-y border-slate-100 py-4">
+                                <p class="text-[9px] font-bold uppercase tracking-[.15em] text-slate-400">
+                                    SCHOOL CLASS
+                                </p>
+
+                                <h3 class="academy-class-name">
+                                    {{ $class->class_name }}
+                                </h3>
+
+                                <p class="academy-class-meta">
+                                    {{ $class->student_count }} enrolled students
+                                </p>
+
+                                <div class="academy-class-numbers">
+
                                     <div>
-                                        <p class="text-xl font-black text-slate-800">
+                                        <p class="academy-class-number">
                                             {{ $class->student_count }}
                                         </p>
-                                        <p class="text-[10px] font-semibold text-slate-400">Siswa</p>
+                                        <p class="academy-class-number-label">
+                                            Students
+                                        </p>
                                     </div>
+
                                     <div>
-                                        <p class="text-xl font-black text-slate-800">
+                                        <p class="academy-class-number">
                                             {{ $class->assignment_count }}
                                         </p>
-                                        <p class="text-[10px] font-semibold text-slate-400">Tugas</p>
+                                        <p class="academy-class-number-label">
+                                            Assignments
+                                        </p>
                                     </div>
+
                                     <div>
-                                        <p class="text-xl font-black text-slate-800">
+                                        <p class="academy-class-number">
                                             {{ $class->exam_count }}
                                         </p>
-                                        <p class="text-[10px] font-semibold text-slate-400">Ujian</p>
+                                        <p class="academy-class-number-label">
+                                            Examinations
+                                        </p>
                                     </div>
+
                                 </div>
 
-                                <div class="mt-4 flex items-center justify-between gap-2">
-                                    <span class="text-xs text-slate-500">
-                                        {{ $class->published_exam_count }} ujian dipublikasikan
+                                <div class="academy-class-footer">
+
+                                    <span class="text-[10px] text-slate-400">
+                                        {{ $class->published_exam_count }} published exams
                                     </span>
 
                                     <a href="{{ route('guru.classes.show', $class->cst_id) }}"
-                                       class="inline-flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-sky-700">
-                                        Buka Kelas <span>→</span>
+                                       class="academy-class-link">
+                                        Open Class <span>→</span>
                                     </a>
+
                                 </div>
+
                             </div>
+
                         </article>
+
                     @empty
-                        <div class="col-span-full rounded-2xl border-2 border-dashed border-slate-200 bg-white px-6 py-14 text-center">
-                            <div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-sky-50 text-3xl text-sky-600">
+
+                        <div class="col-span-full rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-14 text-center">
+
+                            <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-3xl text-blue-600">
                                 ▤
                             </div>
-                            <h3 class="mt-4 text-lg font-bold text-slate-800">
-                                Belum Ada Kelas
+
+                            <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60]">
+                                Your Teaching Journey Starts Here
                             </h3>
-                            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                                Kelas yang Anda ampu akan ditampilkan di sini.
-                                Silakan periksa pengaturan kelas Anda.
+
+                            <p class="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500">
+                                Belum ada kelas yang tersedia untuk ditampilkan.
+                                Kelas yang Anda ampu akan muncul di bagian ini.
                             </p>
+
                             <a href="{{ route('guru.classes.index') }}"
-                               class="mt-5 inline-flex rounded-xl bg-sky-600 px-5 py-3 text-sm font-bold text-white hover:bg-sky-700">
-                                Kelola Kelas →
+                               class="academy-button academy-button-primary mt-5">
+                                Manage My Classes →
                             </a>
+
                         </div>
+
                     @endforelse
+
                 </div>
+
             </section>
 
-            {{-- ASSIGNMENTS AND SCHEDULE --}}
-            <section class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            {{-- ==========================================
+                 ASSIGNMENTS AND SCHEDULE
+            =========================================== --}}
 
-                <div class="teacher-panel">
-                    <div class="flex items-center justify-between gap-3">
+            <section class="academy-section academy-two-columns">
+
+                {{-- ASSIGNMENT STATUS --}}
+
+                <div class="academy-panel">
+
+                    <div class="academy-panel-header">
                         <div>
-                            <p class="text-xs font-bold uppercase tracking-[.15em] text-sky-600">
-                                Assignment Monitor
+                            <p class="academy-section-label">
+                                Academic Assessment
                             </p>
-                            <h3 class="teacher-section-title mt-1">Status Penilaian Tugas</h3>
+
+                            <h3 class="academy-section-title text-xl">
+                                Assignment Overview
+                            </h3>
                         </div>
-                        <div class="grid h-11 w-11 place-items-center rounded-xl bg-amber-50 text-xl text-amber-600">
+
+                        <div class="academy-panel-icon">
                             ✎
                         </div>
                     </div>
 
-                    <div class="mt-5">
-                        @forelse($assignmentStatuses as $assignment)
-                            <div class="teacher-list-row">
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-bold text-slate-800">
-                                        {{ $assignment->title }}
-                                    </p>
-                                    <p class="mt-1 text-xs text-slate-500">
-                                        {{ $assignment->class_name }}
-                                    </p>
-                                </div>
-                                <div class="shrink-0 text-right">
-                                    <p class="text-sm font-extrabold text-slate-800">
-                                        {{ $assignment->graded_count }}/{{ $assignment->submitted_count }}
-                                    </p>
-                                    <p class="text-[10px] font-semibold text-slate-400">Sudah dinilai</p>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="rounded-xl bg-slate-50 p-5 text-center">
-                                <p class="text-sm font-semibold text-slate-600">
-                                    Belum ada tugas yang dibuat.
+                    @forelse($assignmentStatuses as $assignment)
+
+                        <div class="academy-list-row">
+
+                            <div class="min-w-0">
+                                <p class="academy-list-title">
+                                    {{ $assignment->title }}
                                 </p>
-                                <p class="mt-1 text-xs text-slate-400">
-                                    Tugas yang dibuat akan muncul di bagian ini.
+
+                                <p class="academy-list-subtitle">
+                                    {{ $assignment->class_name }}
                                 </p>
                             </div>
-                        @endforelse
-                    </div>
+
+                            <div class="academy-list-value">
+                                {{ $assignment->graded_count }}/{{ $assignment->submitted_count }}
+
+                                <p class="mt-1 text-[9px] font-medium text-slate-400">
+                                    Graded
+                                </p>
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="academy-empty">
+                            Belum ada tugas yang dibuat.
+                        </div>
+
+                    @endforelse
 
                     @if($totalUngraded > 0)
-                        <div class="mt-4 flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
+
+                        <div class="mt-5 flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
+
                             <span class="text-xl">⏳</span>
+
                             <div>
-                                <p class="text-sm font-bold text-amber-800">
-                                    {{ $totalUngraded }} esai menunggu koreksi
+                                <p class="text-xs font-bold text-amber-800">
+                                    {{ $totalUngraded }} essays awaiting review
                                 </p>
-                                <p class="text-xs text-amber-700">
-                                    Periksa hasil pekerjaan siswa Anda.
+
+                                <p class="mt-1 text-[10px] text-amber-700">
+                                    Terdapat pekerjaan siswa yang menunggu penilaian.
                                 </p>
                             </div>
+
                         </div>
+
                     @endif
+
                 </div>
 
-                <div class="teacher-panel">
-                    <div class="flex items-center justify-between gap-3">
+                {{-- TEACHING SCHEDULE --}}
+
+                <div class="academy-panel">
+
+                    <div class="academy-panel-header">
+
                         <div>
-                            <p class="text-xs font-bold uppercase tracking-[.15em] text-sky-600">
-                                Teaching Schedule
+                            <p class="academy-section-label">
+                                Weekly Activities
                             </p>
-                            <h3 class="teacher-section-title mt-1">Jadwal Mengajar</h3>
+
+                            <h3 class="academy-section-title text-xl">
+                                Teaching Schedule
+                            </h3>
                         </div>
-                        <div class="grid h-11 w-11 place-items-center rounded-xl bg-indigo-50 text-xl text-indigo-600">
+
+                        <div class="academy-panel-icon">
                             ◷
                         </div>
+
                     </div>
 
-                    <div class="mt-5">
-                        @forelse($schedule as $slot)
-                            <div class="teacher-list-row">
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-slate-800">
-                                        {{ ucfirst($slot->day) }}
-                                    </p>
-                                    <p class="mt-1 truncate text-xs text-slate-500">
-                                        {{ $slot->class_name }} · {{ $slot->subject_name }}
-                                    </p>
-                                </div>
-                                <span class="shrink-0 rounded-lg bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700">
-                                    {{ substr($slot->start_time, 0, 5) }}–{{ substr($slot->end_time, 0, 5) }}
-                                </span>
-                            </div>
-                        @empty
-                            <div class="rounded-xl bg-slate-50 p-5 text-center">
-                                <p class="text-sm font-semibold text-slate-600">
-                                    Belum ada jadwal mengajar.
+                    @forelse($schedule as $slot)
+
+                        <div class="academy-list-row">
+
+                            <div class="min-w-0">
+                                <p class="academy-list-title">
+                                    {{ ucfirst($slot->day) }}
                                 </p>
-                                <p class="mt-1 text-xs text-slate-400">
-                                    Jadwal Anda akan muncul di bagian ini.
+
+                                <p class="academy-list-subtitle">
+                                    {{ $slot->class_name }} · {{ $slot->subject_name }}
                                 </p>
                             </div>
-                        @endforelse
-                    </div>
+
+                            <span class="shrink-0 rounded-full bg-blue-50 px-3 py-2 text-[10px] font-bold text-blue-800">
+                                {{ substr($slot->start_time, 0, 5) }}
+                                –
+                                {{ substr($slot->end_time, 0, 5) }}
+                            </span>
+
+                        </div>
+
+                    @empty
+
+                        <div class="academy-empty">
+                            Belum ada jadwal mengajar.
+                        </div>
+
+                    @endforelse
+
                 </div>
+
             </section>
 
-            {{-- STUDENTS AND GRADES --}}
-            <section class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            {{-- ==========================================
+                 STUDENTS AND GRADES
+            =========================================== --}}
 
-                <div class="teacher-panel">
-                    <div class="flex items-center justify-between gap-3">
+            <section class="academy-section academy-two-columns">
+
+                {{-- STUDENT DIRECTORY --}}
+
+                <div class="academy-panel">
+
+                    <div class="academy-panel-header">
+
                         <div>
-                            <p class="text-xs font-bold uppercase tracking-[.15em] text-sky-600">
-                                Student Directory
+                            <p class="academy-section-label">
+                                Learning Community
                             </p>
-                            <h3 class="teacher-section-title mt-1">Daftar Siswa</h3>
+
+                            <h3 class="academy-section-title text-xl">
+                                Student Directory
+                            </h3>
                         </div>
-                        <div class="grid h-11 w-11 place-items-center rounded-xl bg-violet-50 text-xl text-violet-600">
+
+                        <div class="academy-panel-icon">
                             ♙
                         </div>
+
                     </div>
 
-                    <div class="mt-5 space-y-4">
-                        @forelse($roster as $cstId => $students)
-                            <div>
-                                <p class="mb-2 text-xs font-extrabold uppercase tracking-wide text-slate-500">
-                                    {{ $students->first()->class_name }}
-                                    · {{ $students->first()->subject_name }}
-                                </p>
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach($students as $student)
-                                        <span class="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
-                                            {{ $student->student_name }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @empty
-                            <p class="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">
-                                Belum ada siswa yang terdaftar.
+                    @forelse($roster as $cstId => $students)
+
+                        <div class="mb-5 last:mb-0">
+
+                            <p class="mb-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                {{ $students->first()->class_name }}
+                                ·
+                                {{ $students->first()->subject_name }}
                             </p>
-                        @endforelse
-                    </div>
+
+                            <div class="flex flex-wrap gap-2">
+
+                                @foreach($students as $student)
+
+                                    <span class="academy-student-chip">
+                                        {{ $student->student_name }}
+                                    </span>
+
+                                @endforeach
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="academy-empty">
+                            Belum ada siswa yang terdaftar.
+                        </div>
+
+                    @endforelse
+
                 </div>
 
-                <div class="teacher-panel">
-                    <div class="flex items-center justify-between gap-3">
+                {{-- LATEST GRADES --}}
+
+                <div class="academy-panel">
+
+                    <div class="academy-panel-header">
+
                         <div>
-                            <p class="text-xs font-bold uppercase tracking-[.15em] text-sky-600">
-                                Latest Assessment
+                            <p class="academy-section-label">
+                                Student Achievement
                             </p>
-                            <h3 class="teacher-section-title mt-1">Nilai Terbaru</h3>
+
+                            <h3 class="academy-section-title text-xl">
+                                Latest Grades
+                            </h3>
                         </div>
-                        <div class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600">
+
+                        <div class="academy-panel-icon">
                             ★
                         </div>
+
                     </div>
 
-                    <div class="mt-5">
-                        @forelse($gradebook->take(10) as $grade)
-                            <div class="teacher-list-row">
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-bold text-slate-800">
-                                        {{ $grade->student_name }}
-                                    </p>
-                                    <p class="mt-1 truncate text-xs text-slate-500">
-                                        {{ $grade->source_title }}
-                                    </p>
-                                </div>
-                                <div class="shrink-0 text-right">
-                                    <p class="text-base font-black text-sky-700">
-                                        {{ $grade->score }}
-                                    </p>
-                                    <p class="text-[10px] font-bold text-slate-400">
-                                        {{ $grade->predicate }}
-                                    </p>
-                                </div>
+                    @forelse($gradebook->take(10) as $grade)
+
+                        <div class="academy-list-row">
+
+                            <div class="min-w-0">
+
+                                <p class="academy-list-title">
+                                    {{ $grade->student_name }}
+                                </p>
+
+                                <p class="academy-list-subtitle">
+                                    {{ $grade->source_title }}
+                                </p>
+
                             </div>
-                        @empty
-                            <p class="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">
-                                Belum ada nilai yang tersedia.
-                            </p>
-                        @endforelse
-                    </div>
+
+                            <div class="academy-list-value">
+
+                                {{ $grade->score }}
+
+                                <p class="mt-1 text-[9px] font-medium text-slate-400">
+                                    {{ $grade->predicate }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="academy-empty">
+                            Belum ada nilai yang tersedia.
+                        </div>
+
+                    @endforelse
+
                 </div>
+
             </section>
 
-            {{-- FOOTER --}}
-            <footer class="border-t border-slate-200 pt-6 text-center">
-                <p class="text-xs font-medium text-slate-400">
-                    Methodist Learning Space · Empowering Learning, Inspiring Future.
+            {{-- ==========================================
+                 FOOTER
+            =========================================== --}}
+
+            <footer class="academy-footer">
+                <p class="academy-serif text-base font-bold text-[#123B60]">
+                    Methodist Learning Space
+                </p>
+
+                <p class="mt-2">
+                    EMPOWERING MINDS · INSPIRING EXCELLENCE · BUILDING THE FUTURE
+                </p>
+
+                <p class="mt-3">
+                    © {{ date('Y') }} Methodist School. All rights reserved.
                 </p>
             </footer>
 
         </div>
-    </div>
+    </main>
+
 </x-app-layout>
