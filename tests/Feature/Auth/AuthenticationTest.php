@@ -6,15 +6,17 @@ test('login screen can be rendered', function () {
     $response = $this->get('/login');
 
     $response->assertStatus(200);
+    $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
 });
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    $response = $this->withSession(['url.intended' => '/admin/dashboard'])
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('dashboard', absolute: false));
