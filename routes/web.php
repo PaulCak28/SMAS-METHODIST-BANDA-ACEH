@@ -50,15 +50,12 @@ Route::post('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class
 // =========================================================
 
 Route::middleware('auth')->group(function () {
-
-    // =====================================================
-    // DASHBOARD
-    // =====================================================
-
     Route::get('/dashboard', function () {
         // Pengalihan dashboard ditangani middleware role.redirect.
     })->middleware('role.redirect')->name('dashboard');
+});
 
+Route::middleware(['auth', 'role:siswa'])->group(function () {
 
     // =====================================================
     // SISWA
@@ -113,7 +110,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{exam}/finish', [SiswaExam::class, 'finish'])
             ->name('finish');
     });
+});
 
+Route::middleware(['auth', 'role:guru'])->group(function () {
 
     // =====================================================
     // GURU
@@ -244,7 +243,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/session/{session}/grade-essay', [GuruExam::class, 'gradeEssay'])
             ->name('grade-essay');
     });
+});
 
+Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // =====================================================
     // ADMIN
@@ -377,14 +378,12 @@ Route::middleware('auth')->group(function () {
     //grade logs
     Route::prefix('admin/activity-logs')
     ->name('admin.activity-logs.')
-    ->middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/', [GradeLogController::class, 'index'])->name('index');
     });
 
     //classes
-    Route::middleware(['auth'])
-    ->prefix('admin')
+    Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
@@ -395,7 +394,6 @@ Route::middleware('auth')->group(function () {
     //announcements
 Route::prefix('admin/announcements')
         ->name('admin.announcements.')
-        ->middleware(['auth', 'role:admin'])
         ->group(function () {
             Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
             Route::get('/create', [AdminAnnouncement::class, 'create'])->name('create');
@@ -470,7 +468,9 @@ Route::prefix('admin/announcements')
         Route::delete('/{teacher}', [TeacherController::class, 'destroy'])
             ->name('destroy');
     });
+});
 
+Route::middleware('auth')->group(function () {
     // =====================================================
     // PROFILE
     // =====================================================

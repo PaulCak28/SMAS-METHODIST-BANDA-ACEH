@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\RoleRedirect;
+use App\Http\Middleware\PreventAuthenticatedPageCaching;
 use App\Http\Middleware\SwitchRoleDatabaseConnection;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Otomatis mengganti koneksi DB berdasarkan role user yang login
         $middleware->web(append: [
             SwitchRoleDatabaseConnection::class,
+            PreventAuthenticatedPageCaching::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
