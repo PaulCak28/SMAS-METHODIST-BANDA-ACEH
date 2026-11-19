@@ -2,24 +2,31 @@
     <x-slot name="header">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
                 <h2 class="font-bold text-xl text-slate-800 leading-tight">
                     {{ __('E-Exam & Kuis') }}
                 </h2>
                 <p class="text-sm text-slate-500 mt-0.5">Kelola daftar ujian dan kuis untuk kelas yang Anda ajar.</p>
             </div>
 
-            <!-- Tombol Tambah Ujian -->
-            <a href="{{ route('guru.exams.create') }}" 
-               class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-150">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                </svg>
-                {{ __('Tambah Ujian Baru') }}
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('guru.dashboard') }}"
+                   class="inline-flex items-center gap-2 rounded-full border border-[#E7EDF2] bg-white px-4 py-2.5 text-sm font-semibold text-[#123B60] shadow-sm transition hover:border-[#267BB5] hover:bg-[#E8F1F8]">
+                    <span aria-hidden="true">&larr;</span>
+                    Kembali ke Dashboard
+                </a>
+                <a href="{{ route('guru.exams.create') }}"
+                   class="inline-flex items-center justify-center gap-2 rounded-full bg-[#123B60] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0B2B48] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#267BB5]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                    </svg>
+                    {{ __('Tambah Ujian Baru') }}
+                </a>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="min-h-screen bg-[#FAF9F6] py-10">
         <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
 
             <!-- Flash Message / Notifikasi (Opsional jika ada) -->
@@ -44,12 +51,12 @@
             <!-- List Exams -->
             <div class="grid grid-cols-1 gap-4">
                 @forelse ($exams as $exam)
-                    <article class="group relative flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/80 hover:ring-indigo-300 hover:shadow-md transition-all duration-200">
+                    <article class="group relative flex flex-col gap-5 rounded-2xl border border-[#E7EDF2] bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between">
                         
                         <!-- Informasi Ujian -->
                         <div class="space-y-1.5">
                             <div class="flex items-center gap-3">
-                                <h4 class="text-base font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                                <h4 class="text-base font-semibold text-[#123B60] transition-colors group-hover:text-[#267BB5]">
                                     {{ $exam->title }}
                                 </h4>
                                 
@@ -71,7 +78,7 @@
                                     {{ $exam->classSubjectTeacher->schoolClass->name }}
                                 </span>
                                 <span>·</span>
-                                <span class="text-indigo-600 font-semibold">
+                                <span class="font-semibold text-[#267BB5]">
                                     {{ $exam->classSubjectTeacher->subject->name }}
                                 </span>
                                 <span>·</span>
@@ -86,7 +93,7 @@
                         <div class="mt-4 sm:mt-0 flex items-center gap-2">
                             <!-- Tombol Kelola -->
                             <a href="{{ route('guru.exams.show', $exam) }}" 
-                            class="inline-flex items-center justify-center rounded-xl bg-indigo-50 px-3.5 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors">
+                            class="inline-flex items-center justify-center rounded-full bg-[#E8F1F8] px-4 py-2 text-xs font-semibold text-[#123B60] transition-colors hover:bg-[#D9EAF5]">
                                 {{ __('Kelola') }}
                             </a>
 
@@ -138,7 +145,7 @@
                 @empty
                     <!-- Empty State yang Lebih Menarik -->
                     <div class="rounded-2xl bg-white p-12 text-center shadow-sm ring-1 ring-slate-200">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
+                        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#E8F1F8] text-[#267BB5]">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -146,7 +153,7 @@
                         <h3 class="text-sm font-semibold text-slate-900">{{ __('Belum ada ujian atau kuis') }}</h3>
                         <p class="mt-1 text-sm text-slate-500">{{ __('Mulai buat evaluasi pembelajaran untuk kelas Anda sekarang.') }}</p>
                         <div class="mt-6">
-                            <a href="{{ route('guru.exams.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                            <a href="{{ route('guru.exams.create') }}" class="inline-flex items-center gap-2 rounded-full bg-[#123B60] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0B2B48]">
                                 {{ __('Buat Ujian Pertama') }}
                             </a>
                         </div>

@@ -653,27 +653,51 @@ class ExamController extends Controller
             $exam->classSubjectTeacher
         );
 
-        $v = $request->validate([
+        $essayQuestions = $exam->questions()
+            ->where('question_type', 'esai')
+            ->get(['exam_question_id', 'score_weight'])
+            ->keyBy('exam_question_id');
+
+        $rules = [
             'scores' => 'required|array',
             'scores.*' => 'nullable|numeric|min:0|max:100',
-        ]);
+        ];
+        foreach ($essayQuestions as $question) {
+            $rules['scores.'.$question->exam_question_id] = [
+                'nullable',
+                'numeric',
+                'min:0',
+                'max:'.$question->score_weight,
+            ];
+        }
 
-        $essayIds = $exam->questions()
-            ->where('question_type', 'esai')
-            ->pluck('exam_question_id')
-            ->all();
+        $v = $request->validate($rules);
 
         $teacherNip = $request->user()->teacher->nip;
+        $connection = DB::connection('mysql_guru');
 
         foreach ($v['scores'] as $questionId => $score) {
             if (
                 $score === null ||
-                !in_array((int) $questionId, $essayIds, true)
+                !$essayQuestions->has((int) $questionId)
             ) {
                 continue;
             }
 
-            DB::connection('mysql_guru')->select(
+            $now = now();
+            $connection->table('exam_answers')->upsert(
+                [[
+                    'exam_id' => $exam->exam_id,
+                    'students_id' => $session->student_id,
+                    'question_id' => (int) $questionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]],
+                ['question_id', 'students_id'],
+                ['updated_at']
+            );
+
+            $connection->select(
                 'CALL sp_grade_exam_essay(?, ?, ?, ?)',
                 [
                     $session->exam_session_id,

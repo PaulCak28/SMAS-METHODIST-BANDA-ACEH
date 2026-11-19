@@ -85,10 +85,10 @@
                             Cek Nilai Siswa
                         </h2>
                         <p class="mt-1.5 text-xs leading-relaxed text-slate-300 sm:text-sm">
-                            Pantau kemajuan akademik putra-putri Anda secara transparan cukup dengan memasukkan NISN dan Tanggal Lahir siswa.
+                            Pantau kemajuan akademik putra-putri Anda secara transparan cukup dengan memasukkan NIS dan Tanggal Lahir siswa.
                         </p>
 
-                        <form action="{{ Route::has('cek-nilai') ? route('cek-nilai') : '#' }}" method="GET" class="mt-6 space-y-4">
+                        <form action="#" method="GET" class="mt-6 space-y-4">
                             <div>
                                 <label for="nisn" class="block text-xs font-semibold uppercase tracking-wider text-slate-200">
                                     Nomor Induk Siswa Nasional (NISN)
