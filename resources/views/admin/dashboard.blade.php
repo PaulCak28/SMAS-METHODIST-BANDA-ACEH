@@ -210,74 +210,84 @@
                     </div>
                 </div>
 
-                {{-- LOG AKTIVITAS NILAI --}}
+              {{-- LOG AKTIVITAS SISTEM (SEMUA TABEL) --}}
                 <div class="portal-card">
                     <div class="card-header-portal d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="fw-bold mb-0 text-dark">
-                                <i class="bi bi-clock-history text-accent me-2"></i> Log Aktivitas Nilai
+                                <i class="bi bi-clock-history text-accent me-2"></i> Log Aktivitas Terbaru
                             </h5>
-                            <small class="text-muted-portal" style="font-size: 0.72rem;">
-                                Audit otomatis
+                            <small class="text-muted-portal" style="font-size: 0.75rem;">
+                                Perubahan data lintas tabel sistem
                             </small>
                         </div>
                         <a href="{{ Route::has('admin.activity-logs.index') ? route('admin.activity-logs.index') : '#' }}" class="small text-accent text-decoration-none fw-semibold">
                             Lihat Semua
                         </a>
                     </div>
+
                     <div class="p-0">
-                        @forelse($recentGradeLogs ?? collect() as $log)
-                            <div class="p-3 border-bottom border-secondary">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <div class="d-flex align-items-center gap-2">
-                                        @php
-                                            $actionUpper = strtoupper($log->action ?? '');
-                                            $badge = match($actionUpper) {
-                                                'INSERT' => 'bg-success text-white',
-                                                'UPDATE' => 'bg-warning text-dark',
-                                                'DELETE' => 'bg-danger text-white',
-                                                default  => 'bg-secondary text-white',
-                                            };
-                                        @endphp
-                                        <span class="badge {{ $badge }} text-uppercase" style="font-size: 0.68rem;">
-                                            {{ $actionUpper }}
+                        @forelse($recentActivityLogs ?? collect() as $log)
+                            @php
+                                $actionUpper = strtoupper((string) ($log->action ?? ''));
+                                $badge = match(true) {
+                                    $actionUpper === 'INSERT'               => 'bg-success-subtle text-success border border-success-subtle',
+                                    str_starts_with($actionUpper, 'UPDATE') => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+                                    default                                 => 'bg-danger-subtle text-danger border border-danger-subtle',
+                                };
+                                $actionLabel = match($actionUpper) {
+                                    'UPDATE_BEFORE' => 'Update (Sebelum)',
+                                    'UPDATE_AFTER'  => 'Update (Sesudah)',
+                                    'UPDATE'        => 'Update',
+                                    'INSERT'        => 'Insert',
+                                    'DELETE'        => 'Delete',
+                                    default         => $actionUpper,
+                                };
+                            @endphp
+                            <div class="p-3 border-bottom border-secondary position-relative log-item-hover">
+                                <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="badge {{ $badge }} rounded-pill px-2.5 py-1 fw-semibold" style="font-size: 0.68rem;">
+                                            {{ $actionLabel }}
                                         </span>
                                         <span class="fw-bold text-dark small">
-                                            {{ $log->student->name ?? 'Siswa #' . $log->students_id }}
+                                            {{ $log->table_label }}
                                         </span>
+                                        <code class="small px-1.5 py-0.5 rounded" style="background:#f8fafc; color:#4f46e5; border:1px solid #e2e8f0; font-size:0.7rem;">
+                                            {{ $log->table }}
+                                        </code>
                                     </div>
-                                    <small class="text-muted-portal" style="font-size: 0.75rem;">
-                                        #{{ $log->log_id }} · {{ $log->changed_at ? \Carbon\Carbon::parse($log->changed_at)->format('d M H:i') : '-' }}
+                                    <small class="text-muted-portal font-monospace text-nowrap" style="font-size: 0.73rem;">
+                                        #{{ $log->log_id }} &middot; {{ $log->logged_at ? \Carbon\Carbon::parse($log->logged_at)->format('d M, H:i') : '-' }}
                                     </small>
                                 </div>
 
-                                <div class="text-muted-portal mb-1" style="font-size: 0.75rem;">
-                                    NIS: {{ $log->students_id }}
-                                    @if(!empty($log->grade_id))
-                                        · Grade #{{ $log->grade_id }}
-                                    @endif
-                                    · <code>{{ $log->cst_id }}</code>
-                                    · <span class="text-dark fw-medium">{{ $log->grade_type }}</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center" style="font-size: 0.78rem;">
-                                    <div>
-                                        <span class="text-muted-portal">Skor </span>
-                                        <i class="bi bi-arrow-right mx-1 text-muted-portal"></i>
-                                        <strong class="text-dark">{{ $log->new_score !== null ? number_format($log->new_score, 2) : 'Dihapus' }}</strong>
+                                @if(!empty($log->summary))
+                                    <div class="text-muted-portal mb-1 text-truncate" style="font-size: 0.76rem;">
+                                        {{ $log->summary }}
                                     </div>
+                                @endif
+
+                                <div class="d-flex justify-content-between align-items-center" style="font-size: 0.76rem;">
+                                    <span class="text-muted-portal">
+                                        <i class="bi bi-person me-1"></i>{{ $log->actor_name }}
+                                    </span>
+
+                                    @if(Route::has('admin.activity-logs.show'))
+                                        <a href="{{ route('admin.activity-logs.show', [$log->table, $log->log_id]) }}" class="small text-accent text-decoration-none fw-semibold stretched-link">
+                                            Detail <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @empty
                             <div class="p-4 text-center text-muted-portal small">
-                                Belum ada aktivitas perubahan nilai terbaru.
+                                <i class="bi bi-inbox fs-5 d-block mb-1"></i>
+                                Belum ada aktivitas perubahan data terbaru.
                             </div>
                         @endforelse
                     </div>
                 </div>
-
-            </div>
-        </div>
 
     </div>
 </div>
@@ -386,6 +396,15 @@
         border-radius: 8px;
         font-size: 1.2rem;
     }
+
+    // Log Aktivitas 
+    .log-item-hover {
+        transition: background-color 0.15s ease;
+    }
+    .log-item-hover:hover {
+        background-color: #f8fafc;
+    }
+
 </style>
 
 @endsection

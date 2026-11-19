@@ -6,15 +6,60 @@ use App\Http\Controllers\Controller;
 use App\Models\SchoolClass;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SchoolClassController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = SchoolClass::with('homeroomTeacher.user')
+            ->withCount('students');
+
+        if ($request->filled('search')) {
+            $term = $request->search;
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('academic_year', 'like', "%{$term}%")
+                  ->orWhere('homeroom_teacher_id', 'like', "%{$term}%")
+                  ->orWhereHas('homeroomTeacher.user', function ($u) use ($term) {
+                      $u->where('name', 'like', "%{$term}%");
+                  });
+            });
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->where('academic_year', $request->academic_year);
+        }
+
+        $classes = $query->orderBy('name')->paginate(15)->withQueryString();
+
+        $academicYears = SchoolClass::whereNotNull('academic_year')
+            ->distinct()
+            ->orderByDesc('academic_year')
+            ->pluck('academic_year');
+
+        $classIds = $classes->pluck('class_id')->all();
+
+        $studentsByClass = DB::connection('mysql_admin')
+            ->table('students as s')
+            ->leftJoin('users as u', 'u.user_id', '=', 's.nis')
+            ->whereIn('s.class_id', $classIds)
+            ->select(
+                's.class_id',
+                's.nis',
+                's.nisn',
+                'u.name as student_name',
+                's.gender',
+                's.status'
+            )
+            ->orderBy('u.name')
+            ->get()
+            ->groupBy(fn ($item) => (string) $item->class_id);
+
         return view('admin.classes.index', [
-            'classes' => SchoolClass::with('homeroomTeacher.user')
-                ->orderBy('name')
-                ->paginate(15)
+            'classes'         => $classes,
+            'academicYears'   => $academicYears,
+            'studentsByClass' => $studentsByClass,
         ]);
     }
 

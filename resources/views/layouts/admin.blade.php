@@ -266,7 +266,7 @@
             </a>
             <a href="{{ Route::has('admin.activity-logs.index') ? route('admin.activity-logs.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.activity-logs*') ? 'active' : '' }}">
                 <i class="bi bi-clock-history"></i>
-                <span>Log Aktivitas Nilai</span>
+                <span>Log Aktivitas</span>
             </a>
         </div>
 

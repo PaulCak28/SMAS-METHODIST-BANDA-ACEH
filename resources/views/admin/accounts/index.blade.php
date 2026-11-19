@@ -94,6 +94,8 @@
                                     'siswa'    => 'bg-success-subtle text-success',
                                     default    => 'bg-secondary-subtle text-secondary',
                                 };
+                                $studentStatus = strtolower((string) ($item->student->status ?? $item->student_status ?? $item->status ?? ''));
+                                $isActiveStudent = $item->role === 'siswa' && in_array($studentStatus, ['aktif', 'active', '1']);
                             @endphp
                             <tr>
                                 <td class="ps-4 text-center text-muted-portal">
@@ -127,14 +129,23 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         @if($item->user_id !== Auth::id())
-                                            <form action="{{ route('admin.accounts.destroy', $item->user_id) }}" method="POST"
-                                                  onsubmit="return confirm('Yakin ingin menghapus akun {{ $item->name }}?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
+                                            @if($isActiveStudent)
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-secondary px-2 opacity-50"
+                                                        title="Akun siswa aktif tidak dapat dihapus. Ubah status siswa terlebih dahulu."
+                                                        onclick="alert('Akun siswa {{ addslashes($item->name) }} masih berstatus AKTIF dan tidak dapat dihapus. Nonaktifkan status siswa terlebih dahulu.');">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
-                                            </form>
+                                            @else
+                                                <form action="{{ route('admin.accounts.destroy', $item->user_id) }}" method="POST"
+                                                      onsubmit="return confirm('Yakin ingin menghapus akun {{ addslashes($item->name) }}?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
