@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+/** Hanya user dengan users.role = 'admin' yang boleh lewat. */
+class EnsureAdmin
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        abort_unless($request->user() && $request->user()->role === 'admin', 403, 'Hanya admin.');
+
+        return $next($request);
+    }
+}

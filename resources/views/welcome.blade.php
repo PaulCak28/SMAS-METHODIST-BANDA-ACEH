@@ -19,7 +19,7 @@
 
         <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
             <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
-                
+
                 {{-- Kolom Kiri: Copywriting & CTA Utama --}}
                 <div class="lg:col-span-7">
                     <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white/90 backdrop-blur-md">
@@ -28,7 +28,7 @@
                     </div>
 
                     <h1 class="mt-5 font-serif text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                        Membangun Generasi Unggul, Berkarakter & Berprestasi.
+                        Membangun Generasi Unggul, Berkarakter &amp; Berprestasi.
                     </h1>
 
                     <p class="mt-5 max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
@@ -55,28 +55,18 @@
 
                     {{-- Badges Keunggulan Singkat --}}
                     <div class="mt-10 flex flex-wrap items-center gap-4 border-t border-white/10 pt-6 text-xs text-slate-300">
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                            </svg>
-                            <span>E-Exam Anti-Curang</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                            </svg>
-                            <span>Rekap Nilai Otomatis</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                            </svg>
-                            <span>Akses Wali Murid Cepat</span>
-                        </div>
+                        @foreach (['E-Exam Anti-Curang', 'Rekap Nilai Otomatis', 'Akses Wali Murid Cepat'] as $badge)
+                            <div class="flex items-center gap-2">
+                                <svg class="h-4 w-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ $badge }}</span>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
-                {{-- Kolom Kanan: Card Cek Nilai Interaktif (Glassmorphism Elegan) --}}
+                {{-- Kolom Kanan: Card Cek Nilai (Glassmorphism) --}}
                 <div class="lg:col-span-5">
                     <div id="cek-nilai" class="relative rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
                         <div class="flex items-center justify-between">
@@ -98,16 +88,48 @@
                             Pantau kemajuan akademik putra-putri Anda secara transparan cukup dengan memasukkan NIS dan Tanggal Lahir siswa.
                         </p>
 
-                        <p class="mt-4 text-sm leading-relaxed text-slate-300">
-                            Lihat riwayat ujian, nilai objektif, hasil koreksi esai, dan nilai akhir dengan verifikasi NIS serta tanggal lahir.
-                        </p>
-                        <a href="{{ route('cek-nilai-ujian.index') }}"
-                           class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-softblue to-sky-400 px-5 py-3.5 text-sm font-bold text-[#101C35] shadow-lg transition-all duration-200 hover:brightness-105 hover:shadow-xl active:scale-[0.99]">
-                            Buka Halaman Cek Nilai Ujian
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                            </svg>
-                        </a>
+                        <form action="#" method="GET" class="mt-6 space-y-4">
+                            <div>
+                                <label for="nisn" class="block text-xs font-semibold uppercase tracking-wider text-slate-200">
+                                    Nomor Induk Siswa Nasional (NISN)
+                                </label>
+                                <div class="relative mt-1.5">
+                                    <input
+                                        id="nisn"
+                                        name="nisn"
+                                        type="text"
+                                        inputmode="numeric"
+                                        maxlength="10"
+                                        autocomplete="off"
+                                        placeholder="Contoh: 0071234567"
+                                        required
+                                        class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 backdrop-blur-md transition focus:border-softblue focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-softblue/40"
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="tgl_lahir" class="block text-xs font-semibold uppercase tracking-wider text-slate-200">
+                                    Tanggal Lahir Siswa
+                                </label>
+                                <div class="relative mt-1.5">
+                                    <input
+                                        id="tgl_lahir"
+                                        name="tgl_lahir"
+                                        type="date"
+                                        required
+                                        class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 backdrop-blur-md transition focus:border-softblue focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-softblue/40"
+                                    >
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="w-full rounded-xl bg-gradient-to-r from-softblue to-sky-400 px-5 py-3.5 text-sm font-bold text-[#101C35] shadow-lg transition-all duration-200 hover:brightness-105 hover:shadow-xl active:scale-[0.99]"
+                            >
+                                Periksa Hasil Belajar
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -116,63 +138,35 @@
     </section>
 
     {{-- STATISTIK HIGHLIGHT --}}
+    @php
+        $stats = [
+            ['M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', '97+', 'Siswa Aktif', false],
+            ['M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', '18', 'Guru Profesional', false],
+            ['M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', '5', 'Format Ujian', false],
+            ['M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', '100%', 'Digital & Terpusat', true],
+        ];
+    @endphp
     <section class="relative z-20 -mt-8 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:grid-cols-4 sm:p-8">
-            
-            <div class="flex items-center gap-4 p-2 sm:border-r sm:border-slate-100">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                    <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
+            @foreach ($stats as [$icon, $number, $label, $green])
+                <div class="flex items-center gap-4 p-2 {{ $loop->last ? '' : 'sm:border-r sm:border-slate-100' }}">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl {{ $green ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-navy' }}">
+                        <svg class="h-6 w-6 {{ $green ? '' : 'text-navy' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="{{ $icon }}" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-serif text-2xl font-bold {{ $green ? 'text-emerald-600' : 'text-navy' }} sm:text-3xl">{{ $number }}</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $label }}</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="font-serif text-2xl font-bold text-navy sm:text-3xl">97+</p>
-                    <p class="text-xs font-semibold text-slate-500">Siswa Aktif</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-2 sm:border-r sm:border-slate-100">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                    <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-serif text-2xl font-bold text-navy sm:text-3xl">18</p>
-                    <p class="text-xs font-semibold text-slate-500">Guru Profesional</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-2 sm:border-r sm:border-slate-100">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                    <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-serif text-2xl font-bold text-navy sm:text-3xl">5</p>
-                    <p class="text-xs font-semibold text-slate-500">Format Ujian</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 p-2">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="font-serif text-2xl font-bold text-emerald-600 sm:text-3xl">100%</p>
-                    <p class="text-xs font-semibold text-slate-500">Digital & Terpusat</p>
-                </div>
-            </div>
-
+            @endforeach
         </div>
     </section>
 
     {{-- FITUR UTAMA (BENTO GRID MODERN) --}}
     <section id="fitur" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-        
+
         <div class="mx-auto max-w-3xl text-center">
             <span class="rounded-full bg-softblue/15 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-navy">
                 Fitur Unggulan
@@ -187,7 +181,7 @@
 
         {{-- Bento Grid --}}
         <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-12">
-            
+
             {{-- Feature Card 1: E-Class (7 Cols) --}}
             <article class="group relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl lg:col-span-7">
                 <div class="flex items-center justify-between">
@@ -209,22 +203,12 @@
                 </p>
 
                 <div class="mt-6 grid gap-3 sm:grid-cols-2">
-                    <div class="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3">
-                        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/10 text-navy font-bold text-xs">✓</div>
-                        <span class="text-xs font-medium text-slate-700">Materi dokumen, video & foto</span>
-                    </div>
-                    <div class="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3">
-                        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/10 text-navy font-bold text-xs">✓</div>
-                        <span class="text-xs font-medium text-slate-700">Pengumpulan tugas online</span>
-                    </div>
-                    <div class="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3">
-                        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/10 text-navy font-bold text-xs">✓</div>
-                        <span class="text-xs font-medium text-slate-700">Forum tanya-jawab interaktif</span>
-                    </div>
-                    <div class="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3">
-                        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/10 text-navy font-bold text-xs">✓</div>
-                        <span class="text-xs font-medium text-slate-700">Notifikasi batas waktu tugas</span>
-                    </div>
+                    @foreach (['Materi dokumen, video & foto', 'Pengumpulan tugas online', 'Forum tanya-jawab interaktif', 'Notifikasi batas waktu tugas'] as $point)
+                        <div class="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3">
+                            <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-navy/10 text-navy font-bold text-xs">&#10003;</div>
+                            <span class="text-xs font-medium text-slate-700">{{ $point }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </article>
 
@@ -237,30 +221,24 @@
                         </svg>
                     </div>
                     <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        Otomatis & Jujur
+                        Otomatis &amp; Jujur
                     </span>
                 </div>
 
                 <h3 class="mt-6 font-serif text-2xl font-bold text-navy">
-                    E-Exam: Evaluasi Teruji & Akurat
+                    E-Exam: Evaluasi Teruji &amp; Akurat
                 </h3>
                 <p class="mt-2 text-sm leading-relaxed text-slate-600">
-                    Sistem ujian daring komprehensif dengan pengacakan soal instan dan penilaian objektif otomatis tanpa hambatan koreksi manual.
+                    Sistem ujian daring komprehensif dengan penilaian objektif otomatis tanpa hambatan koreksi manual.
                 </p>
 
                 <ul class="mt-6 space-y-3">
-                    <li class="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                        <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                        Pilihan Ganda, Benar/Salah, Menjodohkan, & Esai
-                    </li>
-                    <li class="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                        <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                        Pengacakan urutan soal & opsi per siswa
-                    </li>
-                    <li class="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                        <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                        Nilai objektif langsung terhitung otomatis
-                    </li>
+                    @foreach (['Pilihan Ganda, Pilihan Ganda Kompleks, Benar/Salah, Menjodohkan, & Esai', 'Bobot nilai tiap soal diatur oleh guru', 'Nilai objektif langsung terhitung otomatis'] as $point)
+                        <li class="flex items-center gap-2.5 text-xs font-medium text-slate-700">
+                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">&#10003;</span>
+                            {{ $point }}
+                        </li>
+                    @endforeach
                 </ul>
             </article>
 
@@ -271,9 +249,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                 </div>
-                <h4 class="mt-4 font-serif text-lg font-bold text-navy">Integritas & Anti-Curang</h4>
+                <h4 class="mt-4 font-serif text-lg font-bold text-navy">Integritas &amp; Anti-Curang</h4>
                 <p class="mt-1.5 text-xs leading-relaxed text-slate-600">
-                    Deteksi otomatis saat siswa berganti tab browser, keluar dari mode layar penuh, atau melakukan salin-tempel.
+                    Foto wajah sebelum ujian, serta pencatatan otomatis saat siswa berganti tab atau melakukan salin-tempel.
                 </p>
             </article>
 
@@ -284,9 +262,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                     </svg>
                 </div>
-                <h4 class="mt-4 font-serif text-lg font-bold text-navy">Live Monitoring Pengawas</h4>
+                <h4 class="mt-4 font-serif text-lg font-bold text-navy">Live Monitoring</h4>
                 <p class="mt-1.5 text-xs leading-relaxed text-slate-600">
-                    Guru dapat memantau progres pengerjaan ujian, waktu tersisa, dan status keaktifan siswa secara real-time.
+                    Admin dan guru dapat memantau progres pengerjaan ujian di setiap kelas secara langsung.
                 </p>
             </article>
 
@@ -298,7 +276,7 @@
                 </div>
                 <h4 class="mt-4 font-serif text-lg font-bold text-navy">Buku Nilai Terpusat</h4>
                 <p class="mt-1.5 text-xs leading-relaxed text-slate-600">
-                    Rekapitulasi otomatis untuk seluruh nilai tugas harian, kuis, UTS, dan UAS tanpa perlu input manual yang berulang.
+                    Rekapitulasi otomatis nilai tugas harian, kuis, UTS, dan UAS tanpa input manual yang berulang.
                 </p>
             </article>
 
@@ -306,6 +284,18 @@
     </section>
 
     {{-- UNTUK SIAPA (EKOSISTEM SEKOLAH) --}}
+    @php
+        $roles = [
+            ['Siswa', 'Akses modul pembelajaran, unggah tugas harian tepat waktu, ikuti ujian digital, dan tinjau progres hasil belajar.',
+                ['M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222']],
+            ['Guru Mapel', 'Kelola bahan ajar, atur bank soal ujian dengan berbagai tipe, awasi ujian, dan nilai tugas siswa secara praktis.',
+                ['M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z']],
+            ['Administrator', 'Manajemen terpusat untuk akun pengguna, pembentukan kelas mata pelajaran, pengumuman sekolah, dan monitoring ujian.',
+                ['M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', 'M15 12a3 3 0 11-6 0 3 3 0 016 0z']],
+            ['Orang Tua / Wali', 'Memantau nilai, tugas, dan kehadiran ujian anak, serta bertanya kepada guru atau menyampaikan pengaduan.',
+                ['M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z']],
+        ];
+    @endphp
     <section class="border-y border-slate-200/80 bg-white/70 py-16 sm:py-20">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
@@ -321,108 +311,52 @@
             </div>
 
             <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                
-                {{-- Siswa --}}
-                <div class="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy/40 hover:shadow-lg">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                        <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
-                        </svg>
+                @foreach ($roles as [$roleName, $roleDesc, $rolePaths])
+                    <div class="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy/40 hover:shadow-lg">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-navy">
+                            <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                @foreach ($rolePaths as $p)
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="{{ $p }}"/>
+                                @endforeach
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 font-serif text-xl font-bold text-navy">{{ $roleName }}</h3>
+                        <p class="mt-2 text-xs leading-relaxed text-slate-600">{{ $roleDesc }}</p>
                     </div>
-                    <h3 class="mt-4 font-serif text-xl font-bold text-navy">Siswa</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-600">
-                        Akses modul pembelajaran, unggah tugas harian tepat waktu, ikuti ujian digital, dan tinjau progres hasil belajar.
-                    </p>
-                </div>
-
-                {{-- Guru --}}
-                <div class="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy/40 hover:shadow-lg">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                        <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
-                        </svg>
-                    </div>
-                    <h3 class="mt-4 font-serif text-xl font-bold text-navy">Guru Mapel</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-600">
-                        Kelola bahan ajar, atur bank soal ujian dengan berbagai tipe, awasi ujian real-time, dan nilai tugas siswa secara praktis.
-                    </p>
-                </div>
-
-                {{-- Admin --}}
-                <div class="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy/40 hover:shadow-lg">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                        <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="mt-4 font-serif text-xl font-bold text-navy">Administrator</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-600">
-                        Manajemen terpusat untuk akun pengguna, plotting kelas, jadwal akademik, pengumuman sekolah, serta sinkronisasi data master.
-                    </p>
-                </div>
-
-                {{-- Orang Tua --}}
-                <div class="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy/40 hover:shadow-lg">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-navy">
-                        <svg class="h-6 w-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="mt-4 font-serif text-xl font-bold text-navy">Orang Tua / Wali</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-600">
-                        Mendukung pemantauan nilai anak kapan saja tanpa harus memiliki akun khusus melalui fitur Cek Nilai Siswa mandiri.
-                    </p>
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>
 
     {{-- PENGUMUMAN & BERITA SEKOLAH --}}
     @php
-        $hasDynamicAnnouncements = isset($announcements) && count($announcements) > 0;
+        $items = isset($announcements) ? collect($announcements) : collect();
         $sampleAnnouncements = [
-            [
-                'category' => 'Pengumuman',
-                'date' => '28 Okt 2026',
-                'title' => 'Jadwal Penilaian Akhir Semester (PAS) Berbasis E-Exam',
-                'desc' => 'Informasi lengkap pelaksanaan PAS digital untuk seluruh tingkatan kelas X, XI, dan XII SMAS Methodist.',
-                'gradient' => 'from-navy via-[#1f4068] to-softblue',
-            ],
-            [
-                'category' => 'Berita',
-                'date' => '27 Okt 2026',
-                'title' => 'Prestasi Gemilang Siswa SMAS Methodist di Tingkat Provinsi',
-                'desc' => 'Apresiasi kepada siswa yang berhasil menorehkan prestasi membanggakan pada ajang kompetisi sains tahun ini.',
-                'gradient' => 'from-softblue via-sky-600 to-navy',
-            ],
-            [
-                'category' => 'Akademik',
-                'date' => '25 Okt 2026',
-                'title' => 'Sosialisasi E-Learning & Pembagian Akun Siswa Baru',
-                'desc' => 'Panduan pengenalan sistem pembelajaran daring terpadu bagi siswa dan wali murid SMAS Methodist Banda Aceh.',
-                'gradient' => 'from-slate-800 via-navy to-softblue',
-            ],
+            ['category' => 'Pengumuman', 'date' => '28 Okt 2026', 'title' => 'Jadwal Penilaian Akhir Semester (PAS) Berbasis E-Exam',
+                'desc' => 'Informasi lengkap pelaksanaan PAS digital untuk seluruh tingkatan kelas X, XI, dan XII SMAS Methodist.', 'gradient' => 'from-navy via-[#1f4068] to-softblue'],
+            ['category' => 'Berita', 'date' => '27 Okt 2026', 'title' => 'Prestasi Gemilang Siswa SMAS Methodist di Tingkat Provinsi',
+                'desc' => 'Apresiasi kepada siswa yang berhasil menorehkan prestasi membanggakan pada ajang kompetisi sains tahun ini.', 'gradient' => 'from-softblue via-sky-600 to-navy'],
+            ['category' => 'Akademik', 'date' => '25 Okt 2026', 'title' => 'Sosialisasi E-Learning & Pembagian Akun Siswa Baru',
+                'desc' => 'Panduan pengenalan sistem pembelajaran daring terpadu bagi siswa dan wali murid SMAS Methodist Banda Aceh.', 'gradient' => 'from-slate-800 via-navy to-softblue'],
         ];
     @endphp
 
     <section id="pengumuman" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-        
+
         <div class="flex flex-col justify-between gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-end">
             <div>
                 <span class="rounded-full bg-softblue/15 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-navy">
                     Informasi Terkini
                 </span>
                 <h2 class="mt-2 font-serif text-3xl font-bold text-navy sm:text-4xl">
-                    Pengumuman & Berita Sekolah
+                    Pengumuman &amp; Berita Sekolah
                 </h2>
                 <p class="mt-1 text-sm text-slate-600">
                     Kabar terkini seputar kegiatan akademik dan pengumuman resmi SMAS Methodist Banda Aceh.
                 </p>
             </div>
 
-            <a href="{{ Route::has('announcements.index') ? route('announcements.index') : '#pengumuman' }}" 
+            <a href="{{ Route::has('announcements.index') ? route('announcements.index') : '#pengumuman' }}"
                class="group inline-flex items-center gap-1.5 text-sm font-bold text-navy transition hover:text-softblue">
                 <span>Lihat Semua Kabar</span>
                 <span class="transition group-hover:translate-x-1">&rarr;</span>
@@ -430,10 +364,14 @@
         </div>
 
         <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            @if ($hasDynamicAnnouncements)
-                @foreach ($announcements as $announcement)
+            @if ($items->isNotEmpty())
+                @foreach ($items->take(3) as $announcement)
+                    @php
+                        $when = $announcement->published_at ?? $announcement->created_at ?? null;
+                        $excerpt = $announcement->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($announcement->content ?? ''), 120);
+                    @endphp
                     <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                        @if (!empty($announcement->image_url))
+                        @if (! empty($announcement->image_url))
                             <img src="{{ $announcement->image_url }}" alt="{{ $announcement->title }}" class="h-44 w-full object-cover">
                         @else
                             <div class="flex h-44 items-center justify-center bg-gradient-to-br from-navy via-slate-800 to-softblue p-4 text-center">
@@ -443,24 +381,18 @@
                         <div class="flex flex-1 flex-col p-6">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="rounded-full bg-blue-50 px-3 py-1 font-semibold text-navy">{{ $announcement->category_label ?? 'Pengumuman' }}</span>
-                                <time class="text-slate-400">{{ optional($announcement->published_at)->translatedFormat('d M Y') ?? date('d M Y') }}</time>
+                                <time class="text-slate-400">{{ $when ? $when->translatedFormat('d M Y') : '' }}</time>
                             </div>
                             <h3 class="mt-3 font-serif text-lg font-bold text-navy group-hover:text-softblue">
                                 {{ $announcement->title }}
                             </h3>
                             <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-600">
-                                {{ $announcement->excerpt ?? '' }}
+                                {{ $excerpt }}
                             </p>
                             <div class="mt-auto pt-4">
-                                @if (Route::has('announcements.show'))
-                                    <a href="{{ route('announcements.show', $announcement->slug) }}" class="inline-flex items-center gap-1 text-xs font-bold text-navy hover:text-softblue">
-                                        Baca selengkapnya &rarr;
-                                    </a>
-                                @else
-                                    <span class="inline-flex items-center gap-1 text-xs font-bold text-navy">
-                                        Baca selengkapnya &rarr;
-                                    </span>
-                                @endif
+                                <span class="inline-flex items-center gap-1 text-xs font-bold text-navy">
+                                    Baca selengkapnya &rarr;
+                                </span>
                             </div>
                         </div>
                     </article>
@@ -494,10 +426,10 @@
         </div>
     </section>
 
-    {{-- CALL TO ACTION (CTA BANNER MODERN) --}}
+    {{-- CALL TO ACTION --}}
     <section class="mx-auto mb-16 max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="relative isolate overflow-hidden rounded-3xl bg-gradient-to-r from-[#0e172a] via-[#101C35] to-[#17365D] px-6 py-12 shadow-2xl sm:px-12 sm:py-16 lg:flex lg:items-center lg:justify-between lg:px-16">
-            
+
             {{-- Ambient light effect --}}
             <div class="absolute -top-24 -right-24 -z-10 h-72 w-72 rounded-full bg-softblue/20 blur-3xl"></div>
 
@@ -521,7 +453,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                     </svg>
                 </a>
-                
+
                 <a href="https://smasmethodistbna.sch.id/"
                    target="_blank"
                    rel="noopener"

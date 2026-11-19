@@ -185,32 +185,30 @@ class AccountController extends Controller
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(string $userId)
     {
-        $user = User::on('mysql_admin')->where('user_id', $id)->firstOrFail();
+        $conn = DB::connection('mysql_admin');
+        $user = $conn->table('users')->where('user_id', $userId)->first();
 
-        if ($user->user_id === Auth::id()) {
-            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        if (! $user) {
+            return back()->with('error', 'Akun pengguna tidak ditemukan.');
         }
 
-        try {
-            DB::connection('mysql_admin')->beginTransaction();
+        if ($user->role === 'siswa') {
+            $student = $conn->table('students')
+                ->where('user_id', $userId)
+                ->orWhere('nis', $userId)
+                ->first();
 
-            if ($user->role === 'guru') {
-                DB::connection('mysql_admin')->table('teachers')->where('nip', $user->user_id)->delete();
-            } elseif ($user->role === 'siswa') {
-                DB::connection('mysql_admin')->table('students')->where('nis', $user->user_id)->delete();
+            $status = strtolower((string) ($student->status ?? ''));
+            if (in_array($status, ['aktif', 'active', '1'])) {
+                return back()->with('error', "Akun siswa {$user->name} masih berstatus aktif sehingga tidak dapat dihapus.");
             }
-
-            $user->delete();
-
-            DB::connection('mysql_admin')->commit();
-
-            return redirect()->route('admin.accounts.index')->with('success', 'Akun berhasil dihapus.');
-        } catch (\Exception $e) {
-            DB::connection('mysql_admin')->rollBack();
-
-            return back()->with('error', 'Gagal menghapus akun: ' . $e->getMessage());
         }
+
+        $conn->table('users')->where('user_id', $userId)->delete();
+
+        return redirect()->route('admin.accounts.index')
+            ->with('success', "Akun {$user->name} berhasil dihapus.");
     }
 }
