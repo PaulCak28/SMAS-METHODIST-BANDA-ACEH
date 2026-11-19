@@ -12,7 +12,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-10">
+    <div class="col-12">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-4 p-md-5">
                 <form action="{{ route('admin.announcements.update', $announcement->slug ?: $announcement->announcement_id) }}" method="POST">
@@ -46,7 +46,7 @@
 
                     @include('admin.announcements.partials.editor', ['content' => old('content', $announcement->content)])
 
-                    <div class="d-flex justify-content-end gap-2">
+                    <div class="d-flex justify-content-end gap-2 mt-4">
                         <a href="{{ route('admin.announcements.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Batal</a>
                         <button type="submit" class="btn btn-primary px-4 rounded-3 fw-medium">Simpan Perubahan</button>
                     </div>

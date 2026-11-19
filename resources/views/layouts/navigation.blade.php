@@ -12,9 +12,27 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard', 'siswa.dashboard', 'guru.dashboard', 'admin.dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if (Auth::user()?->isSiswa())
+                        <x-nav-link :href="route('siswa.classes.index')" :active="request()->routeIs('siswa.classes.*')">
+                            {{ __('E-Class') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('siswa.exams.index')" :active="request()->routeIs('siswa.exams.*')">
+                            {{ __('E-Exam') }}
+                        </x-nav-link>
+                    @elseif (Auth::user()?->isGuru())
+                        <x-nav-link :href="route('guru.classes.index')" :active="request()->routeIs('guru.classes.*')">
+                            {{ __('E-Class') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('guru.exams.index')" :active="request()->routeIs('guru.exams.*')">
+                            {{ __('E-Exam') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

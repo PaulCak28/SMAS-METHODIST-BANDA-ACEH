@@ -1,110 +1,153 @@
 @extends('layouts.admin')
 
-@section('title', 'Mata Pelajaran')
+@section('title', 'Mata Pelajaran - Portal Akademik')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Data Mata Pelajaran</h4>
-        <p class="text-muted small mb-0">Kelola daftar mata pelajaran yang diajarkan di sekolah.</p>
-    </div>
-    <div>
-        <a href="{{ route('admin.subjects.create') }}" class="btn btn-primary shadow-sm rounded-3 fw-medium px-3">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Mapel
+
+<div class="theme-portal rounded-4 shadow-sm">
+
+    {{-- HEADER HALAMAN --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Akademik</div>
+            <h2 class="fw-bold mb-1 text-dark">Daftar Mata Pelajaran</h2>
+            <p class="text-muted-portal mb-0">
+                Manajemen kode dan nama mata pelajaran yang diajarkan di SMAS Methodist Banda Aceh.
+            </p>
+        </div>
+        <a href="{{ route('admin.subjects.create') }}" class="btn btn-portal-primary px-4 py-2 rounded-3">
+            <i class="bi bi-plus-lg me-1"></i> Tambah Mata Pelajaran
         </a>
     </div>
-</div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4 border-0 bg-success text-white" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4 border-0 bg-danger text-white" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+    <div class="p-4 pt-0">
 
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-    <div class="card-body p-4">
-        <form action="{{ route('admin.subjects.index') }}" method="GET" class="row g-3">
-            <div class="col-md-9">
-                <div class="input-group input-group-lg">
-                    <span class="input-group-text bg-light border-end-0 text-muted px-3"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" class="form-control bg-light border-start-0 fs-6" placeholder="Cari kode atau nama mata pelajaran..." value="{{ $search ?? '' }}">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- FORM PENCARIAN FULL-WIDTH RAPI --}}
+        <form method="GET" action="{{ route('admin.subjects.index') }}" class="portal-card p-3 mb-4">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-8 col-lg-9">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ $search ?? request('search') }}"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Cari kode mapel atau nama mata pelajaran...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-portal-primary flex-grow-1">
+                        <i class="bi bi-search me-1"></i> Cari
+                    </button>
+                    <a href="{{ route('admin.subjects.index') }}" class="btn btn-outline-secondary px-3">
+                        Reset
+                    </a>
                 </div>
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-dark w-100 rounded-3 fw-medium">Cari</button>
-                <a href="{{ route('admin.subjects.index') }}" class="btn btn-light border rounded-3 text-secondary px-3" title="Reset">
-                    <i class="bi bi-arrow-clockwise"></i>
-                </a>
-            </div>
         </form>
-    </div>
-</div>
 
-<div class="card border-0 shadow-sm rounded-4">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light text-muted small text-uppercase" style="letter-spacing: 0.5px;">
-                <tr>
-                    <th class="ps-4 py-3" style="width: 80px;">No</th>
-                    <th class="py-3" style="width: 150px;">Kode Mapel</th>
-                    <th class="py-3">Nama Mata Pelajaran</th>
-                    <th class="text-end pe-4 py-3" style="width: 150px;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($subjects as $index => $subject)
-                    <tr>
-                        <td class="ps-4 text-muted">{{ $subjects->firstItem() + $index }}</td>
-                        <td>
-                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fs-6 font-monospace">
-                                {{ $subject->code }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="fw-semibold text-dark fs-6">{{ $subject->name }}</div>
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                {{-- Tombol Edit --}}
-<a href="{{ route('admin.subjects.edit', $subject->code) }}" class="btn btn-sm btn-light border shadow-sm text-primary" title="Edit Mapel">
-    <i class="bi bi-pencil-square"></i>
-</a>
+        {{-- TABEL MATA PELAJARAN --}}
+        <div class="portal-card overflow-hidden">
+            <div class="card-header-portal d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-book text-accent me-2"></i> Daftar Mata Pelajaran ({{ $subjects->total() }})
+                </h5>
+            </div>
 
-{{-- Tombol Hapus --}}
-<form action="{{ route('admin.subjects.destroy', $subject->code) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus mata pelajaran {{ $subject->name }}?')">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-sm btn-light border shadow-sm text-danger" title="Hapus Mapel">
-        <i class="bi bi-trash"></i>
-    </button>
-</form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">
-                            <i class="bi bi-book display-4 text-muted d-block mb-3 opacity-50"></i>
-                            <h6 class="fw-semibold text-dark">Data tidak ditemukan</h6>
-                            <p class="small mb-0">Belum ada mata pelajaran yang terdaftar atau sesuai pencarian Anda.</p>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    
-    @if($subjects->hasPages())
-        <div class="card-footer bg-white border-top p-3">
-            {{ $subjects->links() }}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle custom-table mb-0">
+                    <thead class="text-muted-portal small border-bottom border-secondary bg-light">
+                        <tr>
+                            <th class="ps-4 text-center" style="width: 70px;">No</th>
+                            <th style="width: 170px;">Kode Mapel</th>
+                            <th>Nama Mata Pelajaran</th>
+                            <th class="text-center" style="width: 170px;">Kelas Diampu</th>
+                            <th class="text-end pe-4" style="width: 140px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($subjects as $index => $subject)
+                            @php
+                                $count = $usageCounts[$subject->code] ?? 0;
+                            @endphp
+                            <tr>
+                                <td class="ps-4 text-center text-muted-portal">
+                                    {{ $subjects->firstItem() + $index }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace fs-6 px-2 py-1">
+                                        {{ $subject->code }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold text-dark">{{ $subject->name }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
+                                        {{ $count }} kelas
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-inline-flex gap-1">
+                                        <a href="{{ route('admin.subjects.edit', $subject->code) }}"
+                                           class="btn btn-sm btn-outline-primary px-2" title="Edit Mata Pelajaran">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form action="{{ route('admin.subjects.destroy', $subject->code) }}" method="POST"
+                                              onsubmit="return confirm('Yakin ingin menghapus mata pelajaran {{ $subject->name }}?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted-portal">
+                                    Belum ada data mata pelajaran yang sesuai.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($subjects->hasPages())
+                <div class="p-3 border-top bg-light">
+                    {{ $subjects->links() }}
+                </div>
+            @endif
         </div>
-    @endif
+    </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; min-height: 80vh; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .border-secondary { border-color: #e2e8f0 !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .card-header-portal { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .custom-table { --bs-table-bg: transparent; --bs-table-color: #1e293b; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection

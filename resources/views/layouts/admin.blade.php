@@ -130,13 +130,12 @@
             box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
 
-        /* Sidebar Footer (Profil User) */
+        /* Sidebar Footer (Info Akun Saja) */
         .sidebar-footer {
             padding: 15px 18px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
-            justify-content: space-between;
         }
         .user-avatar {
             width: 38px;
@@ -148,17 +147,6 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-        }
-        .btn-logout {
-            color: var(--sidebar-text);
-            background: none;
-            border: none;
-            font-size: 1.3rem;
-            transition: 0.2s;
-            padding: 0;
-        }
-        .btn-logout:hover {
-            color: white;
         }
 
         /* MAIN CONTENT AREA */
@@ -178,6 +166,21 @@
             align-items: center;
             padding: 0 25px;
             justify-content: space-between;
+        }
+
+        .profile-dropdown-btn {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 50rem;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .profile-dropdown-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
         }
 
         .main-content {
@@ -235,11 +238,14 @@
             </a>
 
             <div class="menu-category">Akademik</div>
+            <a href="{{ Route::has('admin.classes.index') ? route('admin.classes.index') : url('/admin/classes') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
+                <i class="bi bi-door-open"></i> Data Kelas
+            </a>
             <a href="{{ Route::has('admin.subjects.index') ? route('admin.subjects.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.subjects.*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Mata Pelajaran
             </a>
             <a href="{{ Route::has('admin.cst.index') ? route('admin.cst.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.cst.*') ? 'active' : '' }}">
-                <i class="bi bi-building"></i> Manajemen Kelas
+                <i class="bi bi-building"></i> Manajemen Kelas 
             </a>
             <a href="{{ Route::has('admin.enrollments.index') ? route('admin.enrollments.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.enrollments.*') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-check"></i> Enrollment Siswa
@@ -254,13 +260,17 @@
             </a>
 
             <div class="menu-category">Informasi</div>
-            <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}">
+            <a href="{{ Route::has('admin.announcements.index') ? route('admin.announcements.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i>
                 <span>Pengumuman</span>
             </a>
+            <a href="{{ Route::has('admin.activity-logs.index') ? route('admin.activity-logs.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.activity-logs*') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i>
+                <span>Log Aktivitas Nilai</span>
+            </a>
         </div>
 
-        <!-- Sidebar Footer -->
+        <!-- Sidebar Footer (Info Akun Saja, Tanpa Logout) -->
         <div class="sidebar-footer">
             <div class="d-flex align-items-center gap-2">
                 <div class="user-avatar">
@@ -271,14 +281,6 @@
                     <div style="color: #94a3b8; font-size: 0.75rem;">Administrator</div>
                 </div>
             </div>
-
-            <!-- Tombol Logout Bawah -->
-            <form action="{{ Route::has('logout') ? route('logout') : '#' }}" method="POST" class="m-0">
-                @csrf
-                <button type="submit" class="btn-logout" title="Keluar Sistem">
-                    <i class="bi bi-arrow-down-circle"></i>
-                </button>
-            </form>
         </div>
 
     </aside>
@@ -293,16 +295,32 @@
                 <i class="bi bi-list fs-4"></i>
             </button>
 
-            <div class="d-none d-md-block">
-                <!-- Breadcrumb atau judul halaman bisa diletakkan di sini jika perlu -->
-            </div>
+            <div class="d-none d-md-block"></div>
 
-            <!-- User Info Kanan Atas -->
-            <div class="bg-white border-0 shadow-sm rounded-pill px-3 py-2 d-flex align-items-center gap-2">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
-                    <i class="bi bi-person-fill small"></i>
-                </div>
-                <span class="fw-semibold small text-dark">{{ auth()->user()->name ?? 'Administrator' }}</span>
+            <!-- Dropdown Profil Kanan Atas (Klik untuk memunculkan menu Logout ke bawah) -->
+            <div class="dropdown ms-auto">
+                <button class="profile-dropdown-btn dropdown-toggle shadow-sm" type="button" id="adminProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                        <i class="bi bi-person-fill small"></i>
+                    </div>
+                    <span class="fw-semibold small text-dark">{{ auth()->user()->name ?? 'Administrator Sekolah' }}</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" aria-labelledby="adminProfileDropdown" style="min-width: 210px;">
+                    <li class="px-3 py-2 border-bottom">
+                        <div class="fw-bold text-dark small">{{ auth()->user()->name ?? 'Administrator Sekolah' }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Role: Admin Akademik</div>
+                    </li>
+                    <li class="p-1">
+                        <form action="{{ Route::has('logout') ? route('logout') : '#' }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger fw-medium rounded-2 d-flex align-items-center gap-2 py-2">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Keluar (Logout)</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </header>
 
@@ -331,5 +349,12 @@
     <!-- Tambahan JS per Halaman -->
     @stack('scripts')
 
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 </html>

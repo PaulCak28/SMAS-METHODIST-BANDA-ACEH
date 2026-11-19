@@ -1,88 +1,102 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Enrollment Siswa')
+@section('title', 'Edit Enrollment Siswa - Portal Akademik')
 
 @section('content')
-<div class="mb-4 d-flex align-items-center gap-3">
-    <a href="{{ route('admin.enrollments.index') }}" class="btn btn-white border-0 shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
-        <i class="bi bi-arrow-left text-dark fs-5"></i>
-    </a>
-    <div>
-        <h4 class="fw-bold mb-1 text-dark">Edit Data Enrollment Siswa</h4>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0 small">
-                <li class="breadcrumb-item text-muted">Akademik</li>
-                <li class="breadcrumb-item text-muted">Enrollment</li>
-                <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">{{ $enrollment->student->user->name ?? 'Edit' }}</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4 p-md-5">
-                
-                <form action="{{ route('admin.enrollments.update', $enrollment->enrollment_id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark">Siswa</label>
-                        <input type="text" class="form-control bg-light" value="{{ $enrollment->students_id }} — {{ $enrollment->student->user->name ?? '' }}" readonly>
-                        <div class="form-text small mt-1 text-muted">Siswa tidak dapat diubah pada halaman edit ini.</div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark">Kelas & Mata Pelajaran (CST) <span class="text-danger">*</span></label>
-                        <select name="cst_id" class="form-select bg-light @error('cst_id') is-invalid @enderror" required>
-                            @foreach($csts as $cst)
-                                <option value="{{ $cst->cst_id }}" {{ old('cst_id', $enrollment->cst_id) == $cst->cst_id ? 'selected' : '' }}>
-                                    {{ $cst->schoolClass->name ?? '-' }} | Mapel: {{ $cst->subject->name ?? '-' }} (Tahun: {{ $cst->academic_year }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cst_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark">Status Siswa <span class="text-danger">*</span></label>
-                        <select name="status" class="form-select bg-light @error('status') is-invalid @enderror" required>
-                            @php $statuses = ['aktif', 'naik_kelas', 'tinggal_kelas', 'pindah', 'lulus', 'drop_out']; @endphp
-                            @foreach($statuses as $st)
-                                <option value="{{ $st }}" {{ old('status', $enrollment->status) == $st ? 'selected' : '' }}>
-                                    {{ ucwords(str_replace('_', ' ', $st)) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label fw-semibold text-dark">Tanggal Masuk (Enrolled At)</label>
-                            <input type="date" name="enrolled_at" class="form-control bg-light @error('enrolled_at') is-invalid @enderror" value="{{ old('enrolled_at', optional($enrollment->enrolled_at)->format('Y-m-d')) }}">
-                            @error('enrolled_at') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label fw-semibold text-dark">Tanggal Keluar (Left At)</label>
-                            <input type="date" name="left_at" class="form-control bg-light @error('left_at') is-invalid @enderror" value="{{ old('left_at', optional($enrollment->left_at)->format('Y-m-d')) }}">
-                            @error('left_at') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
-
-                    <hr class="border-secondary mb-4 opacity-10">
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.enrollments.index') }}" class="btn btn-light border px-4 rounded-3 fw-medium">Batal</a>
-                        <button type="submit" class="btn btn-primary px-4 rounded-3 fw-medium">Simpan Perubahan</button>
-                    </div>
-
-                </form>
-                
-            </div>
+<div class="theme-portal rounded-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-4 border-bottom">
+        <div>
+            <div class="text-uppercase tracking-wide text-accent fw-bold small mb-1">Akademik</div>
+            <h2 class="fw-bold mb-1 text-dark">Edit Enrollment Siswa</h2>
+            <p class="text-muted-portal mb-0">
+                Siswa: <strong>{{ $enrollment->student->user->name ?? $enrollment->students_id }}</strong>
+                (<code>{{ $enrollment->students_id }}</code>)
+            </p>
         </div>
+        <a href="{{ route('admin.enrollments.show', $enrollment->students_id) }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
+    </div>
+
+    <div class="p-4 pt-0">
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.enrollments.update', $enrollment->enrollment_id) }}" method="POST" class="portal-card p-4">
+            @csrf
+            @method('PUT')
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Siswa</label>
+                    <input type="text" value="{{ $enrollment->students_id }} — {{ $enrollment->student->user->name ?? '' }}"
+                           class="form-control bg-light" disabled>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Kelas Mata Pelajaran (CST) <span class="text-danger">*</span></label>
+                    <select name="cst_id" class="form-select" required>
+                        @foreach($csts as $cst)
+                            <option value="{{ $cst->cst_id }}" {{ (string) old('cst_id', $enrollment->cst_id) === (string) $cst->cst_id ? 'selected' : '' }}>
+                                {{ $cst->schoolClass->name ?? 'Kelas #' . $cst->class_id }} —
+                                {{ $cst->subject->name ?? $cst->subject_code }}
+                                ({{ $cst->academic_year }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Status Enrollment <span class="text-danger">*</span></label>
+                    <select name="status" class="form-select" required>
+                        @foreach(['aktif', 'naik_kelas', 'tinggal_kelas', 'pindah', 'lulus', 'drop_out'] as $st)
+                            <option value="{{ $st }}" {{ old('status', $enrollment->status) === $st ? 'selected' : '' }}>
+                                {{ ucwords(str_replace('_', ' ', $st)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Masuk</label>
+                    <input type="date" name="enrolled_at"
+                           value="{{ old('enrolled_at', $enrollment->enrolled_at ? \Carbon\Carbon::parse($enrollment->enrolled_at)->format('Y-m-d') : '') }}"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Keluar (Opsional)</label>
+                    <input type="date" name="left_at"
+                           value="{{ old('left_at', $enrollment->left_at ? \Carbon\Carbon::parse($enrollment->left_at)->format('Y-m-d') : '') }}"
+                           class="form-control">
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button type="submit" class="btn btn-portal-primary px-4">
+                    <i class="bi bi-save me-1"></i> Simpan Perubahan
+                </button>
+                <a href="{{ route('admin.enrollments.show', $enrollment->students_id) }}" class="btn btn-outline-secondary px-4">Batal</a>
+            </div>
+        </form>
     </div>
 </div>
+
+<style>
+    .theme-portal { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    .text-accent { color: #4f46e5 !important; }
+    .text-muted-portal { color: #64748b !important; }
+    .portal-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .btn-portal-primary { background-color: #4f46e5; border-color: #4f46e5; color: white; font-weight: 500; }
+    .btn-portal-primary:hover { background-color: #4338ca; color: white; }
+</style>
+
 @endsection
