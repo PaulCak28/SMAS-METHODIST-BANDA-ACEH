@@ -1,0 +1,328 @@
+@php
+    $className = $cst->schoolClass->name ?? 'Kelas ' . $cst->class_id;
+    $subjectName = $cst->subject->name ?? $cst->subject_code;
+    $fullClassTitle = strtoupper($className) . ' - ' . strtoupper($subjectName);
+    $oldFormats = old('allowed_formats', ['pdf']);
+@endphp
+
+@section('title', 'Buat Tugas Baru - ' . $fullClassTitle . ' | E-Class Guru')
+
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                    <a href="{{ route('guru.classes.index') }}" class="hover:text-blue-600 transition">E-Class</a>
+                    <span>/</span>
+                    <a href="{{ route('guru.classes.show', $cst) }}" class="hover:text-blue-600 transition">{{ $fullClassTitle }}</a>
+                    <span>/</span>
+                    <span class="text-indigo-700 font-bold">Buat Tugas</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-slate-800 mt-1">
+                    Buat Tugas Baru
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Ruang Kelas: <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span> (T.A. {{ $cst->academic_year }} · Semester {{ ucfirst($cst->semester) }})
+                </p>
+            </div>
+
+            <a href="{{ route('guru.classes.show', $cst) }}"
+               class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                <span>←</span>
+                Kembali ke Kelas
+            </a>
+        </div>
+    </x-slot>
+
+    {{-- QUILL STYLE --}}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+        .lms-page {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .lms-card {
+            border: 1px solid #e8eef6;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(15, 53, 100, .045);
+        }
+
+        .lms-input {
+            width: 100%;
+            border: 1px solid #dce5f0;
+            border-radius: 12px;
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #1e293b;
+            transition: .2s;
+        }
+
+        .lms-input:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+        }
+
+        .lms-label {
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .lms-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 12px;
+            padding: 11px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .lms-btn-primary {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 14px rgba(79,70,229,.25);
+        }
+
+        .lms-btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .ql-editor {
+            min-height: 200px;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            border-color: #dce5f0 !important;
+        }
+
+        .ql-toolbar {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-color: #dce5f0 !important;
+            background: #f8fafc;
+        }
+    </style>
+
+    <div class="lms-page min-h-screen bg-[#f5f8fc] py-6 sm:py-8">
+        <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+
+            {{-- NOTIFIKASI ERROR --}}
+            @if ($errors->any())
+                <div class="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
+                    <div class="flex items-start gap-3">
+                        <span class="text-xl">⚠️</span>
+                        <div>
+                            <p class="font-bold">Gagal membuat tugas, periksa isian Anda:</p>
+                            <ul class="mt-2 list-inside list-disc space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            {{-- CARD FORM BUAT TUGAS --}}
+            <section class="lms-card overflow-hidden">
+                <div class="border-b border-slate-100 bg-gradient-to-r from-indigo-50/80 to-white px-7 py-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-2xl text-white shadow-lg shadow-indigo-200">
+                            📝
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-800">Buat Tugas Baru untuk Siswa</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Atur topik tugas, rincian instruksi kerja, batas akhir pengumpulan, dan jenis berkas yang diperbolehkan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="form-assignment-create"
+                      action="{{ route('guru.classes.assignments.store', $cst) }}"
+                      method="POST"
+                      class="space-y-6 p-7">
+                    @csrf
+
+                    <input type="hidden" name="max_score" value="100">
+
+                    <div>
+                        <label class="lms-label">Judul Tugas <span class="text-rose-500">*</span></label>
+                        <input name="title"
+                               value="{{ old('title') }}"
+                               required
+                               maxlength="150"
+                               class="lms-input"
+                               placeholder="Contoh: Latihan 1 - Analisis Struktur dan Tata Ruang Wilayah">
+                        <p class="mt-1.5 text-[11px] text-slate-400">Tentukan judul tugas yang spesifik dan mudah dipahami siswa.</p>
+                    </div>
+
+                    <div>
+                        <label class="lms-label">Instruksi & Petunjuk Pengerjaan</label>
+                        <div id="editor-assignment-create"></div>
+                        <input type="hidden"
+                               name="description"
+                               id="input-assignment-create">
+                        <p class="mt-1.5 text-[11px] text-slate-400">Jelaskan langkah-langkah kerja, kriteria penilaian, atau format penulisan yang diharapkan.</p>
+                    </div>
+
+                    <div>
+                        <label class="lms-label">Batas Akhir Pengumpulan (Tenggat Waktu) <span class="text-rose-500">*</span></label>
+                        <input type="datetime-local"
+                               name="due_date"
+                               required
+                               min="{{ now()->format('Y-m-d\TH:i') }}"
+                               value="{{ old('due_date') }}"
+                               class="lms-input">
+                        <p class="mt-1.5 text-[11px] text-slate-400">Siswa yang mengumpulkan melewati batas waktu ini akan ditandai terlambat.</p>
+                    </div>
+
+                    <div>
+                        <label class="lms-label">Format Berkas yang Diizinkan <span class="text-rose-500">*</span></label>
+                        <p class="mb-3 text-[11px] text-slate-400">
+                            Pilih minimal satu jenis format file yang diizinkan untuk diunggah siswa.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4"
+                             data-format-group>
+                            @foreach ($formatOptions as $ext => $label)
+                                <label class="flex cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-3 text-xs font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50/50">
+                                    <input type="checkbox"
+                                           name="allowed_formats[]"
+                                           value="{{ $ext }}"
+                                           @checked(in_array($ext, $oldFormats))
+                                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                    {{ $label }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-6">
+                        <a href="{{ route('guru.classes.show', $cst) }}"
+                           class="lms-btn border border-slate-200 text-slate-600 hover:bg-slate-50">
+                            Batal
+                        </a>
+
+                        <button type="submit"
+                                class="lms-btn lms-btn-primary">
+                            <span>＋</span>
+                            Terbitkan Tugas Baru
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+        </div>
+    </div>
+
+    {{-- SCRIPTS --}}
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadUrl = @json(route('guru.classes.editor-images.store', $cst));
+            const csrfToken = @json(csrf_token());
+
+            function uploadQuillImage(quill) {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/jpeg,image/png,image/gif,image/webp';
+                fileInput.click();
+
+                fileInput.onchange = async function () {
+                    const file = fileInput.files[0];
+                    if (!file) return;
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Ukuran gambar maksimal 5 MB.');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    try {
+                        const response = await fetch(uploadUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        });
+
+                        const result = await response.json();
+                        if (!response.ok) {
+                            throw new Error(result.message || 'Gagal mengunggah gambar.');
+                        }
+
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, 'image', result.url, 'user');
+                        quill.setSelection(range.index + 1);
+                    } catch (error) {
+                        console.error(error);
+                        alert(error.message || 'Terjadi kesalahan saat upload gambar.');
+                    }
+                };
+            }
+
+            const quill = new Quill('#editor-assignment-create', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            [{ header: [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline'],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['link', 'image', 'blockquote'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            image: function () {
+                                uploadQuillImage(quill);
+                            }
+                        }
+                    }
+                }
+            });
+
+            const form = document.getElementById('form-assignment-create');
+            const inputDesc = document.getElementById('input-assignment-create');
+            const oldDesc = @json(old('description'));
+
+            if (oldDesc) {
+                quill.clipboard.dangerouslyPasteHTML(oldDesc);
+            }
+
+            form.addEventListener('submit', (event) => {
+                const checked = form.querySelector('[data-format-group] input:checked');
+                if (!checked) {
+                    event.preventDefault();
+                    alert('Pilih minimal satu format berkas untuk pengumpulan tugas.');
+                    return;
+                }
+
+                const empty = quill.getText().trim() === '' && !quill.root.querySelector('img');
+                inputDesc.value = empty ? '' : quill.root.innerHTML;
+            });
+        });
+    </script>
+</x-app-layout>

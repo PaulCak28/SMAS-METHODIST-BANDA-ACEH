@@ -1,3 +1,4 @@
+@section('title', strtoupper($class->schoolClass->name ?? 'Kelas') . ' - ' . strtoupper($class->subject->name ?? $class->subject_code) . ' | E-Class Guru')
 
 <x-app-layout>
     @php
@@ -5,21 +6,21 @@
 
         $status = function ($e) use ($now) {
             if (! $e->is_published) {
-                return ['Draf', 'bg-slate-100 text-slate-600', ''];
+                return ['Draf', 'bg-slate-100 text-slate-600 border-slate-200'];
             }
 
             $start = \Illuminate\Support\Carbon::parse($e->start_time);
             $end = \Illuminate\Support\Carbon::parse($e->end_time);
 
             if ($now->lt($start)) {
-                return ['Belum dibuka', 'bg-blue-50 text-blue-700', ''];
+                return ['Belum dibuka', 'bg-blue-50 text-blue-700 border-blue-200'];
             }
 
             if ($now->gt($end)) {
-                return ['Ditutup', 'bg-slate-100 text-slate-600', ''];
+                return ['Ditutup', 'bg-slate-100 text-slate-600 border-slate-200'];
             }
 
-            return ['Berlangsung', 'bg-emerald-50 text-emerald-700', ''];
+            return ['Berlangsung', 'bg-emerald-50 text-emerald-700 border-emerald-200'];
         };
 
         $formatOptions = [
@@ -45,21 +46,36 @@
 
         $subjectName = $class->subject->name ?? $class->subject_code;
         $className = $class->schoolClass->name ?? 'Kelas '.$class->class_id;
+        $fullClassTitle = strtoupper($className) . ' - ' . strtoupper($subjectName);
     @endphp
+
+    <x-slot name="header">
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                    E-Class Guru · SMAS Methodist Banda Aceh
+                </p>
+                <h2 class="text-xl font-extrabold text-slate-800">
+                    {{ $fullClassTitle }}
+                </h2>
+            </div>
+
+            <div class="mt-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                Kelas Aktif · {{ $class->academic_year }} ({{ ucfirst($class->semester) }})
+            </div>
+        </div>
+    </x-slot>
 
     {{-- QUILL STYLE --}}
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap');
 
         .lms-page {
             font-family: 'DM Sans', sans-serif;
-        }
-
-        .lms-shadow {
-            box-shadow: 0 8px 30px rgba(15, 53, 100, .055);
         }
 
         .lms-card {
@@ -99,7 +115,7 @@
             justify-content: center;
             gap: 8px;
             border-radius: 11px;
-            padding: 11px 16px;
+            padding: 10px 16px;
             font-size: 12px;
             font-weight: 700;
             transition: .2s;
@@ -129,10 +145,6 @@
             font-size: 16px;
             font-weight: 800;
             letter-spacing: -.35px;
-        }
-
-        .lms-muted {
-            color: #8492a6;
         }
 
         .rich {
@@ -180,7 +192,7 @@
         }
 
         .ql-editor {
-            min-height: 145px;
+            min-height: 140px;
             font-size: 13px;
             line-height: 1.7;
         }
@@ -239,15 +251,15 @@
             }
 
             .lms-hero h1 {
-                font-size: 25px !important;
+                font-size: 24px !important;
             }
         }
     </style>
 
-    <div class="lms-page min-h-screen bg-[#f5f8fc] py-7 sm:py-9">
+    <div class="lms-page min-h-screen bg-[#f5f8fc] py-6 sm:py-8">
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
 
-            {{-- BREADCRUMB --}}
+            {{-- BREADCRUMB & TOMBOL KEMBALI --}}
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
                     <a href="{{ route('guru.classes.index') }}"
@@ -255,26 +267,27 @@
                         E-Class
                     </a>
                     <span>/</span>
-                    <span class="font-bold text-blue-700">{{ $className }}</span>
+                    <span class="font-bold text-blue-700">{{ $fullClassTitle }}</span>
                 </div>
 
                 <a href="{{ route('guru.classes.index') }}"
-                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
                     <span>←</span>
-                    Kembali ke daftar kelas
+                    Kembali ke Daftar E-Class
                 </a>
             </div>
 
-            {{-- HERO --}}
+            {{-- ==========================================
+                 HERO SECTION: NAMA KELAS SANGAT JELAS (CONTOH: X-IPA 1 - GEOGRAFI)
+            =========================================== --}}
             <section class="lms-hero relative overflow-hidden rounded-[25px] bg-gradient-to-br from-[#123d80] via-[#1756a8] to-[#2879df] p-7 text-white shadow-xl sm:p-9">
-
                 <div class="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full border-[35px] border-white/5"></div>
                 <div class="pointer-events-none absolute -bottom-36 right-52 h-72 w-72 rounded-full bg-blue-400/10 blur-2xl"></div>
 
                 <div class="relative z-10">
-                    <div class="mb-5 flex flex-wrap items-center gap-2">
+                    <div class="mb-4 flex flex-wrap items-center gap-2">
                         <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[1.5px] text-blue-100">
-                            TEACHER LEARNING SPACE
+                            RUANG PEMBELAJARAN GURU
                         </span>
                         <span class="rounded-full bg-emerald-400/20 px-3 py-1.5 text-[10px] font-bold text-emerald-100">
                             ● KELAS AKTIF
@@ -282,31 +295,32 @@
                     </div>
 
                     <div class="max-w-3xl">
-                        <p class="mb-2 text-sm font-medium text-blue-100">
-                            {{ $className }} · {{ $class->academic_year }}
+                        <p class="mb-1 text-sm font-semibold text-blue-100">
+                            Tahun Ajaran {{ $class->academic_year }} · Semester {{ ucfirst($class->semester) }}
                         </p>
 
-                        <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">
-                            {{ $subjectName }}
+                        {{-- NAMA KELAS DAN MATA PELAJARAN --}}
+                        <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
+                            {{ $fullClassTitle }}
                         </h1>
 
-                        <p class="mt-3 max-w-2xl text-sm leading-7 text-blue-100">
-                            Kelola pembelajaran, bagikan materi, berikan tugas,
-                            dan pantau perkembangan siswa dalam satu ruang kelas.
+                        <p class="mt-3 max-w-2xl text-xs sm:text-sm leading-6 sm:leading-7 text-blue-100">
+                            Kelola seluruh aktivitas kelas, bagikan materi pelajaran, atur tugas siswa,
+                            pantau jadwal mengajar resmi, dan bimbing siswa dalam ruang kelas ini.
                         </p>
                     </div>
 
                     <div class="mt-7 flex flex-wrap gap-3">
-                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-3">
+                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5">
                             <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-200">
-                                Tahun ajaran
+                                Tahun Ajaran
                             </p>
                             <p class="mt-1 text-sm font-bold">
                                 {{ $class->academic_year }}
                             </p>
                         </div>
 
-                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-3">
+                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5">
                             <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-200">
                                 Semester
                             </p>
@@ -315,9 +329,9 @@
                             </p>
                         </div>
 
-                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-3">
+                        <div class="rounded-xl border border-white/15 bg-white/10 px-4 py-2.5">
                             <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-200">
-                                Kode bergabung
+                                Kode Bergabung Siswa
                             </p>
                             <div class="mt-1 flex items-center gap-2">
                                 <span id="join-code"
@@ -326,18 +340,40 @@
                                 </span>
                                 <button type="button"
                                         onclick="copyJoinCode()"
-                                        class="rounded-md bg-white/15 px-2 py-1 text-[10px] font-bold transition hover:bg-white/25">
-                                    Salin
+                                        class="rounded-md bg-white/20 px-2 py-1 text-[10px] font-bold transition hover:bg-white/30">
+                                    Salin Kode
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    {{-- TOMBOL AKSI CEPAT --}}
+                    <div class="mt-5 flex flex-wrap gap-2.5 pt-2">
+                        <a href="{{ route('guru.classes.materials.create', $cst) }}"
+                           class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
+                            <span>📚</span>
+                            <span>＋ Tambah Materi</span>
+                        </a>
+
+                        <a href="{{ route('guru.classes.assignments.create', $cst) }}"
+                           class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
+                            <span>📝</span>
+                            <span>＋ Buat Tugas</span>
+                        </a>
+
+                        <a href="{{ route('guru.exams.create') }}"
+                           class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
+                            <span>📋</span>
+                            <span>＋ Buat Ujian</span>
+                        </a>
+                    </div>
                 </div>
             </section>
 
-            {{-- STATISTIK --}}
+            {{-- ==========================================
+                 STATISTIK RINGKAS KELAS
+            =========================================== --}}
             <section class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-
                 <div class="lms-card lms-stat p-5">
                     <div class="flex items-center justify-between">
                         <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl">
@@ -347,7 +383,7 @@
                             Materi
                         </span>
                     </div>
-                    <p class="mt-5 text-3xl font-extrabold text-slate-800">
+                    <p class="mt-4 text-3xl font-extrabold text-slate-800">
                         {{ $materialCount }}
                     </p>
                     <p class="mt-1 text-xs text-slate-400">Materi pembelajaran</p>
@@ -362,10 +398,10 @@
                             Tugas
                         </span>
                     </div>
-                    <p class="mt-5 text-3xl font-extrabold text-slate-800">
+                    <p class="mt-4 text-3xl font-extrabold text-slate-800">
                         {{ $assignmentCount }}
                     </p>
-                    <p class="mt-1 text-xs text-slate-400">Tugas diberikan</p>
+                    <p class="mt-1 text-xs text-slate-400">Tugas aktif</p>
                 </div>
 
                 <div class="lms-card lms-stat p-5">
@@ -377,10 +413,10 @@
                             Ujian
                         </span>
                     </div>
-                    <p class="mt-5 text-3xl font-extrabold text-slate-800">
+                    <p class="mt-4 text-3xl font-extrabold text-slate-800">
                         {{ $examCount }}
                     </p>
-                    <p class="mt-1 text-xs text-slate-400">Ujian tersedia</p>
+                    <p class="mt-1 text-xs text-slate-400">Ujian & kuis</p>
                 </div>
 
                 <div class="lms-card lms-stat p-5">
@@ -392,21 +428,111 @@
                             Siswa
                         </span>
                     </div>
-                    <p class="mt-5 text-3xl font-extrabold text-slate-800">
+                    <p class="mt-4 text-3xl font-extrabold text-slate-800">
                         {{ $studentCount }}
                     </p>
                     <p class="mt-1 text-xs text-slate-400">Siswa bergabung</p>
                 </div>
-
             </section>
 
-            {{-- NOTIFIKASI ERROR --}}
+            {{-- ==========================================
+                 TEACHING SCHEDULE (JADWAL MENGAJAR KELAS INI - DIPERBAIKI LENGKAP)
+            =========================================== --}}
+            <section class="lms-card overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-blue-50/70 to-white px-6 py-5">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">◷</span>
+                            <h2 class="lms-section-title">Jadwal Mengajar</h2>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-500">
+                            Jadwal tatap muka resmi untuk kelas <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span>.
+                        </p>
+                    </div>
+
+                    <span class="rounded-full bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-blue-700 border border-blue-100">
+                        {{ $schedule->count() }} Jadwal Terdaftar
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-left text-xs">
+                        <thead class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5 font-bold">Hari</th>
+                                <th class="px-6 py-3.5 font-bold">Jam Pembelajaran</th>
+                                <th class="px-6 py-3.5 font-bold">Durasi</th>
+                                <th class="px-6 py-3.5 font-bold">Mata Pelajaran</th>
+                                <th class="px-6 py-3.5 font-bold">Kelas</th>
+                                <th class="px-6 py-3.5 font-bold">Semester & T.A.</th>
+                                <th class="px-6 py-3.5 font-bold">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @forelse($schedule as $slot)
+                                @php
+                                    $startTime = substr($slot->start_time, 0, 5);
+                                    $endTime = substr($slot->end_time, 0, 5);
+
+                                    $startCarbon = \Illuminate\Support\Carbon::createFromFormat('H:i:s', $slot->start_time);
+                                    $endCarbon = \Illuminate\Support\Carbon::createFromFormat('H:i:s', $slot->end_time);
+                                    $durationMinutes = $startCarbon->diffInMinutes($endCarbon);
+                                @endphp
+                                <tr class="hover:bg-blue-50/30 transition">
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 font-bold text-blue-800">
+                                            📅 {{ ucfirst($slot->day) }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-extrabold text-slate-800">
+                                        {{ $startTime }} – {{ $endTime }} WIB
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-slate-600">
+                                        {{ $durationMinutes }} Menit
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-[#123B60]">
+                                        {{ $slot->subject_name }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-slate-800">
+                                        {{ $slot->class_name }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-slate-500">
+                                        Semester {{ ucfirst($slot->semester) }} · {{ $slot->academic_year }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                                            Aktif
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-10 text-center text-slate-400">
+                                        <div class="text-3xl mb-2">◷</div>
+                                        <p class="font-bold text-slate-600">Belum ada jadwal mengajar untuk kelas ini.</p>
+                                        <p class="text-xs text-slate-400 mt-1">Jadwal tatap muka yang ditetapkan oleh bagian kurikulum akan ditampilkan di tabel ini.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {{-- NOTIFIKASI ERROR / SUKSES --}}
+            @if (session('success'))
+                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 flex items-center gap-3">
+                    <span class="text-xl">✅</span>
+                    <span class="font-semibold">{{ session('success') }}</span>
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
                     <div class="flex items-start gap-3">
                         <span class="text-xl">⚠️</span>
                         <div>
-                            <p class="font-bold">Periksa kembali isian Anda</p>
+                            <p class="font-bold">Periksa kembali isian formulir Anda:</p>
                             <ul class="mt-2 list-inside list-disc space-y-1">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -417,166 +543,9 @@
                 </div>
             @endif
 
-            {{-- FORM MATERI DAN TUGAS --}}
-            <div class="grid items-start gap-6 xl:grid-cols-2">
-
-                {{-- TAMBAH MATERI --}}
-                <section class="lms-card overflow-hidden">
-                    <div class="border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white px-6 py-5">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-xl text-white shadow-lg shadow-blue-200">
-                                📚
-                            </div>
-                            <div>
-                                <h2 class="lms-section-title">Tambah Materi</h2>
-                                <p class="mt-1 text-xs text-slate-400">
-                                    Bagikan sumber belajar kepada siswa.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form id="form-material-create"
-                          action="{{ route('guru.classes.materials.store', $cst) }}"
-                          method="POST"
-                          enctype="multipart/form-data"
-                          class="space-y-5 p-6">
-                        @csrf
-
-                        <div>
-                            <label class="lms-label">Judul materi</label>
-                            <input name="title"
-                                   value="{{ old('title') }}"
-                                   required
-                                   maxlength="150"
-                                   class="lms-input"
-                                   placeholder="Contoh: Pengenalan Basis Data">
-                        </div>
-
-                        <div>
-                            <label class="lms-label">Deskripsi materi</label>
-                            <div id="editor-material-create"></div>
-                            <input type="hidden"
-                                   name="description"
-                                   id="input-material-create">
-                        </div>
-
-                        <div>
-                            <label class="lms-label">
-                                Lampiran materi
-                                <span class="font-normal text-slate-400">(maks. 20 MB)</span>
-                            </label>
-
-                            <div class="rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/50 p-5 transition hover:border-blue-400">
-                                <div class="text-center">
-                                    <div class="text-2xl">☁️</div>
-                                    <p class="mt-2 text-xs font-bold text-slate-700">
-                                        Pilih file pembelajaran
-                                    </p>
-                                    <p class="mt-1 text-[11px] text-slate-400">
-                                        PDF, Word, PowerPoint, Excel, gambar, video, ZIP
-                                    </p>
-                                    <input type="file"
-                                           name="file"
-                                           data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip,txt"
-                                           data-max-mb="20"
-                                           accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip,.txt"
-                                           class="mt-4 block w-full text-xs text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-xs file:font-bold file:text-white hover:file:bg-blue-700">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit"
-                                class="lms-btn lms-btn-primary w-full py-3">
-                            <span>＋</span>
-                            Unggah Materi
-                        </button>
-                    </form>
-                </section>
-
-                {{-- TAMBAH TUGAS --}}
-                <section class="lms-card overflow-hidden">
-                    <div class="border-b border-slate-100 bg-gradient-to-r from-indigo-50 to-white px-6 py-5">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-xl text-white shadow-lg shadow-indigo-200">
-                                📝
-                            </div>
-                            <div>
-                                <h2 class="lms-section-title">Buat Tugas</h2>
-                                <p class="mt-1 text-xs text-slate-400">
-                                    Atur instruksi dan tenggat pengumpulan.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form id="form-assignment-create"
-                          action="{{ route('guru.classes.assignments.store', $cst) }}"
-                          method="POST"
-                          class="space-y-5 p-6">
-                        @csrf
-
-                        <input type="hidden" name="max_score" value="100">
-
-                        <div>
-                            <label class="lms-label">Judul tugas</label>
-                            <input name="title"
-                                   value="{{ old('title') }}"
-                                   required
-                                   maxlength="150"
-                                   class="lms-input"
-                                   placeholder="Contoh: Latihan Pertemuan 1">
-                        </div>
-
-                        <div>
-                            <label class="lms-label">Instruksi tugas</label>
-                            <div id="editor-assignment-create"></div>
-                            <input type="hidden"
-                                   name="description"
-                                   id="input-assignment-create">
-                        </div>
-
-                        <div>
-                            <label class="lms-label">Batas pengumpulan</label>
-                            <input type="datetime-local"
-                                   name="due_date"
-                                   required
-                                   min="{{ now()->format('Y-m-d\TH:i') }}"
-                                   value="{{ old('due_date') }}"
-                                   class="lms-input">
-                        </div>
-
-                        <div>
-                            <label class="lms-label">Format file yang diterima</label>
-                            <p class="mb-3 text-[11px] leading-5 text-slate-400">
-                                Pilih format file yang boleh dikumpulkan oleh siswa.
-                            </p>
-
-                            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3"
-                                 data-format-group>
-                                @foreach ($formatOptions as $ext => $label)
-                                    <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:bg-blue-50">
-                                        <input type="checkbox"
-                                               name="allowed_formats[]"
-                                               value="{{ $ext }}"
-                                               @checked(in_array($ext, $oldFormats))
-                                               class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                        {{ $label }}
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <button type="submit"
-                                class="lms-btn w-full bg-indigo-600 py-3 text-white hover:bg-indigo-700">
-                            <span>＋</span>
-                            Buat Tugas
-                        </button>
-                    </form>
-                </section>
-            </div>
-
-            {{-- DAFTAR MATERI --}}
+            {{-- ==========================================
+                 DAFTAR MATERI PEMBELAJARAN
+            =========================================== --}}
             <section class="lms-card overflow-hidden">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-5">
                     <div>
@@ -585,20 +554,27 @@
                             <h2 class="lms-section-title">Materi Pembelajaran</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
-                            Seluruh materi yang telah dibagikan kepada siswa.
+                            Daftar seluruh materi yang telah dibagikan kepada siswa pada kelas ini.
                         </p>
                     </div>
 
-                    <span class="rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-700">
-                        {{ $materialCount }} Materi
-                    </span>
+                    <div class="flex items-center gap-3">
+                        <span class="rounded-full bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-blue-700">
+                            {{ $materialCount }} Materi
+                        </span>
+
+                        <a href="{{ route('guru.classes.materials.create', $cst) }}"
+                           class="lms-btn lms-btn-primary">
+                            <span>＋</span>
+                            Tambah Materi
+                        </a>
+                    </div>
                 </div>
 
                 @forelse ($class->materials->sortByDesc('uploaded_at') as $material)
                     <div class="lms-item flex flex-col gap-4 border-b border-slate-100 px-6 py-5 last:border-0 sm:flex-row sm:items-start sm:justify-between">
-
                         <div class="flex min-w-0 gap-4">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-700">
                                 📄
                             </div>
 
@@ -614,23 +590,23 @@
                                 @endif
 
                                 <p class="mt-2 text-[11px] text-slate-400">
-                                    {{ optional($material->uploaded_at)->format('d M Y, H:i') ?? $material->created_at?->format('d M Y, H:i') }}
+                                    Diunggah: {{ optional($material->uploaded_at)->format('d M Y, H:i') ?? $material->created_at?->format('d M Y, H:i') }} WIB
                                 </p>
 
                                 @if ($material->file_path)
                                     <a href="{{ asset('storage/' . $material->file_path) }}"
                                        target="_blank"
                                        rel="noopener"
-                                       class="mt-3 inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 transition hover:bg-blue-100">
+                                       class="mt-3 inline-flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-100">
                                         <span>↗</span>
-                                        Lihat / Unduh File
+                                        Lihat / Unduh Berkas
                                     </a>
                                 @endif
                             </div>
                         </div>
 
                         <div class="flex shrink-0 items-center gap-2">
-                           <button type="button"
+                            <button type="button"
                                     class="js-edit-material lms-btn lms-btn-light"
                                     data-action="{{ route('guru.classes.materials.update', ['cst' => $cst->cst_id, 'material' => $material->material_id]) }}"
                                     data-title="{{ $material->title }}"
@@ -640,7 +616,7 @@
 
                             <form action="{{ route('guru.classes.materials.destroy', ['cst' => $cst->cst_id, 'material' => $material->material_id]) }}"
                                   method="POST"
-                                  onsubmit="return confirm('Hapus materi ini?')">
+                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus materi ini?')">
                                 @csrf
                                 @method('DELETE')
 
@@ -650,29 +626,28 @@
                                 </button>
                             </form>
                         </div>
-
-                        {{-- Data untuk modal edit --}}
-                        <button type="button"
-                                class="js-edit-material hidden"
-                                data-action="{{ route('guru.classes.materials.update', ['cst' => $cst->cst_id, 'material' => $material->material_id]) }}"
-                                data-title="{{ $material->title }}"
-                                data-description="{{ $material->description }}">
-                        </button>
                     </div>
                 @empty
-                    <div class="px-6 py-14 text-center">
+                    <div class="px-6 py-12 text-center">
                         <div class="text-4xl">📚</div>
                         <h3 class="mt-4 text-sm font-bold text-slate-700">
-                            Belum ada materi pembelajaran
+                            Belum Ada Materi Pembelajaran
                         </h3>
                         <p class="mt-1 text-xs text-slate-400">
-                            Materi yang Anda tambahkan akan muncul di sini.
+                            Materi yang Anda unggah akan ditampilkan di sini.
                         </p>
+                        <a href="{{ route('guru.classes.materials.create', $cst) }}"
+                           class="mt-4 lms-btn lms-btn-primary">
+                            <span>＋</span>
+                            Tambah Materi Pertama
+                        </a>
                     </div>
                 @endforelse
             </section>
 
-            {{-- DAFTAR TUGAS --}}
+            {{-- ==========================================
+                 DAFTAR TUGAS KELAS INI
+            =========================================== --}}
             <section class="lms-card overflow-hidden">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-5">
                     <div>
@@ -681,13 +656,21 @@
                             <h2 class="lms-section-title">Daftar Tugas</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
-                            Pantau tugas dan pengumpulan siswa.
+                            Pantau instruksi, batas pengumpulan, dan nilai jawaban siswa.
                         </p>
                     </div>
 
-                    <span class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-bold text-indigo-700">
-                        {{ $assignmentCount }} Tugas
-                    </span>
+                    <div class="flex items-center gap-3">
+                        <span class="rounded-full bg-indigo-50 px-3.5 py-1.5 text-xs font-bold text-indigo-700">
+                            {{ $assignmentCount }} Tugas
+                        </span>
+
+                        <a href="{{ route('guru.classes.assignments.create', $cst) }}"
+                           class="lms-btn lms-btn-primary bg-indigo-600 hover:bg-indigo-700">
+                            <span>＋</span>
+                            Buat Tugas Baru
+                        </a>
+                    </div>
                 </div>
 
                 @forelse ($class->assignments->sortByDesc('created_at') as $assignment)
@@ -697,7 +680,7 @@
 
                     <div class="lms-item flex flex-col gap-4 border-b border-slate-100 px-6 py-5 last:border-0 xl:flex-row xl:items-center xl:justify-between">
                         <div class="flex min-w-0 gap-4">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xl">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xl text-indigo-700">
                                 📋
                             </div>
 
@@ -714,7 +697,7 @@
 
                                 <div class="mt-3 flex flex-wrap gap-2">
                                     <span class="rounded-lg bg-slate-100 px-3 py-1.5 text-[10px] font-semibold text-slate-600">
-                                        🕒 {{ $assignment->due_date?->format('d M Y, H:i') }}
+                                        🕒 Batas: {{ $assignment->due_date?->format('d M Y, H:i') }} WIB
                                     </span>
 
                                     <span class="rounded-lg bg-blue-50 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
@@ -729,9 +712,10 @@
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2 xl:shrink-0">
+                            {{-- TOMBOL LINK LANGSUNG KE PENGUMPULAN TUGAS --}}
                             <a href="{{ route('guru.classes.assignments.show', $assignment) }}"
                                class="lms-btn lms-btn-primary">
-                                Lihat Pengumpulan →
+                                Periksa Pengumpulan →
                             </a>
 
                             <button type="button"
@@ -746,7 +730,7 @@
 
                             <form action="{{ route('guru.classes.assignments.destroy', $assignment) }}"
                                   method="POST"
-                                  onsubmit="return confirm('Hapus tugas ini beserta data pengumpulannya?')">
+                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus tugas ini beserta seluruh data pengumpulannya?')">
                                 @csrf
                                 @method('DELETE')
 
@@ -758,161 +742,338 @@
                         </div>
                     </div>
                 @empty
-                    <div class="px-6 py-14 text-center">
+                    <div class="px-6 py-12 text-center">
                         <div class="text-4xl">📝</div>
                         <h3 class="mt-4 text-sm font-bold text-slate-700">
-                            Belum ada tugas
+                            Belum Ada Tugas
                         </h3>
                         <p class="mt-1 text-xs text-slate-400">
-                            Buat tugas pertama untuk kelas ini.
+                            Buat tugas pertama untuk kelas ini agar siswa dapat mengumpulkan pekerjaannya.
                         </p>
+                        <a href="{{ route('guru.classes.assignments.create', $cst) }}"
+                           class="mt-4 lms-btn lms-btn-primary bg-indigo-600 hover:bg-indigo-700">
+                            <span>＋</span>
+                            Buat Tugas Pertama
+                        </a>
                     </div>
                 @endforelse
             </section>
 
-            {{-- UJIAN DAN SISWA --}}
-            <div class="grid gap-6 xl:grid-cols-5">
-
-                {{-- UJIAN --}}
-                <section class="lms-card overflow-hidden xl:col-span-3">
-                    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">📋</span>
-                                <h2 class="lms-section-title">Ujian</h2>
-                            </div>
-                            <p class="mt-1 text-xs text-slate-400">
-                                Informasi ujian pada kelas ini.
-                            </p>
+            {{-- ==========================================
+                 STUDENT DIRECTORY (DIREKTORI SISWA KELAS INI - LENGKAP DENGAN SEARCH & AKSI)
+            =========================================== --}}
+            <section class="lms-card overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-emerald-50/70 to-white px-6 py-5">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">👨‍🎓</span>
+                            <h2 class="lms-section-title">Direktori Siswa (Daftar Siswa Kelas)</h2>
                         </div>
-
-                        <span class="rounded-full bg-violet-50 px-4 py-2 text-xs font-bold text-violet-700">
-                            {{ $examCount }} Ujian
-                        </span>
+                        <p class="mt-1 text-xs text-slate-500">
+                            Daftar seluruh siswa yang terdaftar aktif dalam kelas <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span>.
+                        </p>
                     </div>
 
-                    @forelse ($exams as $e)
-                        @php
-                            [$label, $cls] = $status($e);
-                        @endphp
+                    <div class="flex items-center gap-3">
+                        <span class="rounded-full bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-700 border border-emerald-200">
+                            {{ $studentCount }} Siswa Terdaftar
+                        </span>
+                    </div>
+                </div>
 
-                        <div class="border-b border-slate-100 p-6 last:border-0">
-                            <div class="flex flex-wrap items-start justify-between gap-3">
-                                <div>
-                                    <h3 class="text-sm font-extrabold text-slate-800">
-                                        {{ $e->title }}
-                                    </h3>
-                                    <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                        {{ $e->exam_type }}
-                                    </p>
-                                </div>
+                {{-- FILTER SEARCH SISWA --}}
+                <div class="border-b border-slate-100 bg-slate-50/60 p-4">
+                    <div class="relative max-w-md">
+                        <input type="text"
+                               id="student-search-input"
+                               placeholder="Cari siswa berdasarkan nama atau NIS..."
+                               class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-xs text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                        <span class="pointer-events-none absolute left-3 top-2.5 text-slate-400">
+                            🔍
+                        </span>
+                    </div>
+                </div>
 
-                                <span class="rounded-full px-3 py-1.5 text-[10px] font-bold {{ $cls }}">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-left text-xs">
+                        <thead class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5 font-bold">No.</th>
+                                <th class="px-6 py-3.5 font-bold">Nama Lengkap</th>
+                                <th class="px-6 py-3.5 font-bold">NIS / NISN</th>
+                                <th class="px-6 py-3.5 font-bold">Jenis Kelamin</th>
+                                <th class="px-6 py-3.5 font-bold">Tanggal Bergabung</th>
+                                <th class="px-6 py-3.5 font-bold">Status</th>
+                                <th class="px-6 py-3.5 font-bold text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body" class="divide-y divide-slate-100 text-slate-700">
+                            @forelse ($students as $index => $student)
+                                @php
+                                    $studentName = $student->user->name ?? $student->name ?? 'Siswa';
+                                    $genderLabel = match(strtoupper($student->gender ?? '')) {
+                                        'L' => 'Laki-laki',
+                                        'P' => 'Perempuan',
+                                        default => '-'
+                                    };
+                                    $joinedDate = $student->pivot->joined_at ? \Illuminate\Support\Carbon::parse($student->pivot->joined_at)->format('d M Y, H:i') : '-';
+                                @endphp
+                                <tr class="student-row hover:bg-slate-50/80 transition">
+                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-slate-400">
+                                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-slate-800">
+                                        <div class="flex items-center gap-3">
+                                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-extrabold text-blue-700">
+                                                {{ strtoupper(substr($studentName, 0, 1)) }}
+                                            </span>
+                                            <div>
+                                                <p class="font-bold text-slate-800 student-name">{{ $studentName }}</p>
+                                                <p class="text-[10px] text-slate-400">{{ $student->user->email ?? '' }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-mono text-slate-600 student-nis">
+                                        {{ $student->nis }}
+                                        @if($student->nisn)
+                                            <span class="block text-[10px] text-slate-400">NISN: {{ $student->nisn }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold {{ $student->gender === 'L' ? 'bg-sky-50 text-sky-700' : 'bg-pink-50 text-pink-700' }}">
+                                            {{ $genderLabel }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-slate-500">
+                                        {{ $joinedDate }} WIB
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                                            Aktif
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-right">
+                                        <form action="{{ route('guru.classes.students.remove', ['cst' => $cst, 'nis' => $student->nis]) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Keluarkan siswa {{ $studentName }} (NIS: {{ $student->nis }}) dari kelas ini?');"
+                                              class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 hover:bg-rose-100 transition"
+                                                    title="Keluarkan siswa dari kelas">
+                                                <span>✕</span>
+                                                <span>Keluarkan</span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-10 text-center text-slate-400">
+                                        <div class="text-3xl mb-2">👨‍🎓</div>
+                                        <p class="font-bold text-slate-600">Belum ada siswa yang bergabung di kelas ini.</p>
+                                        <p class="text-xs text-slate-400 mt-1">Bagikan kode kelas <strong>{{ $class->join_code }}</strong> kepada siswa agar mereka dapat mendaftar ke kelas ini.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {{-- ==========================================
+                 LATEST GRADES (REKAP NILAI SISWA KELAS INI - DIPERBAIKI)
+            =========================================== --}}
+            <section class="lms-card overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-amber-50/70 to-white px-6 py-5">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">★</span>
+                            <h2 class="lms-section-title">Rekap Nilai Siswa</h2>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-500">
+                            Rekap perolehan nilai tugas dan ujian untuk kelas <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span>.
+                        </p>
+                    </div>
+
+                    <span class="rounded-full bg-amber-50 px-3.5 py-1.5 text-xs font-bold text-amber-800 border border-amber-200">
+                        {{ $gradebook->count() }} Data Nilai
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100 text-left text-xs">
+                        <thead class="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500">
+                            <tr>
+                                <th class="px-6 py-3.5 font-bold">Nama Siswa</th>
+                                <th class="px-6 py-3.5 font-bold">Tugas / Ujian</th>
+                                <th class="px-6 py-3.5 font-bold">Kategori Nilai</th>
+                                <th class="px-6 py-3.5 font-bold">Nilai</th>
+                                <th class="px-6 py-3.5 font-bold">Predikat</th>
+                                <th class="px-6 py-3.5 font-bold">Tanggal Dinilai</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @forelse($gradebook as $grade)
+                                @php
+                                    $predBadge = match($grade->predicate) {
+                                        'A' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'B' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                        'C' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                        'D' => 'bg-orange-50 text-orange-700 border-orange-200',
+                                        default => 'bg-rose-50 text-rose-700 border-rose-200',
+                                    };
+                                    $typeBadge = match(strtolower($grade->grade_type)) {
+                                        'tugas' => 'bg-indigo-50 text-indigo-700',
+                                        'kuis' => 'bg-violet-50 text-violet-700',
+                                        'uts' => 'bg-sky-50 text-sky-700',
+                                        'uas' => 'bg-amber-50 text-amber-700',
+                                        default => 'bg-slate-100 text-slate-600',
+                                    };
+                                @endphp
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <p class="font-bold text-slate-800">{{ $grade->student_name }}</p>
+                                        <p class="text-[10px] text-slate-400">NIS: {{ $grade->nis }}</p>
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-[#123B60]">
+                                        {{ $grade->source_title }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex items-center rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider {{ $typeBadge }}">
+                                            {{ $grade->grade_type }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="text-base font-extrabold text-[#123B60]">
+                                            {{ $grade->score }}
+                                        </span>
+                                        <span class="text-[10px] text-slate-400">/ 100</span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full font-bold text-xs border {{ $predBadge }}">
+                                            {{ $grade->predicate }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-slate-400">
+                                        {{ $grade->graded_at ? \Illuminate\Support\Carbon::parse($grade->graded_at)->format('d M Y, H:i') : '-' }} WIB
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-10 text-center text-slate-400">
+                                        <div class="text-3xl mb-2">★</div>
+                                        <p class="font-bold text-slate-600">Belum ada nilai yang tercatat untuk kelas ini.</p>
+                                        <p class="text-xs text-slate-400 mt-1">Nilai akan otomatis muncul di tabel ini setelah Anda menilai tugas atau menyelesaikan sesi ujian siswa.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {{-- ==========================================
+                 DAFTAR UJIAN KELAS INI
+            =========================================== --}}
+            <section class="lms-card overflow-hidden">
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📋</span>
+                            <h2 class="lms-section-title">Ujian & Kuis</h2>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-400">
+                            Daftar ujian dan kuis online untuk kelas <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span>.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('guru.exams.index') }}"
+                       class="text-xs font-bold text-blue-700 hover:text-blue-900 transition">
+                        Buka Semua di E-Exam →
+                    </a>
+                </div>
+
+                @forelse ($exams as $e)
+                    @php
+                        [$label, $cls] = $status($e);
+                    @endphp
+
+                    <div class="border-b border-slate-100 p-6 last:border-0 hover:bg-slate-50/50 transition">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <h3 class="text-sm font-extrabold text-slate-800">
+                                    {{ $e->title }}
+                                </h3>
+                                <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    {{ $e->exam_type }} · KKM: {{ $e->pass_score }}
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <span class="rounded-full px-3 py-1 text-[10px] font-bold border {{ $cls }}">
                                     {{ $label }}
                                 </span>
-                            </div>
 
-                            <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                <div class="rounded-xl bg-slate-50 p-3">
-                                    <p class="text-[10px] text-slate-400">Jumlah soal</p>
-                                    <p class="mt-1 text-sm font-extrabold text-slate-800">
-                                        {{ $e->questions->count() }}
-                                    </p>
-                                </div>
-
-                                <div class="rounded-xl bg-slate-50 p-3">
-                                    <p class="text-[10px] text-slate-400">Durasi</p>
-                                    <p class="mt-1 text-sm font-extrabold text-slate-800">
-                                        {{ $e->duration_minutes }} menit
-                                    </p>
-                                </div>
-
-                                <div class="rounded-xl bg-slate-50 p-3">
-                                    <p class="text-[10px] text-slate-400">Dibuka</p>
-                                    <p class="mt-1 text-xs font-bold text-slate-800">
-                                        {{ \Illuminate\Support\Carbon::parse($e->start_time)->format('d M Y, H:i') }}
-                                    </p>
-                                </div>
-
-                                <div class="rounded-xl bg-slate-50 p-3">
-                                    <p class="text-[10px] text-slate-400">Ditutup</p>
-                                    <p class="mt-1 text-xs font-bold text-slate-800">
-                                        {{ \Illuminate\Support\Carbon::parse($e->end_time)->format('d M Y, H:i') }}
-                                    </p>
-                                </div>
+                                <a href="{{ route('guru.exams.show', $e) }}"
+                                   class="inline-flex items-center gap-1 rounded-xl bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#4338A8] hover:bg-indigo-100 transition">
+                                    Kelola Soal →
+                                </a>
                             </div>
                         </div>
-                    @empty
-                        <div class="px-6 py-14 text-center">
-                            <div class="text-4xl">📋</div>
-                            <h3 class="mt-4 text-sm font-bold text-slate-700">
-                                Belum ada ujian
-                            </h3>
-                            <p class="mt-1 text-xs text-slate-400">
-                                Ujian yang tersedia akan muncul di bagian ini.
-                            </p>
-                        </div>
-                    @endforelse
-                </section>
 
-                {{-- SISWA --}}
-                <section class="lms-card overflow-hidden xl:col-span-2">
-                    <div class="flex items-center justify-between border-b border-slate-100 px-5 py-5">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">👨‍🎓</span>
-                                <h2 class="lms-section-title">Siswa Bergabung</h2>
+                        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            <div class="rounded-xl bg-slate-50 p-3">
+                                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Jumlah Soal</p>
+                                <p class="mt-1 text-sm font-extrabold text-slate-800">
+                                    {{ $e->questions->count() }} Butir
+                                </p>
                             </div>
-                            <p class="mt-1 text-xs text-slate-400">
-                                Daftar peserta kelas.
-                            </p>
-                        </div>
 
-                        <span class="rounded-full bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
-                            {{ $studentCount }}
-                        </span>
+                            <div class="rounded-xl bg-slate-50 p-3">
+                                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Durasi</p>
+                                <p class="mt-1 text-sm font-extrabold text-slate-800">
+                                    {{ $e->duration_minutes }} Menit
+                                </p>
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 p-3">
+                                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Waktu Buka</p>
+                                <p class="mt-1 text-xs font-bold text-slate-800">
+                                    {{ \Illuminate\Support\Carbon::parse($e->start_time)->format('d M Y, H:i') }} WIB
+                                </p>
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 p-3">
+                                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Waktu Tutup</p>
+                                <p class="mt-1 text-xs font-bold text-slate-800">
+                                    {{ \Illuminate\Support\Carbon::parse($e->end_time)->format('d M Y, H:i') }} WIB
+                                </p>
+                            </div>
+                        </div>
                     </div>
-
-                    @if ($students->isEmpty())
-                        <div class="px-5 py-14 text-center">
-                            <div class="text-4xl">👨‍🎓</div>
-                            <p class="mt-4 text-sm font-bold text-slate-700">
-                                Belum ada siswa
-                            </p>
-                            <p class="mt-2 text-xs leading-6 text-slate-400">
-                                Bagikan kode kelas kepada siswa agar mereka dapat bergabung.
-                            </p>
-                        </div>
-                    @else
-                        <ol class="lms-scroll max-h-[480px] divide-y divide-slate-100 overflow-y-auto">
-                            @foreach ($students as $i => $s)
-                                <li class="flex items-center gap-3 px-5 py-4 transition hover:bg-blue-50/50">
-                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-extrabold text-blue-700">
-                                        {{ strtoupper(substr($s->user->name ?? $s->name ?? 'S', 0, 1)) }}
-                                    </span>
-
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-xs font-bold text-slate-800">
-                                            {{ $s->user->name ?? $s->name ?? 'Siswa' }}
-                                        </p>
-                                        <p class="mt-1 text-[10px] text-slate-400">
-                                            NIS {{ $s->nis }}
-                                        </p>
-                                    </div>
-
-                                    <span class="text-[10px] font-semibold text-slate-300">
-                                        {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}
-                                    </span>
-                                </li>
-                            @endforeach
-                        </ol>
-                    @endif
-                </section>
-            </div>
+                @empty
+                    <div class="px-6 py-12 text-center">
+                        <div class="text-4xl">📋</div>
+                        <h3 class="mt-4 text-sm font-bold text-slate-700">
+                            Belum Ada Ujian untuk Kelas Ini
+                        </h3>
+                        <p class="mt-1 text-xs text-slate-400">
+                            Ujian yang dibuat untuk kelas ini akan ditampilkan di bagian ini.
+                        </p>
+                        <a href="{{ route('guru.exams.create') }}"
+                           class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#123B60] px-4 py-2 text-xs font-bold text-white hover:bg-[#0B2B48] transition">
+                            <span>＋</span>
+                            Buat Ujian Baru
+                        </a>
+                    </div>
+                @endforelse
+            </section>
 
             <div class="pb-4 text-center">
                 <p class="text-[11px] text-slate-400">
-                    Methodist Learning Space · Teacher Workspace
+                    Methodist Learning Space · Ruang Kerja Guru · SMAS Methodist Banda Aceh
                 </p>
             </div>
 
@@ -945,7 +1106,7 @@
                 @method('PUT')
 
                 <div>
-                    <label class="lms-label">Judul materi</label>
+                    <label class="lms-label">Judul Materi</label>
                     <input name="title"
                            id="edit-material-title"
                            required
@@ -962,7 +1123,7 @@
                 </div>
 
                 <div>
-                    <label class="lms-label">Ganti file</label>
+                    <label class="lms-label">Ganti Berkas Materi</label>
                     <input type="file"
                            name="file"
                            data-allowed="pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,zip"
@@ -970,7 +1131,7 @@
                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip"
                            class="block w-full rounded-xl border border-slate-200 p-3 text-xs">
                     <p class="mt-2 text-[10px] text-slate-400">
-                        Kosongkan jika tidak ingin mengganti file.
+                        Biarkan kosong jika tidak ingin mengganti berkas yang sudah ada.
                     </p>
                 </div>
 
@@ -998,7 +1159,7 @@
             <div class="mb-6 flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-extrabold text-slate-800">Edit Tugas</h2>
-                    <p class="mt-1 text-xs text-slate-400">Perbarui instruksi dan batas pengumpulan.</p>
+                    <p class="mt-1 text-xs text-slate-400">Perbarui instruksi dan batas pengumpulan tugas.</p>
                 </div>
 
                 <button type="button"
@@ -1015,7 +1176,7 @@
                 @method('PUT')
 
                 <div>
-                    <label class="lms-label">Judul tugas</label>
+                    <label class="lms-label">Judul Tugas</label>
                     <input name="title"
                            id="edit-assignment-title"
                            required
@@ -1024,7 +1185,7 @@
                 </div>
 
                 <div>
-                    <label class="lms-label">Instruksi tugas</label>
+                    <label class="lms-label">Instruksi Tugas</label>
                     <div id="editor-assignment-edit"></div>
                     <input type="hidden"
                            name="description"
@@ -1032,7 +1193,7 @@
                 </div>
 
                 <div>
-                    <label class="lms-label">Batas pengumpulan</label>
+                    <label class="lms-label">Batas Pengumpulan (Tenggat)</label>
                     <input type="datetime-local"
                            name="due_date"
                            id="edit-assignment-due"
@@ -1041,11 +1202,11 @@
                 </div>
 
                 <div>
-                    <label class="lms-label">Format file yang diterima</label>
+                    <label class="lms-label">Format File yang Diizinkan</label>
                     <div class="grid grid-cols-2 gap-2 sm:grid-cols-3"
                          data-format-group>
                         @foreach ($formatOptions as $ext => $label)
-                            <label class="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-3 text-xs font-semibold text-slate-600">
+                            <label class="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-xs font-semibold text-slate-600">
                                 <input type="checkbox"
                                        name="allowed_formats[]"
                                        value="{{ $ext }}"
@@ -1079,13 +1240,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            // PENCARIAN SISWA (LIVE FILTER DI TABEL DIREKTORI SISWA)
+            const studentSearchInput = document.getElementById('student-search-input');
+            if (studentSearchInput) {
+                studentSearchInput.addEventListener('input', function () {
+                    const query = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll('#student-table-body .student-row');
+                    rows.forEach(row => {
+                        const nameEl = row.querySelector('.student-name');
+                        const nisEl = row.querySelector('.student-nis');
+                        const nameText = nameEl ? nameEl.textContent.toLowerCase() : '';
+                        const nisText = nisEl ? nisEl.textContent.toLowerCase() : '';
+                        if (nameText.includes(query) || nisText.includes(query)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
             // COPY KODE KELAS
             window.copyJoinCode = function () {
                 const code = document.getElementById('join-code').innerText.trim();
 
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(code).then(() => {
-                        alert('Kode kelas berhasil disalin!');
+                        alert('Kode kelas berhasil disalin: ' + code);
                     });
                 } else {
                     const temp = document.createElement('textarea');
@@ -1094,7 +1275,7 @@
                     temp.select();
                     document.execCommand('copy');
                     temp.remove();
-                    alert('Kode kelas berhasil disalin!');
+                    alert('Kode kelas berhasil disalin: ' + code);
                 }
             };
 
@@ -1177,6 +1358,7 @@
 
             // SINKRONISASI EDITOR
             function bindSync(form, quill, input) {
+                if (!form || !quill || !input) return;
                 form.addEventListener('submit', () => {
                     const empty =
                         quill.getText().trim() === '' &&
@@ -1188,6 +1370,7 @@
 
             // VALIDASI FORMAT
             function requireFormat(form) {
+                if (!form) return;
                 form.addEventListener('submit', (event) => {
                     const checked = form.querySelector(
                         '[data-format-group] input:checked'
@@ -1199,33 +1382,6 @@
                     }
                 });
             }
-
-            // EDITOR CREATE
-            const qMatCreate = makeEditor('#editor-material-create');
-            const qAsgCreate = makeEditor('#editor-assignment-create');
-
-            const formMatCreate = document.getElementById('form-material-create');
-            const formAsgCreate = document.getElementById('form-assignment-create');
-
-            const oldMat = @json(old('description'));
-
-            if (oldMat && document.querySelector('#form-material-create [name=title]').value) {
-                qMatCreate.clipboard.dangerouslyPasteHTML(oldMat);
-            }
-
-            bindSync(
-                formMatCreate,
-                qMatCreate,
-                document.getElementById('input-material-create')
-            );
-
-            bindSync(
-                formAsgCreate,
-                qAsgCreate,
-                document.getElementById('input-assignment-create')
-            );
-
-            requireFormat(formAsgCreate);
 
             // EDITOR MODAL
             const qMatEdit = makeEditor('#editor-material-edit');
@@ -1248,14 +1404,15 @@
 
             requireFormat(formAsgEdit);
 
-            // MODAL
-            const open = (id) => {
+            // MODAL HANDLING
+            const openModal = (id) => {
                 const modal = document.getElementById(id);
+                if (!modal) return;
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             };
 
-            const close = (modal) => {
+            const closeModal = (modal) => {
                 if (!modal) return;
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
@@ -1263,20 +1420,19 @@
 
             document.querySelectorAll('[data-close-modal]').forEach(button => {
                 button.addEventListener('click', () => {
-                    close(button.closest('[id^=modal-]'));
+                    closeModal(button.closest('[id^=modal-]'));
                 });
             });
 
             document.addEventListener('keydown', event => {
                 if (event.key === 'Escape') {
-                    document.querySelectorAll('[id^=modal-]').forEach(close);
+                    document.querySelectorAll('[id^=modal-]').forEach(closeModal);
                 }
             });
 
             // EDIT MATERI
             document.querySelectorAll('.js-edit-material').forEach(button => {
                 button.addEventListener('click', () => {
-
                     if (!button.dataset.action) return;
 
                     formMatEdit.action = button.dataset.action;
@@ -1292,14 +1448,13 @@
 
                     formMatEdit.querySelector('[type=file]').value = '';
 
-                    open('modal-material');
+                    openModal('modal-material');
                 });
             });
 
             // EDIT TUGAS
             document.querySelectorAll('.js-edit-assignment').forEach(button => {
                 button.addEventListener('click', () => {
-
                     formAsgEdit.action = button.dataset.action;
 
                     document.getElementById('edit-assignment-title').value =
@@ -1326,7 +1481,7 @@
                         checkbox.checked = formats.includes(checkbox.value);
                     });
 
-                    open('modal-assignment');
+                    openModal('modal-assignment');
                 });
             });
 

@@ -14,7 +14,7 @@
 
             <span class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
                 <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Teacher Workspace
+                Ruang Kerja Guru
             </span>
         </div>
     </x-slot>
@@ -23,90 +23,106 @@
         $subjectThemes = [
             'matematika' => [
                 'symbol' => '∑',
-                'category' => 'MATHEMATICS',
-                'description' => 'Discover the beauty of numbers',
+                'category' => 'MATEMATIKA',
+                'description' => 'Eksplorasi angka, pola, dan logika berpikir',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
                 'light' => '#E8F1F8',
                 'accent' => '#267BB5',
             ],
             'bahasa indonesia' => [
                 'symbol' => 'Aa',
-                'category' => 'LANGUAGE & LITERATURE',
-                'description' => 'The art of words and expression',
+                'category' => 'BAHASA & SASTRA INDONESIA',
+                'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
                 'background' => 'linear-gradient(135deg,#8F344A,#D97786)',
                 'light' => '#FBECEF',
                 'accent' => '#A63D55',
             ],
             'bahasa inggris' => [
                 'symbol' => 'Ab',
-                'category' => 'ENGLISH LANGUAGE',
-                'description' => 'Connect with the world',
+                'category' => 'BAHASA INGGRIS',
+                'description' => 'Berkomunikasi dan terhubung secara global',
                 'background' => 'linear-gradient(135deg,#373B8D,#777CE0)',
                 'light' => '#EEEEFF',
                 'accent' => '#5559B7',
             ],
             'biologi' => [
                 'symbol' => '✿',
-                'category' => 'BIOLOGY',
-                'description' => 'Explore the wonders of life',
+                'category' => 'BIOLOGI',
+                'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
                 'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
                 'light' => '#E7F5EE',
                 'accent' => '#26835F',
             ],
             'fisika' => [
                 'symbol' => '⚛',
-                'category' => 'PHYSICS',
-                'description' => 'Explore the laws of the universe',
+                'category' => 'FISIKA',
+                'description' => 'Memahami hukum alam dan prinsip semesta',
                 'background' => 'linear-gradient(135deg,#513B8B,#9A82DC)',
                 'light' => '#F0ECFA',
                 'accent' => '#7255B2',
             ],
             'kimia' => [
                 'symbol' => '⚗',
-                'category' => 'CHEMISTRY',
-                'description' => 'Discover matter and reactions',
+                'category' => 'KIMIA',
+                'description' => 'Mempelajari materi, zat, dan reaksi kimia',
                 'background' => 'linear-gradient(135deg,#98551A,#E5A64D)',
                 'light' => '#FBF1E2',
                 'accent' => '#B77927',
             ],
             'sejarah' => [
                 'symbol' => '◷',
-                'category' => 'HISTORY',
-                'description' => 'Understand stories of the past',
+                'category' => 'SEJARAH',
+                'description' => 'Mengambil hikmah dan perjalanan masa lalu',
                 'background' => 'linear-gradient(135deg,#854522,#D88D5A)',
                 'light' => '#F8EDE5',
                 'accent' => '#A65C30',
             ],
             'informatika' => [
                 'symbol' => '</>',
-                'category' => 'INFORMATICS',
-                'description' => 'Shape the digital future',
+                'category' => 'INFORMATIKA',
+                'description' => 'Membangun logika digital dan komputasi',
                 'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
                 'light' => '#E5F5F8',
                 'accent' => '#16839C',
             ],
             'agama' => [
                 'symbol' => '✧',
-                'category' => 'RELIGIOUS EDUCATION',
-                'description' => 'Knowledge, faith and character',
+                'category' => 'PENDIDIKAN AGAMA',
+                'description' => 'Membina karakter, iman, dan pekerti mulia',
                 'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
                 'light' => '#F6EFE4',
                 'accent' => '#987342',
             ],
             'ekonomi' => [
                 'symbol' => '↗',
-                'category' => 'ECONOMICS',
-                'description' => 'Understand the world of economics',
+                'category' => 'EKONOMI',
+                'description' => 'Memahami pasar, bisnis, dan keuangan',
                 'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
                 'light' => '#E5F4F3',
                 'accent' => '#23858B',
+            ],
+            'geografi' => [
+                'symbol' => '🌍',
+                'category' => 'GEOGRAFI',
+                'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
+                'background' => 'linear-gradient(135deg,#1b6e53,#56ab7c)',
+                'light' => '#E5F5EE',
+                'accent' => '#1b6e53',
+            ],
+            'sosiologi' => [
+                'symbol' => '👥',
+                'category' => 'SOSIOLOGI',
+                'description' => 'Memahami struktur sosial dan dinamika masyarakat',
+                'background' => 'linear-gradient(135deg,#843b62,#d46a92)',
+                'light' => '#F8EBF2',
+                'accent' => '#843b62',
             ],
         ];
 
         $defaultTheme = [
             'symbol' => '▤',
-            'category' => 'ACADEMIC CLASS',
-            'description' => 'A space to learn and grow',
+            'category' => 'KELAS AKADEMIK',
+            'description' => 'Ruang belajar dan berkembang bersama',
             'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
             'light' => '#E8F1F8',
             'accent' => '#267BB5',
@@ -711,12 +727,12 @@
 
                 <div>
                     <span class="eclass-eyebrow">
-                        ✦ TEACHER LEARNING SPACE
+                        ✦ METHODIST LEARNING SPACE
                     </span>
 
                     <h1>
-                        Every Class,<br>
-                        <span>A New Possibility.</span>
+                        Setiap Kelas,<br>
+                        <span>Peluang Baru Menanti.</span>
                     </h1>
 
                     <p class="description">
@@ -729,11 +745,11 @@
 
                         <span class="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-4 py-2 text-xs font-bold text-blue-900">
                             <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                            {{ $totalClasses }} Active Classes
+                            {{ $totalClasses }} Kelas Aktif
                         </span>
 
                         <span class="text-xs text-slate-500">
-                            Teaching with purpose and passion.
+                            Mendidik dengan tujuan dan ketulusan.
                         </span>
 
                     </div>
@@ -750,11 +766,11 @@
                         <div class="art-symbol">M.</div>
 
                         <h2 class="eclass-serif mt-3 text-2xl font-bold">
-                            Learn. Grow. Achieve.
+                            Belajar. Tumbuh. Berprestasi.
                         </h2>
 
                         <p class="mt-2 text-xs text-sky-100">
-                            Inspiring excellence through education.
+                            Mewujudkan prestasi melalui pendidikan bermutu.
                         </p>
 
                     </div>
@@ -771,7 +787,7 @@
                     <div class="summary-icon">▤</div>
                     <div>
                         <p class="summary-number">{{ $totalClasses }}</p>
-                        <p class="summary-label">Total Classes</p>
+                        <p class="summary-label">Total Kelas</p>
                     </div>
                 </article>
 
@@ -779,7 +795,7 @@
                     <div class="summary-icon">♙</div>
                     <div>
                         <p class="summary-number">{{ $totalStudents }}</p>
-                        <p class="summary-label">Enrolled Students</p>
+                        <p class="summary-label">Siswa Terdaftar</p>
                     </div>
                 </article>
 
@@ -787,7 +803,7 @@
                     <div class="summary-icon">▧</div>
                     <div>
                         <p class="summary-number">{{ $totalMaterials }}</p>
-                        <p class="summary-label">Learning Materials</p>
+                        <p class="summary-label">Materi Pembelajaran</p>
                     </div>
                 </article>
 
@@ -801,20 +817,20 @@
 
                     <div>
                         <p class="eclass-section-label">
-                            Your Teaching Space
+                            Ruang Pembelajaran Anda
                         </p>
 
                         <h2 class="eclass-section-title">
-                            Classes You Teach
+                            Daftar Kelas yang Anda Ampu
                         </h2>
 
                         <p class="eclass-section-description">
-                            Pilih kelas untuk mengelola kegiatan pembelajaran.
+                            Pilih kelas untuk mengelola materi, tugas, jadwal mengajar, dan direktori siswa.
                         </p>
                     </div>
 
                     <span class="eclass-count">
-                        {{ $totalClasses }} Classes
+                        {{ $totalClasses }} Kelas
                     </span>
 
                 </div>
@@ -828,7 +844,7 @@
                         </div>
 
                         <h3>
-                            Your Classroom Awaits
+                            Belum Ada Kelas yang Diampu
                         </h3>
 
                         <p>
@@ -862,7 +878,8 @@
                             @endphp
 
                             <a href="{{ route('guru.classes.show', $class->cst_id) }}"
-                               class="eclass-card">
+                               class="eclass-card"
+                               title="Klik untuk membuka kelas {{ $class->schoolClass->name ?? '' }} {{ $subjectName }}">
 
                                 {{-- SUBJECT COVER --}}
 
@@ -896,7 +913,7 @@
                                 <div class="eclass-card-body">
 
                                     <p class="eclass-class-label">
-                                        CLASSROOM
+                                        KELAS
                                     </p>
 
                                     <h3 class="eclass-class-name">
@@ -906,7 +923,7 @@
                                     <p class="eclass-class-meta">
                                         {{ $class->academic_year ?? 'Tahun akademik belum tersedia' }}
                                         ·
-                                        {{ ucfirst($class->semester ?? '-') }}
+                                        Semester {{ ucfirst($class->semester ?? '-') }}
                                     </p>
 
                                     {{-- STATISTICS --}}
@@ -917,21 +934,21 @@
                                             <strong>
                                                 {{ $class->joined_students_count ?? 0 }}
                                             </strong>
-                                            <span>Students</span>
+                                            <span>Siswa</span>
                                         </div>
 
                                         <div class="eclass-card-stat">
                                             <strong>
                                                 {{ $class->materials_count ?? 0 }}
                                             </strong>
-                                            <span>Materials</span>
+                                            <span>Materi</span>
                                         </div>
 
                                         <div class="eclass-card-stat">
                                             <strong>
                                                 {{ $class->assignments_count ?? 0 }}
                                             </strong>
-                                            <span>Assignments</span>
+                                            <span>Tugas</span>
                                         </div>
 
                                     </div>
@@ -941,11 +958,11 @@
                                     <div class="eclass-card-footer">
 
                                         <span class="eclass-year">
-                                            Academic Classroom
+                                            Kelas Pembelajaran
                                         </span>
 
                                         <span class="eclass-open">
-                                            Open Classroom <span>→</span>
+                                            Buka Kelas <span>→</span>
                                         </span>
 
                                     </div>
@@ -970,12 +987,12 @@
                     Methodist Learning Space
                 </p>
 
-                <p class="mt-2">
-                    EMPOWERING MINDS · INSPIRING EXCELLENCE · BUILDING THE FUTURE
+                <p class="mt-2 text-slate-500">
+                    MENGINSPIRASI MINAT · MENGEMBANGKAN POTENSI · MEMBANGUN PRESTASI
                 </p>
 
-                <p class="mt-3">
-                    © {{ date('Y') }} Methodist School. All rights reserved.
+                <p class="mt-2 text-slate-400">
+                    © {{ date('Y') }} SMAS Methodist Banda Aceh. Seluruh hak cipta dilindungi.
                 </p>
 
             </footer>

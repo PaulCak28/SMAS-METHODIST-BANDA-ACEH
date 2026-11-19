@@ -48,13 +48,24 @@ class DashboardController extends Controller
             ->orderBy('start_time')
             ->get();
 
+        $recentExams = \App\Models\Exam::whereIn('cst_id', $cstIds)
+            ->with(['classSubjectTeacher.schoolClass', 'classSubjectTeacher.subject'])
+            ->withCount('questions')
+            ->latest('created_at')
+            ->take(6)
+            ->get();
+
+        $totalMaterials = \App\Models\Material::whereIn('cst_id', $cstIds)->count();
+
         return view('guru.dashboard', compact(
             'overview',
             'gradeSummaries',
             'gradebook',
             'assignmentStatuses',
             'roster',
-            'schedule'
+            'schedule',
+            'recentExams',
+            'totalMaterials'
         ));
     }
 }

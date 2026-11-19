@@ -149,6 +149,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         ->name('editor-images.store');
 
     // MATERI
+    Route::get('/{cst}/materials/create', [GuruClassroom::class, 'createMaterial'])
+        ->name('materials.create');
+
     Route::post('/{cst}/materials', [GuruClassroom::class, 'storeMaterial'])
         ->name('materials.store');
 
@@ -159,6 +162,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         ->name('materials.destroy');
 
     // TUGAS
+    Route::get('/{cst}/assignments/create', [GuruClassroom::class, 'createAssignment'])
+        ->name('assignments.create');
+
     Route::post('/{cst}/assignments', [GuruClassroom::class, 'storeAssignment'])
         ->name('assignments.store');
 

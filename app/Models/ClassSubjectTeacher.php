@@ -127,7 +127,7 @@ class ClassSubjectTeacher extends Model
             'students_id',
             'cst_id',
             'nis'
-        )->withPivot('joined_at');
+        )->withPivot(['status', 'joined_at', 'left_at']);
     }
 
     public function label(): string

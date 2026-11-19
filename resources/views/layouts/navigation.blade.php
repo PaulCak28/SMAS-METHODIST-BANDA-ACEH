@@ -85,9 +85,27 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard', 'siswa.dashboard', 'guru.dashboard', 'admin.dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if (Auth::user()?->isSiswa())
+                <x-responsive-nav-link :href="route('siswa.classes.index')" :active="request()->routeIs('siswa.classes.*')">
+                    {{ __('E-Class') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('siswa.exams.index')" :active="request()->routeIs('siswa.exams.*')">
+                    {{ __('E-Exam') }}
+                </x-responsive-nav-link>
+            @elseif (Auth::user()?->isGuru())
+                <x-responsive-nav-link :href="route('guru.classes.index')" :active="request()->routeIs('guru.classes.*')">
+                    {{ __('E-Class') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('guru.exams.index')" :active="request()->routeIs('guru.exams.*')">
+                    {{ __('E-Exam') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
