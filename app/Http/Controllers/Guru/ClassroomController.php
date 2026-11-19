@@ -124,9 +124,24 @@ class ClassroomController extends Controller
             ->withCount('questions')
             ->get();
 
+        // Data jadwal dan nilai dibatasi untuk kelas yang sedang dibuka.
+        $connection = DB::connection('mysql_guru');
+
+        $schedule = $connection->table('v_teaching_schedule')
+            ->where('cst_id', $cst->cst_id)
+            ->orderByRaw("FIELD(day, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')")
+            ->orderBy('start_time')
+            ->get();
+
+        $gradebook = $connection->table('v_gradebook')
+            ->where('cst_id', $cst->cst_id)
+            ->orderBy('student_name')
+            ->orderByDesc('graded_at')
+            ->get();
+
         return view(
             'guru.classes.show',
-            compact('cst', 'class', 'students', 'exams')
+            compact('cst', 'class', 'students', 'exams', 'schedule', 'gradebook')
         );
     }
 
@@ -180,6 +195,20 @@ class ClassroomController extends Controller
     // =====================================================
 
     /**
+     * Halaman form tambah materi.
+     */
+    public function createMaterial(
+        Request $request,
+        ClassSubjectTeacher $cst
+    ) {
+        Access::authorizeTeacher($request->user(), $cst);
+
+        $cst->load(['subject', 'schoolClass']);
+
+        return view('guru.classes.materials.create', compact('cst'));
+    }
+
+    /**
      * Menambahkan materi.
      */
     public function storeMaterial(
@@ -220,7 +249,7 @@ class ClassroomController extends Controller
             throw $e;
         }
 
-        return back()->with(
+        return redirect()->route('guru.classes.show', $cst)->with(
             'success',
             'Materi berhasil ditambahkan.'
         );
@@ -320,6 +349,34 @@ class ClassroomController extends Controller
     // =====================================================
 
     /**
+     * Halaman form buat tugas baru.
+     */
+    public function createAssignment(
+        Request $request,
+        ClassSubjectTeacher $cst
+    ) {
+        Access::authorizeTeacher($request->user(), $cst);
+
+        $cst->load(['subject', 'schoolClass']);
+
+        $formatOptions = [
+            'pdf' => 'PDF',
+            'doc' => 'DOC',
+            'docx' => 'DOCX',
+            'ppt' => 'PPT',
+            'pptx' => 'PPTX',
+            'xls' => 'XLS',
+            'xlsx' => 'XLSX',
+            'jpg' => 'JPG / JPEG',
+            'png' => 'PNG',
+            'zip' => 'ZIP',
+            'txt' => 'TXT',
+        ];
+
+        return view('guru.classes.assignments.create', compact('cst', 'formatOptions'));
+    }
+
+    /**
      * Membuat tugas baru.
      */
     public function storeAssignment(
@@ -351,7 +408,7 @@ class ClassroomController extends Controller
 
         Assignment::create($v);
 
-        return back()->with(
+        return redirect()->route('guru.classes.show', $cst)->with(
             'success',
             'Tugas berhasil dibuat.'
         );
