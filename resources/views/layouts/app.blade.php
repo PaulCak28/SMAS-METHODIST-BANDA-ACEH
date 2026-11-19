@@ -132,47 +132,224 @@
             </div>
         </aside>
 
-        <div class="min-h-screen lg:pl-72">
-            <header class="sticky top-0 z-30 flex min-h-[72px] items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6 lg:px-8">
-                <div class="flex min-w-0 items-center gap-3">
-                    <button
-                        type="button"
-                        @click="sidebarOpen = true"
-                        aria-label="Buka navigasi"
-                        :aria-expanded="sidebarOpen"
-                        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-[#101C35] hover:bg-slate-50 lg:hidden"
-                    >
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
-                    <div class="min-w-0">
-                        <p class="text-[10px] font-bold uppercase tracking-[.18em] text-[#267bb5]">SMAS Methodist · {{ $roleLabel }}</p>
-                        <p class="truncate text-sm font-bold text-[#101C35] sm:text-base">Portal Akademik</p>
+        <div class="min-h-screen lg:pl-72 flex flex-col justify-between">
+            {{-- SATU HEADER TUNGGAL --}}
+            <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6 lg:px-8">
+                <div class="flex min-h-[72px] items-center justify-between gap-4 py-2">
+                    <div class="flex flex-1 min-w-0 items-center gap-3">
+                        <button
+                            type="button"
+                            @click="sidebarOpen = true"
+                            aria-label="Buka navigasi"
+                            :aria-expanded="sidebarOpen"
+                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-[#101C35] hover:bg-slate-50 lg:hidden"
+                        >
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+
+                        @isset($header)
+                            <div class="min-w-0 flex-1">
+                                {{ $header }}
+                            </div>
+                        @else
+                            <div class="min-w-0">
+                                <p class="text-[10px] font-bold uppercase tracking-[.18em] text-[#267bb5]">SMAS Methodist · {{ $roleLabel }}</p>
+                                <p class="truncate text-base font-bold text-[#101C35]">Portal Akademik</p>
+                            </div>
+                        @endisset
                     </div>
+
+                    @if ($user)
+                        <div class="hidden shrink-0 items-center gap-3 text-right sm:flex">
+                            <div class="text-right">
+                                <span class="block text-sm font-bold text-slate-700 leading-tight">{{ $user->name }}</span>
+                                <span class="block text-[11px] font-semibold text-slate-400 capitalize">{{ $roleLabel }}</span>
+                            </div>
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f1f8] font-bold text-[#17365d] shadow-sm">
+                                {{ strtoupper(mb_substr($user->name, 0, 1)) }}
+                            </span>
+                        </div>
+                    @endif
                 </div>
-                @if ($user)
-                    <div class="hidden items-center gap-3 text-right sm:flex">
-                        <span class="text-sm font-semibold text-slate-600">{{ $user->name }}</span>
-                        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[#e8f1f8] font-bold text-[#17365d]">
-                            {{ strtoupper(mb_substr($user->name, 0, 1)) }}
-                        </span>
-                    </div>
-                @endif
             </header>
 
-            @isset($header)
-                <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            @endisset
-
-            <main class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+            <main class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 flex-1">
                 {{ $slot }}
             </main>
 
-            <footer class="border-t border-slate-200 bg-white px-4 py-4 text-center text-xs text-slate-500 sm:px-6 lg:px-8">
-                &copy; {{ date('Y') }} SMAS Methodist Banda Aceh · Portal Akademik
+            {{-- FOOTER SEPERTI HOMEPAGE --}}
+            <footer class="mt-auto border-t border-slate-800 bg-[#101C35] text-white">
+                <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+                    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
+
+                        {{-- SCHOOL IDENTITY --}}
+                        <div class="lg:col-span-5">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white p-1.5 shadow-sm">
+                                    <img src="{{ asset('images/methodist-logo.png') }}"
+                                         alt="Logo SMAS Methodist"
+                                         class="h-full w-full object-contain">
+                                </div>
+
+                                <div>
+                                    <h2 class="font-serif text-lg font-bold text-white">
+                                        SMAS Methodist
+                                    </h2>
+                                    <p class="text-xs font-semibold tracking-wider text-[#8eadd0]">
+                                        BANDA ACEH
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p class="mt-5 max-w-sm text-sm leading-6 text-slate-300">
+                                Portal pembelajaran digital yang mengintegrasikan kegiatan belajar, pengumpulan tugas, ujian, dan pengelolaan nilai dalam satu platform.
+                            </p>
+
+                            <div class="mt-5 inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300">
+                                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                                <span>Methodist Learning Space &bull; {{ $roleLabel }}</span>
+                            </div>
+                        </div>
+
+                        {{-- CONTACT --}}
+                        <div class="lg:col-span-4">
+                            <h3 class="text-sm font-bold tracking-wide text-white uppercase">
+                                Informasi Kontak
+                            </h3>
+
+                            <div class="mt-5 space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#8eadd0]">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-5.5 7-12a7 7 0 10-14 0c0 6.5 7 12 7 12z"/>
+                                            <circle cx="12" cy="9" r="2"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs sm:text-sm leading-5 text-slate-300">
+                                        Jl. Pocut Baren No. 3, Kelurahan Mulia / Laksana, Kecamatan Kuta Alam, Banda Aceh, Aceh 23123.
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#8eadd0]">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.3a1 1 0 01.95.68l1.2 3.6a1 1 0 01-.5 1.2l-2.1 1.1a11 11 0 005.57 5.57l1.1-2.1a1 1 0 011.2-.5l3.6 1.2a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.16 21 3 14.84 3 7V5z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-300">0852-6010-9442</p>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#8eadd0]">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                            <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 6 9-6"/>
+                                        </svg>
+                                    </div>
+                                    <a href="mailto:official_smasmethodist@gmail.com"
+                                       class="break-all text-xs sm:text-sm text-slate-300 transition hover:text-white">
+                                        official_smasmethodist@gmail.com
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- QUICK LINKS --}}
+                        <div class="lg:col-span-3">
+                            <h3 class="text-sm font-bold tracking-wide text-white uppercase">
+                                Navigasi
+                            </h3>
+
+                            <ul class="mt-5 space-y-2.5">
+                                @if ($user?->isGuru())
+                                    <li>
+                                        <a href="{{ route('guru.dashboard') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            Dashboard Guru
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('guru.classes.index') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            E-Class (Ruang Belajar)
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('guru.exams.index') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            E-Exam (Kelola Ujian)
+                                        </a>
+                                    </li>
+                                @elseif ($user?->isSiswa())
+                                    <li>
+                                        <a href="{{ route('siswa.dashboard') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            Dashboard Siswa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('siswa.classes.index') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            E-Class Siswa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('siswa.exams.index') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            E-Exam Siswa
+                                        </a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ route('dashboard') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                @endif
+
+                                <li>
+                                    <a href="{{ route('profile.edit') }}"
+                                       class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                        <span class="text-[#8eadd0]">→</span>
+                                        Profil Akun
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="https://smasmethodistbna.sch.id/"
+                                       target="_blank"
+                                       rel="noopener"
+                                       class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                        <span class="text-[#8eadd0]">→</span>
+                                        Website Sekolah ↗
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    {{-- FOOTER BOTTOM --}}
+                    <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                        <p>
+                            &copy; {{ date('Y') }} SMAS Methodist Banda Aceh. All rights reserved.
+                        </p>
+
+                        <p>
+                            Methodist Learning Space &bull; Portal E-Learning &amp; E-Exam
+                        </p>
+                    </div>
+                </div>
             </footer>
         </div>
     </div>

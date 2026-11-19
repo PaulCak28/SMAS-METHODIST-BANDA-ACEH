@@ -33,89 +33,89 @@
                 'symbol' => 'Aa',
                 'category' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
-                'background' => 'linear-gradient(135deg,#8F344A,#D97786)',
-                'light' => '#FBECEF',
-                'accent' => '#A63D55',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'bahasa inggris' => [
                 'symbol' => 'Ab',
                 'category' => 'BAHASA INGGRIS',
                 'description' => 'Berkomunikasi dan terhubung secara global',
-                'background' => 'linear-gradient(135deg,#373B8D,#777CE0)',
-                'light' => '#EEEEFF',
-                'accent' => '#5559B7',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'biologi' => [
                 'symbol' => '✿',
                 'category' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
-                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
-                'light' => '#E7F5EE',
-                'accent' => '#26835F',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'fisika' => [
                 'symbol' => '⚛',
                 'category' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
-                'background' => 'linear-gradient(135deg,#513B8B,#9A82DC)',
-                'light' => '#F0ECFA',
-                'accent' => '#7255B2',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'kimia' => [
                 'symbol' => '⚗',
                 'category' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
-                'background' => 'linear-gradient(135deg,#98551A,#E5A64D)',
-                'light' => '#FBF1E2',
-                'accent' => '#B77927',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'sejarah' => [
                 'symbol' => '◷',
                 'category' => 'SEJARAH',
                 'description' => 'Mengambil hikmah dan perjalanan masa lalu',
-                'background' => 'linear-gradient(135deg,#854522,#D88D5A)',
-                'light' => '#F8EDE5',
-                'accent' => '#A65C30',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'informatika' => [
                 'symbol' => '</>',
                 'category' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
-                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
-                'light' => '#E5F5F8',
-                'accent' => '#16839C',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'agama' => [
                 'symbol' => '✧',
                 'category' => 'PENDIDIKAN AGAMA',
                 'description' => 'Membina karakter, iman, dan pekerti mulia',
-                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
-                'light' => '#F6EFE4',
-                'accent' => '#987342',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'ekonomi' => [
                 'symbol' => '↗',
                 'category' => 'EKONOMI',
                 'description' => 'Memahami pasar, bisnis, dan keuangan',
-                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
-                'light' => '#E5F4F3',
-                'accent' => '#23858B',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'geografi' => [
                 'symbol' => '🌍',
                 'category' => 'GEOGRAFI',
                 'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
-                'background' => 'linear-gradient(135deg,#1b6e53,#56ab7c)',
-                'light' => '#E5F5EE',
-                'accent' => '#1b6e53',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'sosiologi' => [
                 'symbol' => '👥',
                 'category' => 'SOSIOLOGI',
                 'description' => 'Memahami struktur sosial dan dinamika masyarakat',
-                'background' => 'linear-gradient(135deg,#843b62,#d46a92)',
-                'light' => '#F8EBF2',
-                'accent' => '#843b62',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
         ];
 
@@ -123,7 +123,7 @@
             'symbol' => '▤',
             'category' => 'KELAS AKADEMIK',
             'description' => 'Ruang belajar dan berkembang bersama',
-            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
+            'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             'light' => '#E8F1F8',
             'accent' => '#267BB5',
         ];
@@ -978,24 +978,6 @@
                 @endif
 
             </section>
-
-            {{-- FOOTER --}}
-
-            <footer class="eclass-footer">
-
-                <p class="eclass-serif text-base font-bold text-[#123B60]">
-                    Methodist Learning Space
-                </p>
-
-                <p class="mt-2 text-slate-500">
-                    MENGINSPIRASI MINAT · MENGEMBANGKAN POTENSI · MEMBANGUN PRESTASI
-                </p>
-
-                <p class="mt-2 text-slate-400">
-                    © {{ date('Y') }} SMAS Methodist Banda Aceh. Seluruh hak cipta dilindungi.
-                </p>
-
-            </footer>
 
         </div>
     </main>

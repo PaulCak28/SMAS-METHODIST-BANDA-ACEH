@@ -39,73 +39,73 @@
                 'icon' => '∑',
                 'label' => 'MATEMATIKA',
                 'description' => 'Eksplorasi angka, pola, dan logika berpikir',
-                'background' => 'linear-gradient(135deg,#164E86,#4299D5)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'bahasa indonesia' => [
                 'icon' => 'Aa',
                 'label' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
-                'background' => 'linear-gradient(135deg,#9F3447,#E87986)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'bahasa inggris' => [
                 'icon' => 'Ab',
                 'label' => 'BAHASA INGGRIS',
                 'description' => 'Berkomunikasi dan terhubung secara global',
-                'background' => 'linear-gradient(135deg,#4338A8,#818CF8)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'biologi' => [
                 'icon' => '✿',
                 'label' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
-                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'fisika' => [
                 'icon' => '⚛',
                 'label' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
-                'background' => 'linear-gradient(135deg,#5B3C99,#A78BFA)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'kimia' => [
                 'icon' => '⚗',
                 'label' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
-                'background' => 'linear-gradient(135deg,#A45D14,#F2B84B)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'sejarah' => [
                 'icon' => '◷',
                 'label' => 'SEJARAH',
                 'description' => 'Mengambil hikmah dan perjalanan masa lalu',
-                'background' => 'linear-gradient(135deg,#9A4B21,#E99A61)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'informatika' => [
                 'icon' => '</>',
                 'label' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
-                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'agama' => [
                 'icon' => '✧',
                 'label' => 'PENDIDIKAN AGAMA',
                 'description' => 'Membina karakter, iman, dan pekerti mulia',
-                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'ekonomi' => [
                 'icon' => '↗',
                 'label' => 'EKONOMI',
                 'description' => 'Memahami pasar, bisnis, dan keuangan',
-                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'geografi' => [
                 'icon' => '🌍',
                 'label' => 'GEOGRAFI',
                 'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
-                'background' => 'linear-gradient(135deg,#1b6e53,#56ab7c)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'sosiologi' => [
                 'icon' => '👥',
                 'label' => 'SOSIOLOGI',
                 'description' => 'Memahami struktur sosial dan dinamika masyarakat',
-                'background' => 'linear-gradient(135deg,#843b62,#d46a92)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
         ];
 
@@ -113,7 +113,7 @@
             'icon' => '▤',
             'label' => 'KELAS AKADEMIK',
             'description' => 'Ruang belajar dan berkembang bersama',
-            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
+            'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
         ];
     @endphp
 
@@ -1267,23 +1267,6 @@
                 </section>
 
             </div>
-
-            {{-- ==========================================
-                 FOOTER
-            =========================================== --}}
-            <footer class="academy-footer">
-                <p class="academy-serif text-base font-bold text-[#123B60]">
-                    Methodist Learning Space
-                </p>
-
-                <p class="mt-2 text-slate-500">
-                    MENGINSPIRASI MINAT · MENGEMBANGKAN POTENSI · MEMBANGUN PRESTASI
-                </p>
-
-                <p class="mt-2 text-slate-400">
-                    © {{ date('Y') }} SMAS Methodist Banda Aceh. Seluruh hak cipta dilindungi.
-                </p>
-            </footer>
 
         </div>
     </main>

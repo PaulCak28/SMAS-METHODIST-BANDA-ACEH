@@ -22,13 +22,48 @@ class ProfileController extends Controller
         $teacher = $user->teacher;
 
         $isStudent = $student !== null;
-
         $profile = $isStudent ? $student : $teacher;
+
+        $stats = [
+            'classes_count' => 0,
+            'secondary_count' => 0,
+            'tertiary_count' => 0,
+        ];
+
+        $classes = collect();
+
+        if ($isStudent && $student) {
+            $student->load(['schoolClass']);
+            $classes = $student->joinedClasses()
+                ->with(['subject', 'schoolClass', 'teacher.user'])
+                ->get();
+
+            $stats = [
+                'classes_count' => $classes->count(),
+                'submissions_count' => $student->submissions()->count(),
+                'grades_count' => $student->grades()->count(),
+            ];
+        } elseif ($teacher) {
+            $teacher->load(['homeroomClasses']);
+            $classes = $teacher->classSubjectTeachers()
+                ->with(['subject', 'schoolClass'])
+                ->withCount('joinedStudents')
+                ->get();
+
+            $cstIds = $classes->pluck('cst_id');
+            $stats = [
+                'classes_count' => $classes->count(),
+                'students_count' => $classes->sum('joined_students_count'),
+                'assignments_count' => \App\Models\Assignment::whereIn('cst_id', $cstIds)->count(),
+            ];
+        }
 
         return view('profile.edit', compact(
             'user',
             'profile',
-            'isStudent'
+            'isStudent',
+            'stats',
+            'classes'
         ));
     }
 
