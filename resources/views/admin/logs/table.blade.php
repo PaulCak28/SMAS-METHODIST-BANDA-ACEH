@@ -1,3 +1,4 @@
+
 @extends('layouts.admin')
 
 @section('title', 'Log ' . $label . ' - Portal Akademik')
