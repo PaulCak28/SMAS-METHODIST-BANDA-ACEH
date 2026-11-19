@@ -1,4 +1,3 @@
-{{-- Simpan di: resources/views/admin/logs/table.blade.php --}}
 @extends('layouts.admin')
 
 @section('title', 'Log ' . $label . ' - Portal Akademik')

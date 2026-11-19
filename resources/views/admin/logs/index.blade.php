@@ -1,4 +1,3 @@
-{{-- Simpan di: resources/views/admin/logs/index.blade.php --}}
 @extends('layouts.admin')
 
 @section('title', 'Log Aktivitas Database - Portal Akademik')
