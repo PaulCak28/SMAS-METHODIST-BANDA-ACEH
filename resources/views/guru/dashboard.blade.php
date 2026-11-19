@@ -219,42 +219,52 @@
             line-height: 1.9;
         }
 
+        /* BUTTONS WITH DYNAMIC CLICK & ACTIVE STATES */
         .academy-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 9px;
-            padding: 12px 22px;
+            padding: 12px 24px;
             border-radius: 100px;
             font-size: 13px;
             font-weight: 700;
             text-decoration: none;
-            transition: .22s ease;
+            transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+            outline: none;
+            user-select: none;
         }
 
-        .academy-button:hover {
-            transform: translateY(-2px);
+        .academy-button:active {
+            transform: scale(0.95);
         }
 
         .academy-button-primary {
-            color: #fff;
-            background: var(--academy-navy);
-            box-shadow: 0 6px 18px rgba(18,59,96,.18);
+            color: #ffffff !important;
+            background: #123B60 !important;
+            box-shadow: 0 8px 22px rgba(18,59,96,.25);
+            border-color: #0E2E4B !important;
         }
 
         .academy-button-primary:hover {
-            color: #fff;
-            background: #0B2B48;
+            color: #ffffff !important;
+            background: #0B2B48 !important;
+            box-shadow: 0 10px 28px rgba(18,59,96,.32);
         }
 
         .academy-button-secondary {
-            color: var(--academy-navy);
-            background: #E4EDF3;
+            color: #123B60 !important;
+            background: #E4EDF3 !important;
+            border-color: #D5E5F0 !important;
+            box-shadow: 0 2px 8px rgba(18,59,96,.04);
         }
 
         .academy-button-secondary:hover {
-            color: var(--academy-navy);
-            background: #D5E5F0;
+            color: #0E2E4B !important;
+            background: #D8E6EF !important;
+            border-color: #C2D8E8 !important;
         }
 
         /* HERO VISUAL */
@@ -299,7 +309,7 @@
 
         /* SECTION */
         .academy-section {
-            margin-top: 50px;
+            margin-top: 48px;
         }
 
         .academy-section-heading {
@@ -334,20 +344,20 @@
             line-height: 1.7;
         }
 
-        /* SPLIT PORTAL HUB CARDS (E-CLASS & E-EXAM) */
+        /* SPLIT PORTAL HUB CARDS */
         .academy-hub-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 20px;
-            margin-top: 28px;
+            margin-top: 26px;
         }
 
         .academy-hub-card {
             display: block;
             text-decoration: none;
-            padding: 28px;
+            padding: 26px;
             border-radius: 24px;
-            border: 1px solid var(--academy-border);
+            border: 2px solid var(--academy-border);
             background: white;
             box-shadow: 0 10px 30px rgba(18,59,96,.04);
             transition: all .25s ease;
@@ -357,9 +367,12 @@
         }
 
         .academy-hub-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 40px rgba(18,59,96,.1);
-            border-color: #B5D2E8;
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px rgba(18,59,96,.09);
+        }
+
+        .academy-hub-card:active {
+            transform: scale(0.98);
         }
 
         /* STATISTICS */
@@ -416,7 +429,7 @@
             font-weight: 600;
         }
 
-        /* CLASS CARDS (DIRECTLY CLICKABLE) */
+        /* CLASS CARDS */
         .academy-class-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -438,6 +451,10 @@
             transform: translateY(-5px);
             border-color: #BBD7E9;
             box-shadow: 0 18px 36px rgba(18,59,96,.1);
+        }
+
+        .academy-class-card:active {
+            transform: scale(0.98);
         }
 
         .academy-class-cover {
@@ -680,7 +697,18 @@
         }
     </style>
 
-    <main class="academy-page">
+    <main class="academy-page"
+          x-data="{
+              activeTab: (window.location.hash === '#exam' || window.location.hash === '#e-exam') ? 'exam' : 'class',
+              setTab(tab) {
+                  this.activeTab = tab;
+                  if (tab === 'exam') {
+                      history.replaceState(null, null, '#exam');
+                  } else {
+                      history.replaceState(null, null, '#class');
+                  }
+              }
+          }">
         <div class="academy-wrap">
 
             {{-- ==========================================
@@ -703,18 +731,40 @@
                         Methodist Learning Space.
                     </p>
 
-                    <div class="mt-7 flex flex-wrap gap-3">
+                    {{-- ==========================================
+                         TOMBOL RESPONSIVE: KLIK UNTUK BERUBAH WARNA & AKTIFKAN TAB
+                    =========================================== --}}
+                    <div class="mt-7 flex flex-wrap items-center gap-3">
+                        {{-- TOMBOL E-CLASS: Klik pertama aktifkan tab, klik kedua navigasi --}}
                         <a href="{{ route('guru.classes.index') }}"
-                           class="academy-button academy-button-primary">
-                            <span>📚</span>
-                            Buka E-Class (Ruang Kelas)
-                            <span>→</span>
+                           @click.prevent="if (activeTab === 'class') { window.location.href = '{{ route('guru.classes.index') }}' } else { setTab('class') }"
+                           class="academy-button"
+                           :class="activeTab === 'class'
+                               ? 'academy-button-primary shadow-lg ring-2 ring-[#267BB5]/40'
+                               : 'academy-button-secondary'"
+                           title="Klik untuk menampilkan aktivitas E-Class, klik lagi untuk membuka halaman">
+                            <span class="text-sm">📚</span>
+                            <span>Buka E-Class (Ruang Kelas)</span>
+                            <span x-show="activeTab === 'class'" x-cloak class="ml-1 font-bold">→</span>
                         </a>
 
+                        {{-- TOMBOL E-EXAM: Klik pertama aktifkan tab, klik kedua navigasi --}}
                         <a href="{{ route('guru.exams.index') }}"
-                           class="academy-button academy-button-secondary">
-                            <span>📋</span>
-                            Buka E-Exam (Kelola Ujian)
+                           @click.prevent="if (activeTab === 'exam') { window.location.href = '{{ route('guru.exams.index') }}' } else { setTab('exam') }"
+                           class="academy-button"
+                           :class="activeTab === 'exam'
+                               ? 'academy-button-primary shadow-lg ring-2 ring-indigo-400/40'
+                               : 'academy-button-secondary'"
+                           title="Klik untuk menampilkan aktivitas E-Exam, klik lagi untuk membuka halaman">
+                            <span class="text-sm">📋</span>
+                            <span>Buka E-Exam (Kelola Ujian)</span>
+                            <span x-show="activeTab === 'exam'" x-cloak class="ml-1 font-bold">→</span>
+                        </a>
+
+                        {{-- TAUTAN KE HALAMAN PENUH --}}
+                        <a x-bind:href="activeTab === 'class' ? '{{ route('guru.classes.index') }}' : '{{ route('guru.exams.index') }}'"
+                           class="inline-flex items-center gap-1.5 text-xs font-bold text-[#267BB5] hover:text-[#123B60] transition underline underline-offset-4 ml-1">
+                            <span x-text="activeTab === 'class' ? 'Buka Halaman Penuh E-Class ↗' : 'Buka Halaman Penuh E-Exam ↗'"></span>
                         </a>
                     </div>
 
@@ -777,19 +827,22 @@
             </section>
 
             {{-- ==========================================
-                 PISAHKAN E-CLASS & E-EXAM (HUB UTAMA - CARD BISA DIKLIK)
+                 PISAHKAN E-CLASS & E-EXAM (HUB PORTAL)
             =========================================== --}}
             <section class="academy-hub-grid">
                 {{-- CARD E-CLASS --}}
-                <a href="{{ route('guru.classes.index') }}"
-                   class="academy-hub-card group hover:border-[#267BB5] relative">
+                <div @click="setTab('class')"
+                     :class="activeTab === 'class' ? 'border-[#267BB5] ring-2 ring-blue-200 shadow-md scale-[1.01]' : 'border-slate-200 opacity-90 hover:opacity-100'"
+                     class="academy-hub-card group relative">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-[#123B60] transition group-hover:scale-105 group-hover:bg-[#123B60] group-hover:text-white">
                             📚
                         </div>
-                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-[#123B60]">
-                            Halaman E-Class <span>→</span>
-                        </span>
+                        <a href="{{ route('guru.classes.index') }}"
+                           @click.stop
+                           class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-[#123B60] hover:bg-blue-100 transition">
+                            Ke Halaman E-Class <span>→</span>
+                        </a>
                     </div>
 
                     <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60] group-hover:text-[#267BB5] transition">
@@ -797,7 +850,7 @@
                     </h3>
 
                     <p class="mt-2 text-xs leading-6 text-slate-500">
-                        Kelola ruang kelas, unggah materi pembelajaran, berikan tugas, dan pantau direktori siswa di masing-masing kelas yang Anda ampu.
+                        Kelola ruang kelas, materi pembelajaran, pemberian tugas, dan direktori siswa per kelas.
                     </p>
 
                     <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4 text-xs">
@@ -816,18 +869,21 @@
                             <span class="text-slate-500">Tugas Diberikan</span>
                         </div>
                     </div>
-                </a>
+                </div>
 
                 {{-- CARD E-EXAM --}}
-                <a href="{{ route('guru.exams.index') }}"
-                   class="academy-hub-card group hover:border-[#4338A8] relative">
+                <div @click="setTab('exam')"
+                     :class="activeTab === 'exam' ? 'border-[#4338A8] ring-2 ring-indigo-200 shadow-md scale-[1.01]' : 'border-slate-200 opacity-90 hover:opacity-100'"
+                     class="academy-hub-card group relative">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-2xl text-[#4338A8] transition group-hover:scale-105 group-hover:bg-[#4338A8] group-hover:text-white">
                             📋
                         </div>
-                        <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-[#4338A8]">
-                            Halaman E-Exam <span>→</span>
-                        </span>
+                        <a href="{{ route('guru.exams.index') }}"
+                           @click.stop
+                           class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-[#4338A8] hover:bg-indigo-100 transition">
+                            Ke Halaman E-Exam <span>→</span>
+                        </a>
                     </div>
 
                     <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60] group-hover:text-[#4338A8] transition">
@@ -835,7 +891,7 @@
                     </h3>
 
                     <p class="mt-2 text-xs leading-6 text-slate-500">
-                        Buat dan jadwalkan ujian, atur bank soal pilihan ganda maupun esai, publikasi ujian, serta lakukan koreksi jawaban siswa.
+                        Buat dan jadwalkan ujian, atur bank soal, publikasi ujian, dan periksa jawaban esai siswa.
                     </p>
 
                     <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4 text-xs">
@@ -849,7 +905,7 @@
                             <span class="text-slate-500">Esai Menunggu Koreksi</span>
                         </div>
                     </div>
-                </a>
+                </div>
             </section>
 
             {{-- ==========================================
@@ -866,10 +922,18 @@
                             Gambaran umum data kelas, siswa, tugas, dan ujian Anda.
                         </p>
                     </div>
+
+                    {{-- INDIKATOR AKTIF SAAT INI --}}
+                    <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
+                        <span class="h-2 w-2 rounded-full" :class="activeTab === 'class' ? 'bg-blue-600' : 'bg-indigo-600'"></span>
+                        <span x-text="activeTab === 'class' ? 'Mode: E-Class (Ruang Belajar)' : 'Mode: E-Exam (Ujian Digital)'"></span>
+                    </div>
                 </div>
 
                 <div class="academy-stats">
-                    <article class="academy-stat">
+                    <article class="academy-stat cursor-pointer"
+                             @click="setTab('class')"
+                             :class="activeTab === 'class' ? 'border-[#267BB5] ring-2 ring-blue-100' : ''">
                         <div class="academy-stat-top">
                             <div class="academy-stat-icon">▤</div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
@@ -880,7 +944,9 @@
                         <p class="academy-stat-label">Kelas yang Anda Ampu</p>
                     </article>
 
-                    <article class="academy-stat">
+                    <article class="academy-stat cursor-pointer"
+                             @click="setTab('class')"
+                             :class="activeTab === 'class' ? 'border-[#267BB5] ring-2 ring-blue-100' : ''">
                         <div class="academy-stat-top">
                             <div class="academy-stat-icon">♙</div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
@@ -891,7 +957,9 @@
                         <p class="academy-stat-label">Total Siswa Terdaftar</p>
                     </article>
 
-                    <article class="academy-stat">
+                    <article class="academy-stat cursor-pointer"
+                             @click="setTab('class')"
+                             :class="activeTab === 'class' ? 'border-[#267BB5] ring-2 ring-blue-100' : ''">
                         <div class="academy-stat-top">
                             <div class="academy-stat-icon">✎</div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
@@ -902,10 +970,12 @@
                         <p class="academy-stat-label">Tugas Diberikan</p>
                     </article>
 
-                    <article class="academy-stat">
+                    <article class="academy-stat cursor-pointer"
+                             @click="setTab('exam')"
+                             :class="activeTab === 'exam' ? 'border-[#4338A8] ring-2 ring-indigo-100' : ''">
                         <div class="academy-stat-top">
                             <div class="academy-stat-icon">✓</div>
-                            <span class="text-[10px] font-bold tracking-wider text-blue-600">
+                            <span class="text-[10px] font-bold tracking-wider text-indigo-600">
                                 E-EXAM
                             </span>
                         </div>
@@ -916,294 +986,340 @@
             </section>
 
             {{-- ==========================================
-                 BAGIAN E-CLASS: KELAS YANG ANDA AMPU (CARD BISA DIKLIK)
+                 KONTEN TAB E-CLASS (AKTIF KETIKA TOMBOL E-CLASS DIKLIK)
             =========================================== --}}
-            <section class="academy-section">
-                <div class="academy-section-heading">
-                    <div>
-                        <p class="academy-section-label">E-Class Guru</p>
-                        <h2 class="academy-section-title">
-                            Kelas yang Anda Ampu
-                        </h2>
-                        <p class="academy-section-description">
-                            Klik pada salah satu kartu kelas untuk membuka ruang kelas, materi, jadwal, tugas, dan daftar siswa.
-                        </p>
+            <div x-show="activeTab === 'class'"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="space-y-12">
+
+                {{-- KELAS YANG ANDA AMPU --}}
+                <section class="academy-section">
+                    <div class="academy-section-heading">
+                        <div>
+                            <p class="academy-section-label">E-Class Guru</p>
+                            <h2 class="academy-section-title">
+                                Kelas yang Anda Ampu
+                            </h2>
+                            <p class="academy-section-description">
+                                Klik pada salah satu kartu kelas untuk membuka ruang kelas, materi, jadwal, tugas, dan daftar siswa.
+                            </p>
+                        </div>
+
+                        <a href="{{ route('guru.classes.index') }}"
+                           class="text-xs font-bold text-blue-700 hover:text-blue-900 transition">
+                            Lihat Semua Kelas E-Class →
+                        </a>
                     </div>
 
-                    <a href="{{ route('guru.classes.index') }}"
-                       class="text-xs font-bold text-blue-700 hover:text-blue-900 transition">
-                        Lihat Semua Kelas E-Class →
-                    </a>
-                </div>
+                    <div class="academy-class-grid">
+                        @forelse($overview as $class)
+                            @php
+                                $subjectLower = strtolower($class->subject_name ?? '');
+                                $theme = $defaultTheme;
 
-                <div class="academy-class-grid">
-                    @forelse($overview as $class)
-                        @php
-                            $subjectLower = strtolower($class->subject_name ?? '');
-                            $theme = $defaultTheme;
-
-                            foreach ($subjectThemes as $key => $value) {
-                                if (str_contains($subjectLower, $key)) {
-                                    $theme = $value;
-                                    break;
+                                foreach ($subjectThemes as $key => $value) {
+                                    if (str_contains($subjectLower, $key)) {
+                                        $theme = $value;
+                                        break;
+                                    }
                                 }
-                            }
-                        @endphp
+                            @endphp
 
-                        {{-- KARTU KELAS: LANGSUNG BISA DIKLIK --}}
-                        <a href="{{ route('guru.classes.show', $class->cst_id) }}"
-                           class="academy-class-card group"
-                           title="Klik untuk membuka kelas {{ $class->class_name }} {{ $class->subject_name }}">
+                            {{-- KARTU KELAS: LANGSUNG BISA DIKLIK --}}
+                            <a href="{{ route('guru.classes.show', $class->cst_id) }}"
+                               class="academy-class-card group"
+                               title="Klik untuk membuka kelas {{ $class->class_name }} {{ $class->subject_name }}">
 
-                            <div class="academy-class-cover"
-                                 style="background: {{ $theme['background'] }}">
-                                <div class="academy-class-cover-info">
-                                    <p class="academy-class-cover-label">
-                                        {{ $theme['label'] }}
+                                <div class="academy-class-cover"
+                                     style="background: {{ $theme['background'] }}">
+                                    <div class="academy-class-cover-info">
+                                        <p class="academy-class-cover-label">
+                                            {{ $theme['label'] }}
+                                        </p>
+                                        <h3 class="academy-class-cover-title">
+                                            {{ $class->subject_name }}
+                                        </h3>
+                                        <p class="mt-1 text-[10px] text-white/80">
+                                            {{ $theme['description'] }}
+                                        </p>
+                                    </div>
+
+                                    <div class="academy-class-symbol group-hover:scale-110 transition duration-300">
+                                        {{ $theme['icon'] }}
+                                    </div>
+                                </div>
+
+                                <div class="academy-class-body">
+                                    <p class="text-[9px] font-bold uppercase tracking-[.15em] text-slate-400">
+                                        KELAS
                                     </p>
-                                    <h3 class="academy-class-cover-title">
-                                        {{ $class->subject_name }}
+
+                                    <h3 class="academy-class-name group-hover:text-[#267BB5] transition">
+                                        {{ $class->class_name }}
                                     </h3>
-                                    <p class="mt-1 text-[10px] text-white/80">
-                                        {{ $theme['description'] }}
+
+                                    <p class="academy-class-meta">
+                                        {{ $class->student_count }} siswa terdaftar
                                     </p>
-                                </div>
 
-                                <div class="academy-class-symbol group-hover:scale-110 transition duration-300">
-                                    {{ $theme['icon'] }}
-                                </div>
-                            </div>
+                                    <div class="academy-class-numbers">
+                                        <div>
+                                            <p class="academy-class-number">
+                                                {{ $class->student_count }}
+                                            </p>
+                                            <p class="academy-class-number-label">
+                                                Siswa
+                                            </p>
+                                        </div>
 
-                            <div class="academy-class-body">
-                                <p class="text-[9px] font-bold uppercase tracking-[.15em] text-slate-400">
-                                    KELAS
-                                </p>
+                                        <div>
+                                            <p class="academy-class-number">
+                                                {{ $class->assignment_count }}
+                                            </p>
+                                            <p class="academy-class-number-label">
+                                                Tugas
+                                            </p>
+                                        </div>
 
-                                <h3 class="academy-class-name group-hover:text-[#267BB5] transition">
-                                    {{ $class->class_name }}
-                                </h3>
-
-                                <p class="academy-class-meta">
-                                    {{ $class->student_count }} siswa terdaftar
-                                </p>
-
-                                <div class="academy-class-numbers">
-                                    <div>
-                                        <p class="academy-class-number">
-                                            {{ $class->student_count }}
-                                        </p>
-                                        <p class="academy-class-number-label">
-                                            Siswa
-                                        </p>
+                                        <div>
+                                            <p class="academy-class-number">
+                                                {{ $class->exam_count }}
+                                            </p>
+                                            <p class="academy-class-number-label">
+                                                Ujian
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <p class="academy-class-number">
-                                            {{ $class->assignment_count }}
-                                        </p>
-                                        <p class="academy-class-number-label">
-                                            Tugas
-                                        </p>
-                                    </div>
+                                    <div class="academy-class-footer">
+                                        <span class="text-[10px] text-slate-400">
+                                            {{ $class->published_exam_count }} ujian aktif
+                                        </span>
 
-                                    <div>
-                                        <p class="academy-class-number">
-                                            {{ $class->exam_count }}
-                                        </p>
-                                        <p class="academy-class-number-label">
-                                            Ujian
-                                        </p>
+                                        <span class="academy-class-link group-hover:translate-x-1 transition">
+                                            Buka Kelas <span>→</span>
+                                        </span>
                                     </div>
                                 </div>
-
-                                <div class="academy-class-footer">
-                                    <span class="text-[10px] text-slate-400">
-                                        {{ $class->published_exam_count }} ujian aktif
-                                    </span>
-
-                                    <span class="academy-class-link group-hover:translate-x-1 transition">
-                                        Buka Kelas <span>→</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                    @empty
-                        <div class="col-span-full rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-14 text-center">
-                            <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-3xl text-blue-600">
-                                ▤
-                            </div>
-                            <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60]">
-                                Belum Ada Kelas yang Diampu
-                            </h3>
-                            <p class="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500">
-                                Kelas yang ditugaskan kepada Anda akan otomatis muncul di bagian ini.
-                            </p>
-                            <a href="{{ route('guru.classes.index') }}"
-                               class="academy-button academy-button-primary mt-5">
-                                Ke Halaman E-Class →
                             </a>
+                        @empty
+                            <div class="col-span-full rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-14 text-center">
+                                <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-3xl text-blue-600">
+                                    ▤
+                                </div>
+                                <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60]">
+                                    Belum Ada Kelas yang Diampu
+                                </h3>
+                                <p class="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500">
+                                    Kelas yang ditugaskan kepada Anda akan otomatis muncul di bagian ini.
+                                </p>
+                                <a href="{{ route('guru.classes.index') }}"
+                                   class="academy-button academy-button-primary mt-5">
+                                    Ke Halaman E-Class →
+                                </a>
+                            </div>
+                        @endforelse
+                    </div>
+                </section>
+
+                {{-- TINJAUAN TUGAS DENGAN TOMBOL LANGSUNG --}}
+                <section class="academy-section">
+                    <div class="academy-panel">
+                        <div class="academy-panel-header">
+                            <div>
+                                <p class="academy-section-label">
+                                    Asesmen Tugas
+                                </p>
+                                <h3 class="academy-section-title text-xl">
+                                    Tinjauan Tugas & Pengumpulan
+                                </h3>
+                                <p class="mt-1 text-xs text-slate-400">
+                                    Pantau status pengumpulan dan penilaian tugas siswa.
+                                </p>
+                            </div>
+
+                            <div class="academy-panel-icon">
+                                ✎
+                            </div>
                         </div>
-                    @endforelse
-                </div>
-            </section>
+
+                        <div class="divide-y divide-slate-100">
+                            @forelse($assignmentStatuses as $assignment)
+                                <div class="academy-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between py-4">
+                                    <div class="min-w-0 flex-1">
+                                        <a href="{{ route('guru.classes.assignments.show', $assignment->assignment_id) }}"
+                                           class="academy-list-title block hover:text-[#267BB5] transition text-sm">
+                                            {{ $assignment->title }}
+                                        </a>
+
+                                        <p class="academy-list-subtitle mt-1">
+                                            {{ $assignment->class_name }} · {{ $assignment->subject_name }}
+                                            @if($assignment->due_date)
+                                                · Batas: {{ \Carbon\Carbon::parse($assignment->due_date)->format('d M Y, H:i') }} WIB
+                                            @endif
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center gap-4 self-end sm:self-center shrink-0">
+                                        <div class="text-right">
+                                            <span class="text-sm font-extrabold text-[#1C6596]">
+                                                {{ $assignment->graded_count }}/{{ $assignment->submitted_count }}
+                                            </span>
+                                            <p class="text-[9px] font-medium text-slate-400">
+                                                Dinilai
+                                            </p>
+                                        </div>
+
+                                        {{-- TOMBOL LINK LANGSUNG KE TUGAS TERSEBUT --}}
+                                        <a href="{{ route('guru.classes.assignments.show', $assignment->assignment_id) }}"
+                                           class="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100 hover:text-blue-900 transition"
+                                           title="Buka detail dan periksa tugas ini">
+                                            <span>Periksa</span>
+                                            <span>→</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="academy-empty">
+                                    Belum ada tugas yang dibuat.
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </section>
+
+            </div>
 
             {{-- ==========================================
-                 BAGIAN TINJAUAN TUGAS (DILENGKAPI TOMBOL KE TUGAS) & E-EXAM RECENT
+                 KONTEN TAB E-EXAM (AKTIF KETIKA TOMBOL E-EXAM DIKLIK)
             =========================================== --}}
-            <section class="academy-section grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div x-show="activeTab === 'exam'"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="space-y-12">
 
-                {{-- TINJAUAN TUGAS (DENGAN TOMBOL LANGSUNG KE TUGAS) --}}
-                <div class="academy-panel">
-                    <div class="academy-panel-header">
+                {{-- DAFTAR UJIAN E-EXAM --}}
+                <section class="academy-section">
+                    <div class="academy-section-heading">
                         <div>
-                            <p class="academy-section-label">
-                                Asesmen Tugas
-                            </p>
-                            <h3 class="academy-section-title text-xl">
-                                Tinjauan Tugas & Pengumpulan
-                            </h3>
-                            <p class="mt-1 text-xs text-slate-400">
-                                Pantau status pengumpulan dan penilaian tugas siswa.
+                            <p class="academy-section-label">Asesmen Digital</p>
+                            <h2 class="academy-section-title">
+                                E-Exam: Ujian & Kuis Online
+                            </h2>
+                            <p class="academy-section-description">
+                                Kelola bank soal, jadwal pelaksanaan ujian, dan koreksi hasil asesmen siswa.
                             </p>
                         </div>
 
-                        <div class="academy-panel-icon">
-                            ✎
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('guru.exams.create') }}"
+                               class="inline-flex items-center gap-1.5 rounded-full bg-[#123B60] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#0B2B48] transition">
+                                <span>＋</span>
+                                <span>Tambah Ujian Baru</span>
+                            </a>
+
+                            <a href="{{ route('guru.exams.index') }}"
+                               class="text-xs font-bold text-indigo-700 hover:text-indigo-900 transition">
+                                Buka Halaman E-Exam →
+                            </a>
                         </div>
                     </div>
 
-                    @forelse($assignmentStatuses as $assignment)
-                        <div class="academy-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div class="min-w-0 flex-1">
-                                <a href="{{ route('guru.classes.assignments.show', $assignment->assignment_id) }}"
-                                   class="academy-list-title block hover:text-[#267BB5] transition">
-                                    {{ $assignment->title }}
-                                </a>
-
-                                <p class="academy-list-subtitle">
-                                    {{ $assignment->class_name }} · {{ $assignment->subject_name }}
-                                    @if($assignment->due_date)
-                                        · Tenggat: {{ \Carbon\Carbon::parse($assignment->due_date)->format('d M Y, H:i') }}
-                                    @endif
-                                </p>
-                            </div>
-
-                            <div class="flex items-center gap-3 self-end sm:self-center shrink-0">
-                                <div class="text-right">
-                                    <span class="text-xs font-extrabold text-[#1C6596]">
-                                        {{ $assignment->graded_count }}/{{ $assignment->submitted_count }}
-                                    </span>
-                                    <p class="text-[9px] font-medium text-slate-400">
-                                        Dinilai
+                    @if($totalUngraded > 0)
+                        <div class="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">⏳</span>
+                                <div>
+                                    <p class="text-sm font-bold text-amber-900">
+                                        {{ $totalUngraded }} Jawaban Esai Siswa Menunggu Koreksi
+                                    </p>
+                                    <p class="text-xs text-amber-700 mt-0.5">
+                                        Terdapat esai ujian siswa yang belum dinilai. Segera periksa hasil ujian untuk memperbarui nilai rapor.
                                     </p>
                                 </div>
-
-                                {{-- TOMBOL YANG ME-LINK-KAN LANGSUNG KE TUGAS TERSEBUT --}}
-                                <a href="{{ route('guru.classes.assignments.show', $assignment->assignment_id) }}"
-                                   class="inline-flex items-center gap-1 rounded-xl bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 hover:text-blue-900 transition"
-                                   title="Buka detail dan penilaian tugas ini">
-                                    <span>Periksa</span>
-                                    <span>→</span>
-                                </a>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="academy-empty">
-                            Belum ada tugas yang dibuat.
-                        </div>
-                    @endforelse
-
-                    @if($totalUngraded > 0)
-                        <div class="mt-5 flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
-                            <span class="text-xl">⏳</span>
-                            <div>
-                                <p class="text-xs font-bold text-amber-800">
-                                    {{ $totalUngraded }} esai ujian menunggu penilaian
-                                </p>
-                                <p class="mt-1 text-[10px] text-amber-700">
-                                    Terdapat jawaban esai siswa pada ujian yang belum diperiksa.
-                                </p>
                             </div>
                             <a href="{{ route('guru.exams.index') }}"
-                               class="ml-auto inline-flex shrink-0 items-center rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700 transition">
-                                Periksa Esai
+                               class="inline-flex shrink-0 items-center rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white hover:bg-amber-700 transition shadow-sm">
+                                Periksa Esai Sekarang →
                             </a>
                         </div>
                     @endif
-                </div>
 
-                {{-- BAGIAN E-EXAM: UJIAN & ASESMEN TERBARU --}}
-                <div class="academy-panel">
-                    <div class="academy-panel-header">
-                        <div>
-                            <p class="academy-section-label">
-                                Asesmen Digital
-                            </p>
-                            <h3 class="academy-section-title text-xl">
-                                E-Exam: Ujian Terbaru
-                            </h3>
-                            <p class="mt-1 text-xs text-slate-400">
-                                Daftar ujian dan kuis yang tersedia untuk kelas Anda.
-                            </p>
-                        </div>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        @forelse($allExams as $exam)
+                            <article class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-md">
+                                <div>
+                                    <div class="flex items-start justify-between gap-3">
+                                        <span class="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider {{ $exam->is_published ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200' }}">
+                                            {{ $exam->is_published ? 'Dipublikasikan' : 'Draf' }}
+                                        </span>
 
-                        <div class="academy-panel-icon">
-                            📋
-                        </div>
-                    </div>
+                                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">
+                                            {{ $exam->exam_type }}
+                                        </span>
+                                    </div>
 
-                    @forelse($recentExams as $exam)
-                        <div class="academy-list-row flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div class="min-w-0 flex-1">
-                                <a href="{{ route('guru.exams.show', $exam) }}"
-                                   class="academy-list-title block hover:text-[#4338A8] transition">
-                                    {{ $exam->title }}
-                                </a>
+                                    <h4 class="mt-3 text-base font-bold text-[#123B60]">
+                                        {{ $exam->title }}
+                                    </h4>
 
-                                <p class="academy-list-subtitle">
-                                    {{ $exam->classSubjectTeacher->schoolClass->name ?? 'Kelas' }} ·
-                                    {{ $exam->classSubjectTeacher->subject->name ?? 'Mapel' }} ·
-                                    {{ $exam->questions_count }} Soal
+                                    <p class="mt-1 text-xs text-slate-500 font-medium">
+                                        {{ $exam->classSubjectTeacher->schoolClass->name ?? 'Kelas' }} ·
+                                        {{ $exam->classSubjectTeacher->subject->name ?? 'Mata Pelajaran' }}
+                                    </p>
+
+                                    <div class="mt-4 grid grid-cols-3 gap-2 border-t border-b border-slate-100 py-3 text-center text-xs">
+                                        <div>
+                                            <p class="text-[10px] text-slate-400">Soal</p>
+                                            <p class="mt-0.5 font-bold text-slate-800">{{ $exam->questions_count }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-slate-400">Durasi</p>
+                                            <p class="mt-0.5 font-bold text-slate-800">{{ $exam->duration_minutes }}m</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-slate-400">KKM</p>
+                                            <p class="mt-0.5 font-bold text-slate-800">{{ $exam->pass_score }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-5 flex items-center justify-between gap-2 pt-2">
+                                    <a href="{{ route('guru.exams.results', $exam) }}"
+                                       class="text-xs font-bold text-emerald-700 hover:text-emerald-900 transition">
+                                        Periksa Hasil →
+                                    </a>
+
+                                    <a href="{{ route('guru.exams.show', $exam) }}"
+                                       class="inline-flex items-center gap-1 rounded-xl bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#4338A8] hover:bg-indigo-100 transition">
+                                        <span>Kelola Soal</span>
+                                        <span>→</span>
+                                    </a>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="col-span-full rounded-2xl border border-dashed border-indigo-200 bg-white p-12 text-center">
+                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-2xl text-indigo-600 mb-4">
+                                    📋
+                                </div>
+                                <h3 class="text-base font-bold text-slate-800">Belum Ada Ujian Terdaftar</h3>
+                                <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                    Buat ujian atau kuis online pertama Anda untuk mengevaluasi pemahaman siswa.
                                 </p>
-                            </div>
-
-                            <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
-                                @if($exam->is_published)
-                                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600">
-                                        Draf
-                                    </span>
-                                @endif
-
-                                <a href="{{ route('guru.exams.show', $exam) }}"
-                                   class="inline-flex items-center gap-1 rounded-xl bg-indigo-50 px-3 py-1.5 text-xs font-bold text-[#4338A8] hover:bg-indigo-100 transition"
-                                   title="Kelola soal dan sesi ujian ini">
-                                    <span>Kelola</span>
-                                    <span>→</span>
+                                <a href="{{ route('guru.exams.create') }}"
+                                   class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#123B60] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#0B2B48] transition">
+                                    <span>＋</span>
+                                    <span>Buat Ujian Baru</span>
                                 </a>
                             </div>
-                        </div>
-                    @empty
-                        <div class="academy-empty">
-                            Belum ada ujian yang dibuat.
-                        </div>
-                    @endforelse
-
-                    <div class="mt-5 border-t border-slate-100 pt-4 flex items-center justify-between">
-                        <span class="text-xs text-slate-500">
-                            Kelola bank soal dan hasil ujian
-                        </span>
-                        <a href="{{ route('guru.exams.index') }}"
-                           class="inline-flex items-center gap-1.5 text-xs font-bold text-[#267BB5] hover:text-[#123B60] transition">
-                            Buka Semua Ujian di E-Exam →
-                        </a>
+                        @endforelse
                     </div>
-                </div>
+                </section>
 
-            </section>
+            </div>
 
             {{-- ==========================================
                  FOOTER
@@ -1224,5 +1340,4 @@
 
         </div>
     </main>
-
 </x-app-layout>

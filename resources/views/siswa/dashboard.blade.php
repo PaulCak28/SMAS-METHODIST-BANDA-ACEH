@@ -682,7 +682,7 @@
                     METHODIST LEARNING SPACE
                     <span> / STUDENT PORTAL</span>
                 </div>
-            @endif
+            </div>
 
             @if (session('error'))
                 <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 shadow-sm flex items-start gap-3">
@@ -1137,4 +1137,3 @@
         </div>
     </div>
 </x-app-layout>
-```
