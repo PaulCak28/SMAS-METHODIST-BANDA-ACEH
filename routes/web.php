@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\GradeLogController;
 use App\Http\Controllers\Admin\SchoolClassController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Middleware\EnsureAdmin;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\ClassEnrollmentController;
@@ -420,6 +422,26 @@ Route::prefix('admin/announcements')
     Route::post('/admin/students/{student}/enrollments', [ClassEnrollmentController::class, 'storeFromStudent'])
         ->name('admin.students.enrollments.store');
 
+        //Logs
+      Route::middleware(['auth', EnsureAdmin::class])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        // 1) kotak-kotak semua tabel
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])
+            ->name('activity-logs.index');
+
+        // 2) isi log satu tabel
+        Route::get('activity-logs/{table}', [ActivityLogController::class, 'table'])
+            ->where('table', '[a-z_]+')
+            ->name('activity-logs.table');
+
+        // 3) detail satu log
+        Route::get('activity-logs/{table}/{id}', [ActivityLogController::class, 'show'])
+            ->where('table', '[a-z_]+')
+            ->whereNumber('id')
+            ->name('activity-logs.show');
+    });
 
     // -----------------------------
     // STUDENT MANAGEMENT

@@ -56,7 +56,7 @@
             </div>
         </form>
 
-        {{-- TABEL DAFTAR KELAS (DARI VIEW v_class_summary) --}}
+        {{-- TABEL DAFTAR KELAS --}}
         <div class="portal-card">
             <div class="card-header-portal d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0 text-dark">
@@ -79,25 +79,36 @@
                     <tbody>
                         @forelse($classes as $index => $class)
                             @php
-                                $classStudents = $studentsByClass[$class->class_id] ?? collect();
+                                $classStudents = $studentsByClass[(string) $class->class_id]
+                                    ?? $studentsByClass[$class->class_id]
+                                    ?? collect();
+                                $teacherName = $class->homeroom_teacher_name
+                                    ?? $class->homeroomTeacher?->user?->name
+                                    ?? null;
+                                $teacherNip = $class->homeroom_teacher_nip
+                                    ?? $class->homeroom_teacher_id
+                                    ?? null;
+                                $studentTotal = $class->total_students
+                                    ?? $class->students_count
+                                    ?? $classStudents->count();
                             @endphp
                             <tr>
                                 <td class="ps-4 text-muted-portal">
                                     {{ $classes->firstItem() + $index }}
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">{{ $class->class_name }}</div>
+                                    <div class="fw-bold text-dark">{{ $class->class_name ?? $class->name }}</div>
                                 </td>
                                 <td class="text-muted-portal">
                                     {{ $class->academic_year ?? '-' }}
                                 </td>
                                 <td>
-                                    @if(!empty($class->homeroom_teacher_name))
+                                    @if(!empty($teacherName))
                                         <div class="fw-semibold text-dark">
-                                            <i class="bi bi-person-badge text-success me-1"></i> {{ $class->homeroom_teacher_name }}
+                                            <i class="bi bi-person-badge text-success me-1"></i> {{ $teacherName }}
                                         </div>
-                                        @if(!empty($class->homeroom_teacher_nip))
-                                            <small class="text-muted-portal">NIP: {{ $class->homeroom_teacher_nip }}</small>
+                                        @if(!empty($teacherNip))
+                                            <small class="text-muted-portal">NIP: {{ $teacherNip }}</small>
                                         @endif
                                     @else
                                         <span class="text-muted-portal fst-italic small">Belum ditentukan</span>
@@ -105,62 +116,68 @@
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
-                                        <i class="bi bi-people-fill me-1"></i> {{ $class->total_students ?? 0 }} Siswa
+                                        <i class="bi bi-people-fill me-1"></i> {{ $studentTotal }} Siswa
                                     </span>
                                 </td>
                                 <td class="text-end pe-4">
                                     <button type="button" class="btn btn-sm btn-outline-primary"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#siswa-kelas-{{ $class->class_id }}">
+                                            data-bs-target="#siswa-kelas-{{ $class->class_id }}"
+                                            aria-expanded="false"
+                                            aria-controls="siswa-kelas-{{ $class->class_id }}">
                                         <i class="bi bi-eye me-1"></i> Lihat Siswa
                                     </button>
                                 </td>
                             </tr>
 
                             {{-- BARIS COLLAPSE DAFTAR SISWA DI KELAS INI --}}
-                            <tr class="collapse bg-light" id="siswa-kelas-{{ $class->class_id }}">
-                                <td colspan="6" class="p-3 ps-4 pe-4">
-                                    <div class="bg-white rounded-3 border p-3">
-                                        <div class="fw-bold text-dark small mb-2">
-                                            <i class="bi bi-people text-accent me-1"></i>
-                                            Daftar Siswa Kelas {{ $class->class_name }} ({{ $classStudents->count() }} orang)
-                                        </div>
-                                        @if($classStudents->isEmpty())
-                                            <p class="text-muted-portal small mb-0 fst-italic">Belum ada siswa di kelas ini.</p>
-                                        @else
-                                            <div class="table-responsive">
-                                                <table class="table table-sm table-borderless mb-0 small">
-                                                    <thead class="border-bottom text-muted-portal">
-                                                        <tr>
-                                                            <th style="width: 50px;">#</th>
-                                                            <th>NISN</th>
-                                                            <th>Nama Siswa</th>
-                                                            <th>Jenis Kelamin</th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($classStudents as $sIdx => $student)
-                                                            <tr>
-                                                                <td class="text-muted-portal">{{ $sIdx + 1 }}</td>
-                                                                <td><code>{{ $student->nis }}</code></td>
-                                                                <td class="fw-medium text-dark">
-                                                                    {{ $student->student_name ?? 'Siswa #' . $student->nis }}
-                                                                </td>
-                                                                <td class="text-muted-portal">
-                                                                    {{ $student->gender ?? '-' }}
-                                                                </td>
-                                                                <td>
-                                                                    <span class="badge {{ ($student->status ?? 'aktif') === 'aktif' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }}">
-                                                                        {{ ucfirst($student->status ?? 'aktif') }}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
+                            <tr class="bg-light">
+                                <td colspan="6" class="p-0 border-0">
+                                    <div class="collapse" id="siswa-kelas-{{ $class->class_id }}">
+                                        <div class="p-3 ps-4 pe-4">
+                                            <div class="bg-white rounded-3 border p-3">
+                                                <div class="fw-bold text-dark small mb-2">
+                                                    <i class="bi bi-people text-accent me-1"></i>
+                                                    Daftar Siswa Kelas {{ $class->class_name ?? $class->name }} ({{ $classStudents->count() }} orang)
+                                                </div>
+                                                @if($classStudents->isEmpty())
+                                                    <p class="text-muted-portal small mb-0 fst-italic">Belum ada siswa di kelas ini.</p>
+                                                @else
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm table-borderless mb-0 small">
+                                                            <thead class="border-bottom text-muted-portal">
+                                                                <tr>
+                                                                    <th style="width: 50px;">#</th>
+                                                                    <th>NIS / NISN</th>
+                                                                    <th>Nama Siswa</th>
+                                                                    <th>Jenis Kelamin</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($classStudents as $sIdx => $student)
+                                                                    <tr>
+                                                                        <td class="text-muted-portal">{{ $sIdx + 1 }}</td>
+                                                                        <td><code>{{ $student->nis ?? $student->nisn ?? '-' }}</code></td>
+                                                                        <td class="fw-medium text-dark">
+                                                                            {{ $student->student_name ?? 'Siswa #' . $student->nis }}
+                                                                        </td>
+                                                                        <td class="text-muted-portal">
+                                                                            {{ $student->gender ?? '-' }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="badge {{ strtolower($student->status ?? 'aktif') === 'aktif' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }}">
+                                                                                {{ ucfirst($student->status ?? 'aktif') }}
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
