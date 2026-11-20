@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ClassEnrollmentController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\CstController;
 use App\Http\Controllers\Admin\TeacherController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncement;
 use App\Http\Controllers\Guru\ClassroomController as GuruClassroom;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
@@ -495,6 +496,20 @@ Route::prefix('admin/announcements')
 
         Route::delete('/{teacher}', [TeacherController::class, 'destroy'])
             ->name('destroy');
+    });
+
+    // -----------------------------
+    // ADMIN PROFILE
+    // -----------------------------
+    Route::prefix('admin/profile')->name('admin.profile.')->group(function () {
+        Route::get('/', [AdminProfileController::class, 'index'])
+            ->name('index');
+
+        Route::put('/', [AdminProfileController::class, 'update'])
+            ->name('update');
+
+        Route::put('/password', [AdminProfileController::class, 'updatePassword'])
+            ->name('password');
     });
 });
 
