@@ -280,7 +280,22 @@
             {{-- ==========================================
                  HERO SECTION: NAMA KELAS SANGAT JELAS (CONTOH: X-IPA 1 - GEOGRAFI)
             =========================================== --}}
-            <section class="lms-hero relative overflow-hidden rounded-[25px] bg-gradient-to-br from-[#123d80] via-[#1756a8] to-[#2879df] p-7 text-white shadow-xl sm:p-9">
+            <section class="lms-hero relative overflow-hidden rounded-[25px] bg-[#10243E] p-7 text-white shadow-xl sm:p-9">
+                @php
+                    $subjectLower = strtolower($subjectName);
+                    $subjectCoverImage = null;
+                    if (str_contains($subjectLower, 'kimia') && file_exists(public_path('images/subjects/kimia.jpg'))) {
+                        $subjectCoverImage = asset('images/subjects/kimia.jpg');
+                    }
+                @endphp
+
+                @if($subjectCoverImage)
+                    <img src="{{ $subjectCoverImage }}" alt="{{ $subjectName }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/95 via-[#102a4e]/85 to-[#164273]/65"></div>
+                @else
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#123d80] via-[#1756a8] to-[#2879df]"></div>
+                @endif
+
                 <div class="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full border-[35px] border-white/5"></div>
                 <div class="pointer-events-none absolute -bottom-36 right-52 h-72 w-72 rounded-full bg-blue-400/10 blur-2xl"></div>
 

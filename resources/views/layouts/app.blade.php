@@ -111,9 +111,13 @@
             <div class="mt-auto border-t border-white/10 p-4">
                 @if ($user)
                     <div class="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#8eadd0] font-bold text-[#101C35]">
-                            {{ strtoupper(mb_substr($user->name, 0, 1)) }}
-                        </span>
+                        @if($user->photo)
+                            <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" class="h-10 w-10 shrink-0 rounded-full object-cover border border-white/20">
+                        @else
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#8eadd0] font-bold text-[#101C35]">
+                                {{ strtoupper(mb_substr($user->name, 0, 1)) }}
+                            </span>
+                        @endif
                         <span class="min-w-0">
                             <span class="block truncate text-sm font-bold">{{ $user->name }}</span>
                             <span class="block text-xs text-slate-400">{{ $roleLabel }}</span>
@@ -171,9 +175,13 @@
                                 <span class="block text-sm font-bold text-slate-700 leading-tight">{{ $user->name }}</span>
                                 <span class="block text-[11px] font-semibold text-slate-400 capitalize">{{ $roleLabel }}</span>
                             </div>
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f1f8] font-bold text-[#17365d] shadow-sm">
-                                {{ strtoupper(mb_substr($user->name, 0, 1)) }}
-                            </span>
+                            @if($user->photo)
+                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" class="h-10 w-10 rounded-full object-cover shadow-sm border border-slate-200">
+                            @else
+                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f1f8] font-bold text-[#17365d] shadow-sm">
+                                    {{ strtoupper(mb_substr($user->name, 0, 1)) }}
+                                </span>
+                            @endif
                         </div>
                     @endif
                 </div>

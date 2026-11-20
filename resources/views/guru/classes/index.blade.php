@@ -66,6 +66,7 @@
                 'category' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/kimia.jpg'),
                 'light' => '#E8F1F8',
                 'accent' => '#267BB5',
             ],
@@ -414,9 +415,10 @@
             overflow: hidden;
             padding: 24px;
             color: white;
+            background-color: #123B60;
         }
 
-        .eclass-card-cover::before {
+        .eclass-card-cover:not(.has-image)::before {
             content: "";
             position: absolute;
             width: 190px;
@@ -430,7 +432,7 @@
                 0 0 0 55px rgba(255,255,255,.035);
         }
 
-        .eclass-card-cover::after {
+        .eclass-card-cover:not(.has-image)::after {
             content: "";
             position: absolute;
             width: 110px;
@@ -439,6 +441,27 @@
             left: 30%;
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 50%;
+        }
+
+        .eclass-cover-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .eclass-card:hover .eclass-cover-image {
+            transform: scale(1.08);
+        }
+
+        .eclass-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(8, 22, 40, 0.88) 0%, rgba(18, 59, 96, 0.72) 55%, rgba(18, 59, 96, 0.38) 100%);
+            pointer-events: none;
         }
 
         .eclass-cover-content {
@@ -872,6 +895,9 @@
                                 foreach ($subjectThemes as $key => $value) {
                                     if (str_contains($subjectLower, $key)) {
                                         $theme = $value;
+                                        if (empty($theme['image']) && file_exists(public_path('images/subjects/' . $key . '.jpg'))) {
+                                            $theme['image'] = asset('images/subjects/' . $key . '.jpg');
+                                        }
                                         break;
                                     }
                                 }
@@ -883,8 +909,15 @@
 
                                 {{-- SUBJECT COVER --}}
 
-                                <div class="eclass-card-cover"
-                                     style="background: {{ $theme['background'] }}">
+                                <div class="eclass-card-cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
+                                     style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}">
+
+                                    @if(!empty($theme['image']))
+                                        <img src="{{ $theme['image'] }}"
+                                             alt="{{ $subjectName }}"
+                                             class="eclass-cover-image">
+                                        <div class="eclass-cover-overlay"></div>
+                                    @endif
 
                                     <div class="eclass-cover-content">
 

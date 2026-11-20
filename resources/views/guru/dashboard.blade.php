@@ -70,6 +70,7 @@
                 'label' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/kimia.jpg'),
             ],
             'sejarah' => [
                 'icon' => '◷',
@@ -472,9 +473,10 @@
             overflow: hidden;
             padding: 22px;
             color: white;
+            background-color: #123B60;
         }
 
-        .academy-class-cover::before {
+        .academy-class-cover:not(.has-image)::before {
             content: "";
             position: absolute;
             width: 155px;
@@ -486,6 +488,27 @@
             box-shadow:
                 0 0 0 22px rgba(255,255,255,.06),
                 0 0 0 45px rgba(255,255,255,.035);
+        }
+
+        .academy-cover-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .academy-class-card:hover .academy-cover-image {
+            transform: scale(1.08);
+        }
+
+        .academy-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(8, 22, 40, 0.88) 0%, rgba(18, 59, 96, 0.72) 55%, rgba(18, 59, 96, 0.38) 100%);
+            pointer-events: none;
         }
 
         .academy-class-cover-info {
@@ -1096,6 +1119,9 @@
                                 foreach ($subjectThemes as $key => $value) {
                                     if (str_contains($subjectLower, $key)) {
                                         $theme = $value;
+                                        if (empty($theme['image']) && file_exists(public_path('images/subjects/' . $key . '.jpg'))) {
+                                            $theme['image'] = asset('images/subjects/' . $key . '.jpg');
+                                        }
                                         break;
                                     }
                                 }
@@ -1106,8 +1132,16 @@
                                class="academy-class-card group"
                                title="Klik untuk membuka kelas {{ $class->class_name }} {{ $class->subject_name }}">
 
-                                <div class="academy-class-cover"
-                                     style="background: {{ $theme['background'] }}">
+                                <div class="academy-class-cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
+                                     style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}">
+
+                                    @if(!empty($theme['image']))
+                                        <img src="{{ $theme['image'] }}"
+                                             alt="{{ $class->subject_name }}"
+                                             class="academy-cover-image">
+                                        <div class="academy-cover-overlay"></div>
+                                    @endif
+
                                     <div class="academy-class-cover-info">
                                         <p class="academy-class-cover-label">
                                             {{ $theme['label'] }}
@@ -1115,7 +1149,7 @@
                                         <h3 class="academy-class-cover-title">
                                             {{ $class->subject_name }}
                                         </h3>
-                                        <p class="mt-1 text-[10px] text-white/80">
+                                        <p class="mt-1 text-[10px] text-white/90">
                                             {{ $theme['description'] }}
                                         </p>
                                     </div>

@@ -26,6 +26,17 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->user_id, "user_id"),
             ],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'remove_photo' => ['nullable', 'boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'photo.image' => 'File yang diunggah harus berupa gambar.',
+            'photo.mimes' => 'Format foto harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'photo.max' => 'Ukuran file foto maksimal adalah 2MB.',
         ];
     }
 }
