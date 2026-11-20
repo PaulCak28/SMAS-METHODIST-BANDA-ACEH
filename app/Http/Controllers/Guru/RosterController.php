@@ -17,17 +17,53 @@ class RosterController extends Controller
         $subjectStyles = RosterService::SUBJECT_STYLES;
 
         // Tentukan kode guru yang terkait dengan user saat ini
-        // Budi Santoso mengajar Matematika (NN) dan Geografi (OS)
         $userName = strtolower($user?->name ?? '');
         $currentTeacherCodes = [];
-        if (str_contains($userName, 'budi')) {
+        if (str_contains($userName, 'nasrul')) {
+            $currentTeacherCodes = ['NH'];
+        } elseif (str_contains($userName, 'zakiyul')) {
+            $currentTeacherCodes = ['ZV'];
+        } elseif (str_contains($userName, 'merry') || str_contains($userName, 'rouli')) {
+            $currentTeacherCodes = ['MR'];
+        } elseif (str_contains($userName, 'daniatul') || str_contains($userName, 'hikmah')) {
+            $currentTeacherCodes = ['DN'];
+        } elseif (str_contains($userName, 'mulyadi')) {
+            $currentTeacherCodes = ['MS'];
+        } elseif (str_contains($userName, 'ajeng')) {
+            $currentTeacherCodes = ['AP'];
+        } elseif (str_contains($userName, 'rahmat')) {
+            $currentTeacherCodes = ['RH'];
+        } elseif (str_contains($userName, 'nisrina')) {
+            $currentTeacherCodes = ['NR'];
+        } elseif (str_contains($userName, 'reza')) {
+            $currentTeacherCodes = ['RZ'];
+        } elseif (str_contains($userName, 'toha')) {
+            $currentTeacherCodes = ['MT'];
+        } elseif (str_contains($userName, 'akbarul')) {
+            $currentTeacherCodes = ['AK'];
+        } elseif (str_contains($userName, 'oslen')) {
+            $currentTeacherCodes = ['OS'];
+        } elseif (str_contains($userName, 'husna') || str_contains($userName, 'nurul')) {
+            $currentTeacherCodes = ['NN'];
+        } elseif (str_contains($userName, 'irhamni')) {
+            $currentTeacherCodes = ['IM'];
+        } elseif (str_contains($userName, 'rayyan')) {
+            $currentTeacherCodes = ['RW'];
+        } elseif (str_contains($userName, 'wahyu')) {
+            $currentTeacherCodes = ['WH'];
+        } elseif (str_contains($userName, 'reinaldo')) {
+            $currentTeacherCodes = ['RE'];
+        } elseif (str_contains($userName, 'geore') || str_contains($userName, 'george') || str_contains($userName, 'rendy')) {
+            $currentTeacherCodes = ['GR'];
+        } elseif (str_contains($userName, 'budi')) {
+            // Demo account Budi Santoso (Matematika & Geografi)
             $currentTeacherCodes = ['NN', 'OS'];
         } elseif (str_contains($userName, 'siti')) {
             $currentTeacherCodes = ['MT', 'WH'];
         } elseif (str_contains($userName, 'andi')) {
             $currentTeacherCodes = ['NR'];
         } elseif (str_contains($userName, 'rina')) {
-            $currentTeacherCodes = ['RH', 'GR'];
+            $currentTeacherCodes = ['RH'];
         } elseif (str_contains($userName, 'maria')) {
             $currentTeacherCodes = ['RZ'];
         } elseif (str_contains($userName, 'john')) {
@@ -36,9 +72,9 @@ class RosterController extends Controller
             $currentTeacherCodes = ['AP'];
         } elseif (str_contains($userName, 'daniel')) {
             $currentTeacherCodes = ['AK'];
-        } elseif (str_contains($userName, 'nasrul')) {
-            $currentTeacherCodes = ['NH'];
         }
+
+        $teacherDuties = RosterService::TEACHER_DUTIES;
 
         // Filter aktif
         $activeDay = $request->query('day', 'all');
@@ -81,6 +117,7 @@ class RosterController extends Controller
             'rosterData',
             'classes',
             'teachers',
+            'teacherDuties',
             'subjectStyles',
             'currentTeacherCodes',
             'mySchedule',

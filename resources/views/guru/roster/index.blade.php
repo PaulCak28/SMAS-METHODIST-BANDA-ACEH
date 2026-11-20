@@ -71,28 +71,38 @@
                 </div>
 
                 {{-- STATISTIK KILAT GURU --}}
-                <div class="flex items-center gap-3 border-t border-white/10 pt-3 md:border-t-0 md:pt-0 print:hidden">
+                <div class="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3 md:border-t-0 md:pt-0 print:hidden">
                     <button
                         type="button"
                         @click="viewMode = 'matrix'"
                         :class="viewMode === 'matrix' ? 'bg-white text-[#123B60] shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'"
-                        class="rounded-xl px-4 py-2 text-xs font-bold transition flex items-center gap-2"
+                        class="rounded-xl px-3.5 py-2 text-xs font-bold transition flex items-center gap-1.5"
                     >
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <path d="M3 9h18M9 21V9"/>
                         </svg>
-                        <span>Matrix Roster Sekolah</span>
+                        <span>Matrix Roster</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="viewMode = 'duties'"
+                        :class="viewMode === 'duties' ? 'bg-white text-[#123B60] shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'"
+                        class="rounded-xl px-3.5 py-2 text-xs font-bold transition flex items-center gap-1.5"
+                    >
+                        <span>👥</span>
+                        <span>Pembagian Tugas Guru</span>
                     </button>
 
                     <button
                         type="button"
                         @click="viewMode = 'my_schedule'"
                         :class="viewMode === 'my_schedule' ? 'bg-[#8eadd0] text-[#101C35] font-extrabold shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'"
-                        class="rounded-xl px-4 py-2 text-xs font-bold transition flex items-center gap-2"
+                        class="rounded-xl px-3.5 py-2 text-xs font-bold transition flex items-center gap-1.5"
                     >
                         <span class="flex h-2 w-2 rounded-full bg-emerald-400"></span>
-                        <span>Jadwal Saya ({{ auth()->user()->name }})</span>
+                        <span>Jadwal Saya</span>
                     </button>
                 </div>
             </div>
@@ -268,182 +278,196 @@
         {{-- ========================================================
              TAMPILAN 1: MATRIX ROSTER SEKOLAH (SESUAI DOKUMEN RESMI)
              ======================================================== --}}
-        <div x-show="viewMode === 'matrix'" class="space-y-8">
-            @foreach ($rosterData as $dayKey => $day)
-                <div
-                    x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
-                    class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:rounded-none print:border-black print:shadow-none"
-                >
-                    {{-- Header Hari --}}
-                    <div class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 via-blue-50/30 to-white px-6 py-3.5 print:bg-slate-200 print:py-2">
-                        <div class="flex items-center gap-3">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-[#123B60] font-black text-xs text-white uppercase print:text-black print:bg-transparent">
-                                📅
-                            </span>
-                            <h3 class="text-base font-extrabold uppercase tracking-wider text-[#101C35] print:text-sm">
-                                HARI {{ $day['day_name'] }}
-                            </h3>
-                        </div>
-                        <span class="text-xs font-semibold text-slate-500 print:text-[10px]">
-                            SMAS Methodist &bull; Roster Pelajaran {{ $metadata['academic_year'] }}
-                        </span>
-                    </div>
+        <div x-show="viewMode === 'matrix'" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:rounded-none print:border-black print:shadow-none">
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[1200px] table-fixed border-collapse text-center text-xs print:text-[9px]">
+                    <colgroup>
+                        <col style="width: 80px;">  {{-- Hari --}}
+                        <col style="width: 45px;">  {{-- Les --}}
+                        <col style="width: 105px;"> {{-- Waktu --}}
+                        {{-- 6 Kelas x 2 kolom = 12 kolom --}}
+                        <col style="width: 80px;">  {{-- X IPAS A Mapel --}}
+                        <col style="width: 65px;">  {{-- X IPAS A Guru --}}
+                        <col style="width: 80px;">  {{-- X IPAS B Mapel --}}
+                        <col style="width: 65px;">  {{-- X IPAS B Guru --}}
+                        <col style="width: 80px;">  {{-- XI A Mapel --}}
+                        <col style="width: 65px;">  {{-- XI A Guru --}}
+                        <col style="width: 80px;">  {{-- XI B Mapel --}}
+                        <col style="width: 65px;">  {{-- XI B Guru --}}
+                        <col style="width: 80px;">  {{-- XII A Mapel --}}
+                        <col style="width: 65px;">  {{-- XII A Guru --}}
+                        <col style="width: 80px;">  {{-- XII B Mapel --}}
+                        <col style="width: 65px;">  {{-- XII B Guru --}}
+                    </colgroup>
+                    <thead class="sticky top-0 z-20">
+                        <tr class="border-b border-white/20 bg-[#123B60] text-white print:bg-slate-200 print:text-black">
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                                Hari
+                            </th>
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                                Les
+                            </th>
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                                Waktu
+                            </th>
+                            @foreach ($classes as $classKey => $classMeta)
+                                <th
+                                    colspan="2"
+                                    class="border-r border-white/20 px-2 py-2 font-black uppercase tracking-wider last:border-r-0 print:border-black"
+                                >
+                                    {{ $classKey }}
+                                </th>
+                            @endforeach
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-[#1B4D7E] text-[10px] font-bold text-slate-100 print:bg-slate-100 print:text-black">
+                            @foreach ($classes as $classKey => $classMeta)
+                                <th class="border-r border-white/20 px-1 py-1.5 print:border-black">
+                                    Bid Studi
+                                </th>
+                                <th class="border-r border-white/20 px-1 py-1.5 last:border-r-0 print:border-black">
+                                    Kode Guru
+                                </th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700 print:divide-black">
+                        @foreach ($rosterData as $dayKey => $day)
+                            {{-- Baris Pemisah Hari --}}
+                            <tr
+                                x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
+                                class="bg-[#123B60] text-white print:bg-slate-200 print:text-black border-y-2 border-[#123B60]"
+                            >
+                                <td colspan="15" class="py-2.5 px-4 text-left font-black tracking-wider uppercase text-xs">
+                                    <span class="inline-flex items-center gap-2">
+                                        <span>📅</span>
+                                        <span>HARI {{ $day['day_name'] }}</span>
+                                        <span class="text-[10px] font-normal text-slate-300 ml-2 print:text-slate-700">SMAS Methodist Banda Aceh</span>
+                                    </span>
+                                </td>
+                            </tr>
 
-                    {{-- Tabel Grid Roster --}}
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-center text-xs print:text-[9px]">
-                            <thead>
-                                <tr class="border-b border-slate-200 bg-[#123B60] text-white print:bg-slate-200 print:text-black">
-                                    <th rowspan="2" class="border-r border-white/20 px-3 py-2.5 font-bold uppercase tracking-wider print:border-black">
-                                        Hari
-                                    </th>
-                                    <th rowspan="2" class="border-r border-white/20 px-2 py-2.5 font-bold uppercase tracking-wider print:border-black">
-                                        Les
-                                    </th>
-                                    <th rowspan="2" class="border-r border-white/20 px-3 py-2.5 font-bold uppercase tracking-wider print:border-black">
-                                        Waktu
-                                    </th>
-                                    @foreach ($classes as $classKey => $classMeta)
-                                        <th
-                                            x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
-                                            colspan="2"
-                                            class="border-r border-white/20 px-3 py-2 font-black uppercase tracking-wider last:border-r-0 print:border-black"
+                            @foreach ($day['rows'] as $row)
+                                @if (!empty($row['is_special']))
+                                    {{-- Baris Khusus: Upacara / Kebaktian --}}
+                                    <tr
+                                        x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
+                                        class="bg-amber-50/60 print:bg-slate-100"
+                                    >
+                                        <td class="border-r border-slate-200 px-2 py-2.5 font-bold uppercase text-[#123B60] print:border-black">
+                                            {{ $day['day_name'] }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-2.5 font-black text-slate-800 print:border-black">
+                                            {{ $row['les'] }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-2.5 font-bold whitespace-nowrap text-slate-600 print:border-black">
+                                            {{ $row['time'] }}
+                                        </td>
+                                        <td
+                                            colspan="12"
+                                            class="py-2.5 text-center text-xs font-black uppercase tracking-[.3em] text-[#123B60] bg-gradient-to-r from-blue-50/60 via-indigo-50/70 to-blue-50/60 border-y border-blue-200/50 print:border-black"
                                         >
-                                            {{ $classKey }}
-                                        </th>
-                                    @endforeach
-                                </tr>
-                                <tr class="border-b border-slate-200 bg-[#1B4D7E] text-[10px] font-bold text-slate-100 print:bg-slate-100 print:text-black">
-                                    @foreach ($classes as $classKey => $classMeta)
-                                        <template x-if="activeClass === 'all' || activeClass === '{{ $classKey }}'">
-                                            <th class="border-r border-white/20 px-2 py-1.5 print:border-black">
-                                                Bid Studi
-                                            </th>
-                                        </template>
-                                        <template x-if="activeClass === 'all' || activeClass === '{{ $classKey }}'">
-                                            <th class="border-r border-white/20 px-2 py-1.5 print:border-black">
-                                                Kode Guru
-                                            </th>
-                                        </template>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-slate-700 print:divide-black">
-                                @foreach ($day['rows'] as $row)
-                                    @if (!empty($row['is_special']))
-                                        {{-- Baris Khusus: Upacara / Kebaktian --}}
-                                        <tr class="bg-amber-50/50 print:bg-slate-100">
-                                            <td class="border-r border-slate-200 px-3 py-2 font-bold uppercase text-[#123B60] print:border-black">
-                                                {{ $day['day_name'] }}
-                                            </td>
-                                            <td class="border-r border-slate-200 px-2 py-2 font-black text-slate-800 print:border-black">
-                                                {{ $row['les'] }}
-                                            </td>
-                                            <td class="border-r border-slate-200 px-3 py-2 font-bold whitespace-nowrap text-slate-600 print:border-black">
-                                                {{ $row['time'] }}
-                                            </td>
+                                            {{ $row['special_title'] }}
+                                        </td>
+                                    </tr>
+                                @elseif (!empty($row['is_break']))
+                                    {{-- Baris Istirahat --}}
+                                    <tr
+                                        x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
+                                        class="bg-slate-100/80 print:bg-slate-200"
+                                    >
+                                        <td class="border-r border-slate-200 px-2 py-1.5 font-bold text-slate-400 print:border-black">
+                                            —
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-1.5 font-bold text-slate-400 print:border-black">
+                                            —
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-1.5 font-bold whitespace-nowrap text-slate-500 print:border-black">
+                                            {{ $row['time'] }}
+                                        </td>
+                                        <td
+                                            colspan="12"
+                                            class="py-1.5 text-center text-[11px] font-black uppercase tracking-[.3em] text-slate-500 print:border-black"
+                                        >
+                                            {{ $row['break_title'] }}
+                                        </td>
+                                    </tr>
+                                @else
+                                    {{-- Baris Pelajaran Reguler --}}
+                                    <tr
+                                        x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
+                                        class="hover:bg-blue-50/30 transition print:hover:bg-transparent"
+                                    >
+                                        <td class="border-r border-slate-200 px-2 py-2 font-bold uppercase text-slate-500 print:border-black align-middle">
+                                            {{ $day['day_name'] }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-2 font-black text-slate-800 print:border-black align-middle">
+                                            {{ $row['les'] }}
+                                        </td>
+                                        <td class="border-r border-slate-200 px-2 py-2 font-semibold whitespace-nowrap text-slate-600 print:border-black align-middle text-[11px]">
+                                            {{ $row['time'] }}
+                                        </td>
+
+                                        @foreach ($classes as $classKey => $classMeta)
+                                            @php
+                                                $slot = $row['slots'][$classKey] ?? null;
+                                                $subjectCode = $slot['subject'] ?? '';
+                                                $teacherCode = $slot['teacher'] ?? '';
+                                                $style = $subjectStyles[$subjectCode] ?? [
+                                                    'bg' => '#64748B',
+                                                    'text' => '#FFFFFF',
+                                                ];
+                                            @endphp
+
+                                            {{-- Kolom Bid Studi --}}
                                             <td
-                                                colspan="12"
-                                                class="py-3 text-center text-xs font-black uppercase tracking-[.3em] text-[#123B60] bg-gradient-to-r from-blue-50/50 via-indigo-50/60 to-blue-50/50 border-y border-blue-200/50 print:border-black"
+                                                class="border-r border-slate-200 px-1.5 py-2 font-bold transition print:border-black align-middle"
+                                                :class="{
+                                                    'ring-2 ring-blue-500 ring-inset bg-blue-100 font-black': highlightTeacher('{{ $teacherCode }}'),
+                                                    'opacity-30': selectedTeacher && !highlightTeacher('{{ $teacherCode }}')
+                                                }"
                                             >
-                                                {{ $row['special_title'] }}
+                                                @if ($slot)
+                                                    <span
+                                                        class="inline-block w-full max-w-[70px] truncate rounded px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-xs print:border print:border-black"
+                                                        style="background-color: {{ $style['bg'] }}; color: {{ $style['text'] }};"
+                                                        title="{{ $subjectStyles[$subjectCode]['name'] ?? $subjectCode }}"
+                                                    >
+                                                        {{ $subjectCode }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-slate-300 font-normal">—</span>
+                                                @endif
                                             </td>
-                                        </tr>
-                                    @elseif (!empty($row['is_break']))
-                                        {{-- Baris Istirahat --}}
-                                        <tr class="bg-slate-100/70 print:bg-slate-200">
-                                            <td class="border-r border-slate-200 px-3 py-1.5 font-bold text-slate-400 print:border-black">
-                                                —
-                                            </td>
-                                            <td class="border-r border-slate-200 px-2 py-1.5 font-bold text-slate-400 print:border-black">
-                                                —
-                                            </td>
-                                            <td class="border-r border-slate-200 px-3 py-1.5 font-bold whitespace-nowrap text-slate-500 print:border-black">
-                                                {{ $row['time'] }}
-                                            </td>
+
+                                            {{-- Kolom Kode Guru --}}
                                             <td
-                                                colspan="12"
-                                                class="py-1.5 text-center text-[11px] font-black uppercase tracking-[.3em] text-slate-500 print:border-black"
+                                                class="border-r border-slate-200 px-1 py-2 font-black text-slate-800 last:border-r-0 transition print:border-black align-middle"
+                                                :class="{
+                                                    'ring-2 ring-blue-500 ring-inset bg-blue-100 text-blue-900 scale-105 font-black': highlightTeacher('{{ $teacherCode }}'),
+                                                    'opacity-30': selectedTeacher && !highlightTeacher('{{ $teacherCode }}')
+                                                }"
                                             >
-                                                {{ $row['break_title'] }}
-                                            </td>
-                                        </tr>
-                                    @else
-                                        {{-- Baris Pelajaran Reguler --}}
-                                        <tr class="hover:bg-blue-50/30 transition print:hover:bg-transparent">
-                                            <td class="border-r border-slate-200 px-3 py-2 font-bold uppercase text-slate-500 print:border-black">
-                                                {{ $day['day_name'] }}
-                                            </td>
-                                            <td class="border-r border-slate-200 px-2 py-2 font-black text-slate-800 print:border-black">
-                                                {{ $row['les'] }}
-                                            </td>
-                                            <td class="border-r border-slate-200 px-3 py-2 font-semibold whitespace-nowrap text-slate-600 print:border-black">
-                                                {{ $row['time'] }}
-                                            </td>
-
-                                            @foreach ($classes as $classKey => $classMeta)
-                                                @php
-                                                    $slot = $row['slots'][$classKey] ?? null;
-                                                    $subjectCode = $slot['subject'] ?? '';
-                                                    $teacherCode = $slot['teacher'] ?? '';
-                                                    $style = $subjectStyles[$subjectCode] ?? [
-                                                        'bg' => '#64748B',
-                                                        'text' => '#FFFFFF',
-                                                    ];
-                                                @endphp
-
-                                                <template x-if="activeClass === 'all' || activeClass === '{{ $classKey }}'">
-                                                    <td
-                                                        class="border-r border-slate-200 px-2 py-2 font-bold transition print:border-black"
-                                                        :class="{
-                                                            'ring-2 ring-blue-500 ring-inset bg-blue-100 font-black': highlightTeacher('{{ $teacherCode }}'),
-                                                            'opacity-30': selectedTeacher && !highlightTeacher('{{ $teacherCode }}')
-                                                        }"
+                                                @if ($slot)
+                                                    <button
+                                                        type="button"
+                                                        @click="selectedTeacher = (selectedTeacher === '{{ $teacherCode }}' ? '' : '{{ $teacherCode }}')"
+                                                        title="{{ $teachers[$teacherCode]['name'] ?? $teacherCode }} (Klik untuk sorot)"
+                                                        class="rounded px-1.5 py-0.5 text-[11px] font-black text-slate-800 hover:bg-slate-200 transition focus:outline-none"
                                                     >
-                                                        @if ($slot)
-                                                            <span
-                                                                class="inline-block rounded px-2 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-xs print:border print:border-black"
-                                                                style="background-color: {{ $style['bg'] }}; color: {{ $style['text'] }};"
-                                                            >
-                                                                {{ $subjectCode }}
-                                                            </span>
-                                                        @else
-                                                            <span class="text-slate-300 font-normal">—</span>
-                                                        @endif
-                                                    </td>
-                                                </template>
-
-                                                <template x-if="activeClass === 'all' || activeClass === '{{ $classKey }}'">
-                                                    <td
-                                                        class="border-r border-slate-200 px-2 py-2 font-black text-slate-800 last:border-r-0 transition print:border-black"
-                                                        :class="{
-                                                            'ring-2 ring-blue-500 ring-inset bg-blue-100 text-blue-900 scale-105 font-black': highlightTeacher('{{ $teacherCode }}'),
-                                                            'opacity-30': selectedTeacher && !highlightTeacher('{{ $teacherCode }}')
-                                                        }"
-                                                    >
-                                                        @if ($slot)
-                                                            <button
-                                                                type="button"
-                                                                @click="selectedTeacher = (selectedTeacher === '{{ $teacherCode }}' ? '' : '{{ $teacherCode }}')"
-                                                                title="Klik untuk menyorot {{ $teachers[$teacherCode]['name'] ?? $teacherCode }}"
-                                                                class="rounded px-1.5 py-0.5 text-[11px] font-black text-slate-800 hover:bg-slate-200 transition focus:outline-none"
-                                                            >
-                                                                {{ $teacherCode }}
-                                                            </button>
-                                                        @else
-                                                            <span class="text-slate-300 font-normal">—</span>
-                                                        @endif
-                                                    </td>
-                                                </template>
-                                            @endforeach
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endforeach
+                                                        {{ $teacherCode }}
+                                                    </button>
+                                                @else
+                                                    <span class="text-slate-300 font-normal">—</span>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         {{-- ========================================================
@@ -533,27 +557,114 @@
         </div>
 
         {{-- ========================================================
-             TANDA TANGAN & PENGESAHAN DOKUMEN (SESUAI DOKUMEN ASLI)
+             TAMPILAN 3: PEMBAGIAN TUGAS GURU (SK BEBAN MENGAJAR RESMI)
              ======================================================== --}}
-        <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm print:border-none print:shadow-none print:p-0 mt-8">
-            <div class="grid grid-cols-2 gap-8 text-center text-xs sm:text-sm">
-                {{-- Kiri: Kepala Sekolah --}}
-                <div class="flex flex-col items-center justify-between min-h-[140px]">
-                    <p class="font-bold text-slate-700">Kepala SMA Methodist</p>
-                    <div class="mt-auto">
-                        <p class="font-extrabold underline text-slate-900">{{ $metadata['principal_name'] }}</p>
+        <div x-show="viewMode === 'duties'" class="space-y-6">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-[#123B60]">
+                            <span>📑</span>
+                            <span>SK Pembagian Tugas Guru TP {{ $metadata['academic_year'] }}</span>
+                        </span>
+                        <h3 class="text-xl font-black text-[#101C35] mt-2">
+                            Pembagian Tugas Guru SMA Methodist Banda Aceh
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Alokasi jam mengajar resmi per kelas (X IPAS A s/d XII B) dan tugas tambahan guru.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="rounded-xl bg-slate-50 px-4 py-2 border border-slate-200 text-right">
+                            <span class="block text-[10px] font-bold uppercase text-slate-400">Total Jam Mengajar</span>
+                            <span class="text-lg font-black text-[#123B60]">296 Jam / Minggu</span>
+                        </div>
                     </div>
                 </div>
 
-                {{-- Kanan: Waka Kurikulum --}}
-                <div class="flex flex-col items-center justify-between min-h-[140px]">
-                    <div>
-                        <p class="text-slate-500 mb-1">{{ $metadata['decree_date'] }}</p>
-                        <p class="font-bold text-slate-700">Waka Kurikulum SMA</p>
-                    </div>
-                    <div class="mt-auto">
-                        <p class="font-extrabold underline text-slate-900">{{ $metadata['curriculum_head'] }}</p>
-                    </div>
+                {{-- TABEL PEMBAGIAN TUGAS GURU --}}
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full min-w-[1050px] table-fixed border-collapse text-xs print:text-[10px]">
+                        <colgroup>
+                            <col style="width: 45px;">   {{-- No --}}
+                            <col style="width: 220px;">  {{-- Nama Guru --}}
+                            <col style="width: 190px;">  {{-- Jabatan --}}
+                            <col style="width: 150px;">  {{-- Mapel --}}
+                            <col style="width: 65px;">   {{-- X IPAS A --}}
+                            <col style="width: 65px;">   {{-- X IPAS B --}}
+                            <col style="width: 65px;">   {{-- XI A --}}
+                            <col style="width: 65px;">   {{-- XI B --}}
+                            <col style="width: 65px;">   {{-- XII A --}}
+                            <col style="width: 65px;">   {{-- XII B --}}
+                            <col style="width: 70px;">   {{-- Jumlah --}}
+                        </colgroup>
+                        <thead>
+                            <tr class="bg-[#123B60] text-white print:bg-slate-200 print:text-black">
+                                <th rowspan="2" class="border border-white/20 px-2 py-3 font-bold text-center">No</th>
+                                <th rowspan="2" class="border border-white/20 px-3 py-3 font-bold text-left">Nama Guru &amp; Tenaga Pendidik</th>
+                                <th rowspan="2" class="border border-white/20 px-3 py-3 font-bold text-left">Jabatan / Tugas Tambahan</th>
+                                <th rowspan="2" class="border border-white/20 px-3 py-3 font-bold text-left">Mata Pelajaran</th>
+                                <th colspan="6" class="border border-white/20 px-2 py-2 font-bold text-center">Jam Mengajar / Kelas</th>
+                                <th rowspan="2" class="border border-white/20 px-2 py-3 font-bold text-center bg-[#0B2B48]">Jumlah</th>
+                            </tr>
+                            <tr class="bg-[#1B4D7E] text-[10px] font-bold text-slate-100 print:bg-slate-100 print:text-black text-center">
+                                <th class="border border-white/20 px-1 py-1.5">X IPAS A</th>
+                                <th class="border border-white/20 px-1 py-1.5">X IPAS B</th>
+                                <th class="border border-white/20 px-1 py-1.5">XI A</th>
+                                <th class="border border-white/20 px-1 py-1.5">XI B</th>
+                                <th class="border border-white/20 px-1 py-1.5">XII A</th>
+                                <th class="border border-white/20 px-1 py-1.5">XII B</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            @foreach ($teacherDuties as $duty)
+                                <tr class="hover:bg-blue-50/40 transition {{ $duty['no'] % 2 === 0 ? 'bg-slate-50/50' : 'bg-white' }}">
+                                    <td class="border border-slate-200 px-2 py-2.5 text-center font-bold text-slate-500">
+                                        {{ $duty['no'] }}
+                                    </td>
+                                    <td class="border border-slate-200 px-3 py-2.5 font-bold text-[#101C35]">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span>{{ $duty['name'] }}</span>
+                                            @if ($duty['code'])
+                                                <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-[#123B60] border border-slate-200">
+                                                    {{ $duty['code'] }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="border border-slate-200 px-3 py-2.5 text-slate-600 font-medium">
+                                        {{ $duty['role'] }}
+                                    </td>
+                                    <td class="border border-slate-200 px-3 py-2.5 font-semibold text-[#123B60]">
+                                        {{ $duty['subject'] }}
+                                    </td>
+                                    @foreach (['X IPAS A', 'X IPAS B', 'XI A', 'XI B', 'XII A', 'XII B'] as $cName)
+                                        <td class="border border-slate-200 px-2 py-2.5 text-center font-bold {{ $duty['hours'][$cName] ? 'text-slate-900 bg-blue-50/20' : 'text-slate-300' }}">
+                                            {{ $duty['hours'][$cName] ?? '—' }}
+                                        </td>
+                                    @endforeach
+                                    <td class="border border-slate-200 px-2 py-2.5 text-center font-black text-[#123B60] bg-slate-50">
+                                        {{ $duty['total'] ?? '—' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-[#123B60] text-white font-black text-xs print:bg-slate-300 print:text-black text-center">
+                                <td colspan="4" class="border border-white/20 px-4 py-3 text-right uppercase tracking-wider">
+                                    Total Jam Pelajaran / Minggu:
+                                </td>
+                                <td class="border border-white/20 px-2 py-3">50</td>
+                                <td class="border border-white/20 px-2 py-3">50</td>
+                                <td class="border border-white/20 px-2 py-3">50</td>
+                                <td class="border border-white/20 px-2 py-3">50</td>
+                                <td class="border border-white/20 px-2 py-3">48</td>
+                                <td class="border border-white/20 px-2 py-3">48</td>
+                                <td class="border border-white/20 px-2 py-3 bg-[#0B2B48] text-sm text-yellow-300">296</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
