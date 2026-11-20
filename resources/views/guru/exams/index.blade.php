@@ -340,12 +340,18 @@
             background: #fff;
             box-shadow: 0 7px 25px rgba(18,59,96,.035);
             transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+            cursor: pointer;
         }
 
         .eexam-card:hover {
             transform: translateY(-6px);
             border-color: #BBD7E9;
             box-shadow: 0 18px 38px rgba(18,59,96,.10);
+        }
+
+        .eexam-card:hover .eexam-card-stat {
+            background: #EEF4F9;
+            border-color: #DDE7F0;
         }
 
         .eexam-card-cover {
@@ -358,6 +364,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .eexam-cover-image {
@@ -840,7 +848,7 @@
                                 $typeInfo = $typeLabels[$exam->exam_type] ?? ['label' => strtoupper($exam->exam_type), 'bg' => 'bg-blue-600', 'light' => 'bg-blue-50 text-blue-700 border-blue-200'];
                             @endphp
 
-                            <article class="eexam-card"
+                            <article class="eexam-card group cursor-pointer"
                                      x-show="matches(
                                          '{{ addslashes($exam->title) }}',
                                          '{{ addslashes($subjectName) }}',
@@ -849,11 +857,14 @@
                                          '{{ $exam->is_published ? 'published' : 'draft' }}',
                                          '{{ $exam->exam_type }}'
                                      )"
-                                     x-transition>
+                                     x-transition
+                                     @click="if (! $event.target.closest('a, button, form, input')) { window.location.href = '{{ route('guru.exams.show', $exam) }}' }">
 
                                 {{-- CARD COVER DENGAN SUBJECT IMAGE / THEME --}}
-                                <div class="eexam-card-cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
-                                     style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}">
+                                <a href="{{ route('guru.exams.show', $exam) }}"
+                                   class="eexam-card-cover block group/cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
+                                   style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}"
+                                   title="Buka & Kelola Ujian: {{ $exam->title }}">
 
                                     @if(!empty($theme['image']))
                                         <img src="{{ $theme['image'] }}"
@@ -903,14 +914,14 @@
                                         </div>
                                     </div>
 
-                                </div>
+                                </a>
 
                                 {{-- CARD BODY --}}
                                 <div class="eexam-card-body space-y-4">
                                     
                                     {{-- JUDUL UJIAN & JADWAL --}}
                                     <div>
-                                        <h4 class="text-base font-bold text-slate-800 leading-snug line-clamp-2 hover:text-[#267BB5] transition">
+                                        <h4 class="text-base font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-[#267BB5] transition">
                                             <a href="{{ route('guru.exams.show', $exam) }}">
                                                 {{ $exam->title }}
                                             </a>
