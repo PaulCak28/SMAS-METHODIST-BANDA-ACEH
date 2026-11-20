@@ -129,8 +129,12 @@
                                                     $durasiMenit = intdiv($durasiDetik, 60);
                                                     $sisaDetik = $durasiDetik % 60;
                                                 @endphp
-                                                <div class="inline-flex items-center bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">
-                                                    ⏱️ {{ $durasiMenit }} menit {{ $sisaDetik }} detik
+                                                <div class="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">
+                                                    <svg class="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <circle cx="12" cy="12" r="9"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/>
+                                                    </svg>
+                                                    <span>{{ $durasiMenit }}m {{ $sisaDetik }}d</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -148,8 +152,11 @@
                                             @endif
 
                                             @if($session->violations_count > 0)
-                                                <span class="inline-flex items-center rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
-                                                    ⚠️ {{ $session->violations_count }} Pelanggaran
+                                                <span class="inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
+                                                    <svg class="h-3 w-3 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                    </svg>
+                                                    <span>{{ $session->violations_count }} Pelanggaran</span>
                                                 </span>
                                             @else
                                                 <span class="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
@@ -194,7 +201,11 @@
                                 <tr>
                                     <td colspan="5" class="px-4 py-12 text-center text-sm text-slate-500">
                                         <div class="flex flex-col items-center justify-center">
-                                            <span class="text-2xl mb-2">📭</span>
+                                            <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                                </svg>
+                                            </div>
                                             <span>Belum ada siswa yang mengerjakan ujian ini.</span>
                                         </div>
                                     </td>

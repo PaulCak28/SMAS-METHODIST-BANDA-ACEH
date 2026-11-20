@@ -108,7 +108,9 @@
                         :class="viewMode === 'duties' ? 'bg-white text-[#123B60] shadow-sm' : 'bg-white/10 text-white hover:bg-white/20'"
                         class="rounded-xl px-3.5 py-2 text-xs font-bold transition flex items-center gap-1.5"
                     >
-                        <span>👥</span>
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                        </svg>
                         <span>Pembagian Tugas Guru</span>
                     </button>
 
@@ -188,7 +190,7 @@
                             @if (!empty($currentTeacherCodes))
                                 <optgroup label="Akun Anda ({{ auth()->user()->name }})">
                                     @foreach ($currentTeacherCodes as $myCode)
-                                        <option value="{{ $myCode }}">★ {{ $myCode }} - {{ $teachers[$myCode]['desc'] ?? $teachers[$myCode]['name'] }}</option>
+                                        <option value="{{ $myCode }}">{{ $myCode }} - {{ $teachers[$myCode]['desc'] ?? $teachers[$myCode]['name'] }} (Jadwal Anda)</option>
                                     @endforeach
                                 </optgroup>
                             @endif
@@ -206,7 +208,7 @@
                         @click="showLegend = !showLegend"
                         class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100"
                     >
-                        <span x-text="showLegend ? 'Tutup Legenda' : 'Lihat Kode Guru & Mapel ℹ'"></span>
+                        <span x-text="showLegend ? 'Tutup Legenda' : 'Lihat Kode Guru & Mapel'"></span>
                     </button>
                 </div>
             </div>
@@ -215,8 +217,10 @@
             <template x-if="selectedTeacher">
                 <div class="mt-3 flex items-center justify-between rounded-xl bg-blue-50/80 px-4 py-2.5 text-xs border border-blue-100">
                     <div class="flex items-center gap-2">
-                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#123B60] text-[10px] font-black text-white">
-                            ★
+                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#123B60] text-amber-300">
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
                         </span>
                         <span class="text-slate-600">
                             Menyorot jadwal untuk kode guru:
@@ -243,8 +247,10 @@
             <template x-if="activeClass !== 'all'">
                 <div class="mt-2.5 flex items-center justify-between rounded-xl bg-sky-50 px-4 py-2.5 text-xs border border-sky-200">
                     <div class="flex items-center gap-2">
-                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#267BB5] text-[10px] font-black text-white">
-                            🏫
+                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#267BB5] text-white">
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
                         </span>
                         <span class="text-slate-700">
                             Menampilkan jadwal khusus kelas:
@@ -273,11 +279,16 @@
         >
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <span>📋</span>
+                    <svg class="h-4 w-4 text-[#123B60]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
                     <span>Daftar Kode Guru &amp; Mata Pelajaran Resmi SMAS Methodist</span>
                 </h3>
-                <button type="button" @click="showLegend = false" class="text-xs font-bold text-slate-400 hover:text-slate-600">
-                    Tutup ✕
+                <button type="button" @click="showLegend = false" class="inline-flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-slate-600 transition">
+                    <span>Tutup</span>
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                 </button>
             </div>
 
@@ -372,7 +383,10 @@
                             >
                                 <td :colspan="activeClass === 'all' ? 15 : 5" class="py-2.5 px-4 text-left font-black tracking-wider uppercase text-xs">
                                     <span class="inline-flex items-center gap-2">
-                                        <span>📅</span>
+                                        <svg class="h-4 w-4 text-sky-300 print:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 2v4M8 2v4M3 10h18"/>
+                                        </svg>
                                         <span>HARI {{ $day['day_name'] }}</span>
                                         <span class="text-[10px] font-normal text-slate-300 ml-2 print:text-slate-700">SMAS Methodist Banda Aceh</span>
                                     </span>
@@ -513,7 +527,9 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <div class="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
-                            <span>👤</span>
+                            <svg class="h-3.5 w-3.5 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
                             <span>Jadwal Khusus Guru</span>
                         </div>
                         <h3 class="text-xl font-black text-[#101C35] mt-2">
@@ -551,7 +567,10 @@
                         >
                             <div class="border-b border-slate-100 bg-gradient-to-r from-blue-50/80 to-white px-5 py-3.5 flex items-center justify-between">
                                 <h4 class="font-black text-sm uppercase text-[#123B60] flex items-center gap-2">
-                                    <span>📅</span>
+                                    <svg class="h-4 w-4 text-[#123B60]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 2v4M8 2v4M3 10h18"/>
+                                    </svg>
                                     <span>Hari {{ $group['day_name'] }}</span>
                                 </h4>
                                 <span class="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-bold text-blue-800">
@@ -579,8 +598,12 @@
                                                         {{ $item['subject'] }}
                                                     </span>
                                                 </div>
-                                                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">
-                                                    ⏰ {{ $item['time'] }} WIB
+                                                <p class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 mt-0.5">
+                                                    <svg class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <circle cx="12" cy="12" r="9"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/>
+                                                    </svg>
+                                                    <span>{{ $item['time'] }} WIB</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -605,7 +628,9 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
                     <div>
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-[#123B60]">
-                            <span>📑</span>
+                            <svg class="h-3.5 w-3.5 text-[#123B60]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
                             <span>SK Pembagian Tugas Guru TP {{ $metadata['academic_year'] }}</span>
                         </span>
                         <h3 class="text-xl font-black text-[#101C35] mt-2">

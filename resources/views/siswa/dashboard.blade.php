@@ -996,7 +996,11 @@
                         @else
                             {{-- Semua Tugas Selesai --}}
                             <div class="mt-6 rounded-2xl bg-emerald-50/50 border border-emerald-100 p-6 text-center">
-                                <span class="text-3xl">🎉</span>
+                                <div class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
                                 <h4 class="mt-2 font-serif text-sm font-bold text-emerald-900">Hebat! Semua Tugas Sudah Kamu Kumpulkan</h4>
                                 <p class="mt-1 text-xs text-emerald-700">Tidak ada penugasan tertunda saat ini. Manfaatkan waktu untuk mengulang materi di E-Class.</p>
                             </div>

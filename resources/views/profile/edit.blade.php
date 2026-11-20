@@ -124,7 +124,9 @@
                     {{-- TOP BANNER BADGE --}}
                     <div class="relative z-10 flex items-center justify-between">
                         <div class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/35 px-3.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm">
-                            <span class="text-amber-300">✦</span>
+                            <svg class="h-3.5 w-3.5 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
                             <span class="tracking-wider">SMAS METHODIST BANDA ACEH</span>
                         </div>
 
@@ -489,8 +491,10 @@
                                             <span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm shadow-sm">
                                                 {{ $className }}
                                             </span>
-                                            <span class="text-xs text-white/90 drop-shadow-sm">
-                                                📚
+                                            <span class="text-white/90 drop-shadow-sm">
+                                                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                                </svg>
                                             </span>
                                         </div>
 
@@ -530,8 +534,10 @@
                     </div>
                 @else
                     <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-400">
-                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-2xl mb-3">
-                            📂
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 mb-3">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+                            </svg>
                         </div>
                         <p class="font-bold text-slate-700">Belum Ada Kelas yang Diikuti</p>
                         <p class="text-xs mt-1">Anda belum tergabung ke dalam rombongan belajar aktif.</p>

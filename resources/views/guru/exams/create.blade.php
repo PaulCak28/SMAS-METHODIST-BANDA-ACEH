@@ -76,8 +76,9 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1">Jenis Evaluasi</label>
                         <select name="exam_type" required class="w-full rounded-xl border-slate-300 shadow-sm focus:border-[#267BB5] focus:ring-[#267BB5] text-sm">
+                            <option value="kuis" {{ old('exam_type') == 'kuis' ? 'selected' : '' }}>Kuis / Ulangan Harian</option>
                             <option value="uts" {{ old('exam_type') == 'uts' ? 'selected' : '' }}>UTS (Ujian Tengah Semester)</option>
-                            <option value="uas" {{ old('exam_type') == 'uas' ? 'selected' : '' }}>UAS / Kuis Akhir</option>
+                            <option value="uas" {{ old('exam_type') == 'uas' ? 'selected' : '' }}>UAS (Ujian Akhir Semester)</option>
                         </select>
                     </div>
 

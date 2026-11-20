@@ -24,7 +24,7 @@
     @php
         $subjectThemes = [
             'matematika' => [
-                'symbol' => '∑',
+                'symbol' => 'MAT',
                 'category' => 'MATEMATIKA',
                 'description' => 'Eksplorasi angka, pola, dan logika berpikir',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -32,7 +32,7 @@
                 'accent' => '#267BB5',
             ],
             'bahasa indonesia' => [
-                'symbol' => 'Aa',
+                'symbol' => 'IDN',
                 'category' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -40,7 +40,7 @@
                 'accent' => '#267BB5',
             ],
             'bahasa inggris' => [
-                'symbol' => 'Ab',
+                'symbol' => 'ENG',
                 'category' => 'BAHASA INGGRIS',
                 'description' => 'Berkomunikasi dan terhubung secara global',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -48,7 +48,7 @@
                 'accent' => '#267BB5',
             ],
             'biologi' => [
-                'symbol' => '✿',
+                'symbol' => 'BIO',
                 'category' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -56,7 +56,7 @@
                 'accent' => '#267BB5',
             ],
             'fisika' => [
-                'symbol' => '⚛',
+                'symbol' => 'FIS',
                 'category' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -64,7 +64,7 @@
                 'accent' => '#267BB5',
             ],
             'kimia' => [
-                'symbol' => '⚗',
+                'symbol' => 'KIM',
                 'category' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -73,7 +73,7 @@
                 'accent' => '#267BB5',
             ],
             'sejarah' => [
-                'symbol' => '◷',
+                'symbol' => 'SEJ',
                 'category' => 'SEJARAH',
                 'description' => 'Mengambil hikmah dan perjalanan masa lalu',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -81,7 +81,7 @@
                 'accent' => '#267BB5',
             ],
             'informatika' => [
-                'symbol' => '</>',
+                'symbol' => 'TIK',
                 'category' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -89,7 +89,7 @@
                 'accent' => '#267BB5',
             ],
             'agama' => [
-                'symbol' => '✧',
+                'symbol' => 'AGM',
                 'category' => 'PENDIDIKAN AGAMA',
                 'description' => 'Membina karakter, iman, dan pekerti mulia',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -97,7 +97,7 @@
                 'accent' => '#267BB5',
             ],
             'ekonomi' => [
-                'symbol' => '↗',
+                'symbol' => 'EKO',
                 'category' => 'EKONOMI',
                 'description' => 'Memahami pasar, bisnis, dan keuangan',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -105,7 +105,7 @@
                 'accent' => '#267BB5',
             ],
             'geografi' => [
-                'symbol' => '🌍',
+                'symbol' => 'GEO',
                 'category' => 'GEOGRAFI',
                 'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -113,7 +113,7 @@
                 'accent' => '#267BB5',
             ],
             'sosiologi' => [
-                'symbol' => '👥',
+                'symbol' => 'SOS',
                 'category' => 'SOSIOLOGI',
                 'description' => 'Memahami struktur sosial dan dinamika masyarakat',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -123,7 +123,7 @@
         ];
 
         $defaultTheme = [
-            'symbol' => '▤',
+            'symbol' => 'MLS',
             'category' => 'KELAS AKADEMIK',
             'description' => 'Ruang belajar dan berkembang bersama',
             'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -286,9 +286,10 @@
 
         .eclass-hero-art .art-symbol {
             font-family: 'Playfair Display',serif;
-            font-size: 78px;
+            font-size: clamp(36px, 4.2vw, 52px);
             font-weight: 700;
-            line-height: 1;
+            line-height: 1.1;
+            letter-spacing: -1px;
         }
 
         /* SUMMARY */
@@ -505,17 +506,17 @@
             position: relative;
             z-index: 1;
             display: grid;
-            width: 69px;
-            height: 69px;
+            width: 60px;
+            height: 60px;
             flex-shrink: 0;
             place-items: center;
             border: 1px solid rgba(255,255,255,.36);
-            border-radius: 21px;
+            border-radius: 18px;
             background: rgba(255,255,255,.17);
             color: white;
-            font-family: 'Playfair Display',serif;
-            font-size: 29px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .08em;
             backdrop-filter: blur(8px);
         }
 
@@ -760,7 +761,10 @@
 
                 <div>
                     <span class="eclass-eyebrow">
-                        ✦ METHODIST LEARNING SPACE
+                        <svg class="h-3 w-3 text-[#185B87]" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>METHODIST LEARNING SPACE</span>
                     </span>
 
                     <h1>
@@ -802,7 +806,7 @@
                                 METHODIST LEARNING SPACE
                             </p>
 
-                            <div class="art-symbol drop-shadow-md">M.</div>
+                            <div class="art-symbol drop-shadow-md">E-Class.</div>
 
                             <h2 class="eclass-serif mt-3 text-2xl font-bold drop-shadow-md">
                                 Belajar. Tumbuh. Berprestasi.
@@ -824,7 +828,11 @@
             <section class="eclass-summary">
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">▤</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalClasses }}</p>
                         <p class="summary-label">Total Kelas</p>
@@ -832,7 +840,11 @@
                 </article>
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">♙</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-5.25 6.557q.75.31 1.5.586"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalStudents }}</p>
                         <p class="summary-label">Siswa Terdaftar</p>
@@ -840,7 +852,11 @@
                 </article>
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">▧</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalMaterials }}</p>
                         <p class="summary-label">Materi Pembelajaran</p>
@@ -880,7 +896,9 @@
                     <div class="eclass-empty">
 
                         <div class="eclass-empty-icon">
-                            ▤
+                            <svg class="h-8 w-8 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                            </svg>
                         </div>
 
                         <h3>

@@ -139,7 +139,11 @@
             {{-- ALERTS --}}
             @if(session('success'))
                 <div role="status" class="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-bold">✓</span>
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </span>
                     <span class="pt-1">{{ session('success') }}</span>
                 </div>
             @endif
@@ -273,7 +277,7 @@
 
                         <div class="absolute bottom-3 left-0 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
                             <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-100">Your progress</p>
-                            <p class="mt-1 text-sm font-extrabold">Keep Growing ✦</p>
+                            <p class="mt-1 text-sm font-extrabold">Keep Growing</p>
                         </div>
                     </div>
                 </div>
