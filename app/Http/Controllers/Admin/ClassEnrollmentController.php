@@ -19,15 +19,16 @@ class ClassEnrollmentController extends Controller
      */
     public function index(Request $request)
     {
-        $search =$request->input('search');
+        $search = $request->input('search');
 
         $students = Student::on('mysql_admin')
             ->with(['user', 'schoolClass', 'classEnrollments'])
             ->has('classEnrollments')
-            ->when($search, function ($query, $search) {$query->where(function ($q) use ($search) {
-                    $q->where('nis', 'like', "\%{$search}%")
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nis', 'like', "%{$search}%")
                       ->orWhere('nisn', 'like', "%{$search}%")
-                      ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "\%{$search}%"));
+                      ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"));
                 });
             })
             ->orderBy('nis')
@@ -52,7 +53,7 @@ class ClassEnrollmentController extends Controller
             ->select('cst_id', 'students_id')
             ->get()
             ->groupBy('cst_id')
-            ->map(fn ($rows) =>$rows->pluck('students_id')->values());
+            ->map(fn ($rows) => $rows->pluck('students_id')->values());
 
         return view('admin.enrollments.index', compact(
             'students',
@@ -84,25 +85,32 @@ class ClassEnrollmentController extends Controller
             ->orderBy('class_id')
             ->get();
 
-        return view('admin.enrollments.show', compact('student', 'csts'));
+        // enrollment_id yang sudah punya aktivitas => tombol hapus dikunci di view
+        $terkunci = $student->classEnrollments
+            ->filter(fn ($enr) => ! empty($this->blockers($student->nis, $enr->cst_id)))
+            ->pluck('enrollment_id')
+            ->flip();
+
+        return view('admin.enrollments.show', compact('student', 'csts', 'terkunci'));
     }
 
     public function create()
     {
-        $students = Student::on('mysql_admin')->with(['user', 'schoolClass'])->orderBy('nis')->get();$csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
+        $students = Student::on('mysql_admin')->with(['user', 'schoolClass'])->orderBy('nis')->get();
+        $csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
 
         return view('admin.enrollments.create', compact('students', 'csts'));
     }
 
     public function store(Request $request)
     {
-        $v =$request->validate([
+        $v = $request->validate([
             'students_id' => ['required', 'exists:mysql_admin.students,nis'],
             'cst_id'      => [
                 'required',
                 'exists:mysql_admin.class_subject_teacher,cst_id',
                 Rule::unique('mysql_admin.class_enrollments', 'cst_id')->where(
-                    fn ($q) => $q->where('students_id',$request->students_id)
+                    fn ($q) => $q->where('students_id', $request->students_id)
                 ),
             ],
             'status'      => ['required', Rule::in(self::STATUSES)],
@@ -114,11 +122,11 @@ class ClassEnrollmentController extends Controller
 
         $cst = ClassSubjectTeacher::on('mysql_admin')->findOrFail($v['cst_id']);
 
-        DB::connection('mysql_admin')->transaction(function () use ($v,$cst) {
+        DB::connection('mysql_admin')->transaction(function () use ($v, $cst) {
             ClassEnrollment::on('mysql_admin')->create($v + [
                 'academic_year' => $cst->academic_year,
             ]);
-            $this->syncCurrentClass($v['students_id'], $cst,$v['status']);
+            $this->syncCurrentClass($v['students_id'], $cst, $v['status']);
         });
 
         return redirect()
@@ -131,7 +139,7 @@ class ClassEnrollmentController extends Controller
      */
     public function storeBulk(Request $request)
     {
-        $v =$request->validate([
+        $v = $request->validate([
             'cst_id'        => ['required', 'exists:mysql_admin.class_subject_teacher,cst_id'],
             'students_id'   => ['required', 'array', 'min:1'],
             'students_id.*' => ['exists:mysql_admin.students,nis'],
@@ -160,8 +168,8 @@ class ClassEnrollmentController extends Controller
             ]);
         }
 
-        DB::connection('mysql_admin')->transaction(function () use ($toEnroll,$cst) {
-            foreach ($toEnroll as$nis) {
+        DB::connection('mysql_admin')->transaction(function () use ($toEnroll, $cst) {
+            foreach ($toEnroll as $nis) {
                 ClassEnrollment::on('mysql_admin')->create([
                     'students_id'   => $nis,
                     'cst_id'        => $cst->cst_id,
@@ -185,21 +193,22 @@ class ClassEnrollmentController extends Controller
 
     public function edit(int $id)
     {
-        $enrollment = ClassEnrollment::on('mysql_admin')->with('student.user')->findOrFail($id);$csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
+        $enrollment = ClassEnrollment::on('mysql_admin')->with('student.user')->findOrFail($id);
+        $csts = ClassSubjectTeacher::on('mysql_admin')->with(['subject', 'schoolClass', 'teacher.user'])->orderBy('class_id')->get();
 
         return view('admin.enrollments.edit', compact('enrollment', 'csts'));
     }
 
-    public function update(Request $request, int$id)
+    public function update(Request $request, int $id)
     {
         $enrollment = ClassEnrollment::on('mysql_admin')->findOrFail($id);
 
-        $v =$request->validate([
+        $v = $request->validate([
             'cst_id'      => [
                 'required',
                 'exists:mysql_admin.class_subject_teacher,cst_id',
                 Rule::unique('mysql_admin.class_enrollments', 'cst_id')
-                    ->where(fn ($q) => $q->where('students_id',$enrollment->students_id))
+                    ->where(fn ($q) => $q->where('students_id', $enrollment->students_id))
                     ->ignore($enrollment->enrollment_id, 'enrollment_id'),
             ],
             'status'      => ['required', Rule::in(self::STATUSES)],
@@ -211,8 +220,9 @@ class ClassEnrollmentController extends Controller
 
         $cst = ClassSubjectTeacher::on('mysql_admin')->findOrFail($v['cst_id']);
 
-        DB::connection('mysql_admin')->transaction(function () use ($v,$cst, $enrollment) {$enrollment->update($v + ['academic_year' =>$cst->academic_year]);
-            $this->syncCurrentClass($enrollment->students_id, $cst,$v['status']);
+        DB::connection('mysql_admin')->transaction(function () use ($v, $cst, $enrollment) {
+            $enrollment->update($v + ['academic_year' => $cst->academic_year]);
+            $this->syncCurrentClass($enrollment->students_id, $cst, $v['status']);
         });
 
         return redirect()
@@ -220,19 +230,102 @@ class ClassEnrollmentController extends Controller
             ->with('success', 'Data enrollment kelas siswa berhasil diperbarui.');
     }
 
+    /**
+     * Mengeluarkan siswa dari kelas mapel.
+     * Ditolak jika siswa sudah punya aktivitas di kelas mapel itu (nilai, tugas, ujian),
+     * agar riwayat akademiknya tidak hilang. Gunakan Edit -> status "pindah" / "drop_out".
+     */
     public function destroy(int $id)
     {
-        $enrollment = ClassEnrollment::on('mysql_admin')->findOrFail($id);
-        $studentNis =$enrollment->students_id;
+        $conn = DB::connection('mysql_admin');
 
-        $enrollment->delete();
+        try {
+            $hasil = $conn->transaction(function () use ($id) {
+                // Kunci baris dulu, lalu cek di dalam transaksi
+                $enrollment = ClassEnrollment::on('mysql_admin')
+                    ->where('enrollment_id', $id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $enrollment) {
+                    return ['status' => 'hilang'];
+                }
+
+                $terpakai = $this->blockers($enrollment->students_id, $enrollment->cst_id);
+
+                if (! empty($terpakai)) {
+                    return [
+                        'status' => 'ditolak',
+                        'nis'    => $enrollment->students_id,
+                        'detail' => collect($terpakai)
+                            ->map(fn ($jumlah, $label) => "{$jumlah} {$label}")
+                            ->implode(', '),
+                    ];
+                }
+
+                $enrollment->delete();
+
+                return ['status' => 'ok', 'nis' => $enrollment->students_id];
+            });
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal mengeluarkan siswa: ' . $e->getMessage());
+        }
+
+        if ($hasil['status'] === 'hilang') {
+            return redirect()
+                ->route('admin.enrollments.index')
+                ->with('error', 'Data enrollment tidak ditemukan atau sudah dihapus.');
+        }
+
+        if ($hasil['status'] === 'ditolak') {
+            return redirect()
+                ->route('admin.enrollments.show', $hasil['nis'])
+                ->with('error', "Siswa tidak bisa dikeluarkan karena sudah memiliki {$hasil['detail']} di kelas mapel ini. "
+                    . 'Ubah statusnya menjadi "pindah" atau "drop out" lewat Edit agar riwayat tetap tersimpan.');
+        }
 
         return redirect()
-            ->route('admin.enrollments.show', $studentNis)
+            ->route('admin.enrollments.show', $hasil['nis'])
             ->with('success', 'Siswa berhasil dikeluarkan dari kelas mapel.');
     }
 
-    private function syncCurrentClass(int|string $nis, ClassSubjectTeacher $cst, string$status): void
+    /**
+     * Aktivitas siswa di satu kelas mapel (cst) yang menghalangi penghapusan enrollment.
+     * Mengembalikan [label => jumlah] hanya untuk yang > 0.
+     */
+    private function blockers(string|int $nis, string|int $cstId): array
+    {
+        $conn = DB::connection('mysql_admin');
+
+        $counts = [
+            'nilai' => $conn->table('grades')
+                ->where('students_id', $nis)
+                ->where('cst_id', $cstId)
+                ->count(),
+
+            'pengumpulan tugas' => $conn->table('assignment_submissions as s')
+                ->join('assignments as a', 'a.assignment_id', '=', 's.assignment_id')
+                ->where('s.students_id', $nis)
+                ->where('a.cst_id', $cstId)
+                ->count(),
+
+            'sesi ujian' => $conn->table('exam_sessions as es')
+                ->join('exams as e', 'e.exam_id', '=', 'es.exam_id')
+                ->where('es.student_id', $nis)
+                ->where('e.cst_id', $cstId)
+                ->count(),
+
+            'jawaban ujian' => $conn->table('exam_answers as ea')
+                ->join('exams as e', 'e.exam_id', '=', 'ea.exam_id')
+                ->where('ea.students_id', $nis)
+                ->where('e.cst_id', $cstId)
+                ->count(),
+        ];
+
+        return array_filter($counts);
+    }
+
+    private function syncCurrentClass(int|string $nis, ClassSubjectTeacher $cst, string $status): void
     {
         if ($status === 'aktif') {
             Student::on('mysql_admin')

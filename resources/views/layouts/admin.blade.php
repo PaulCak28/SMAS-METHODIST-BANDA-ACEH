@@ -270,19 +270,6 @@
             </a>
         </div>
 
-        <!-- Sidebar Footer (Info Akun Saja, Tanpa Logout) -->
-        <div class="sidebar-footer">
-            <div class="d-flex align-items-center gap-2">
-                <div class="user-avatar">
-                    <i class="bi bi-person"></i>
-                </div>
-                <div>
-                    <div class="text-white fw-bold" style="font-size: 0.85rem;">{{ auth()->user()->name ?? 'Administrator' }}</div>
-                    <div style="color: #94a3b8; font-size: 0.75rem;">Administrator</div>
-                </div>
-            </div>
-        </div>
-
     </aside>
 
     <!-- WRAPPER KONTEN UTAMA -->
@@ -331,7 +318,7 @@
 
         <!-- FOOTER -->
         <footer class="bg-white border-top text-center py-3 mt-auto">
-            <small class="text-muted">&copy; {{ date('Y') }} MALAS - Methodist Academic Learning. All rights reserved.</small>
+            <small class="text-muted">&copy; {{ date('Y') }} Methodist Academic Learning. All rights reserved.</small>
         </footer>
 
     </div>

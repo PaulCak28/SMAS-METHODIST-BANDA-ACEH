@@ -132,19 +132,34 @@ class SubjectController extends Controller
             ->with('success', 'Kode dan nama Mata Pelajaran berhasil diperbarui.');
     }
 
-    public function destroy(string $code)
+        public function destroy(string $code)
     {
-        $subject = Subject::on('mysql_admin')->where('code',$code)->firstOrFail();
-
+        $subject = Subject::on('mysql_admin')->where('code', $code)->firstOrFail();
+    
+        $cstTable = (new ClassSubjectTeacher())->getTable();
+    
+        $sedangDiampu = Schema::connection('mysql_admin')->hasTable($cstTable)
+            && DB::connection('mysql_admin')
+                ->table($cstTable)
+                ->where('subject_code', $subject->code)
+                ->exists();
+    
+        if ($sedangDiampu) {
+            return back()->with(
+                'error',
+                "Mata pelajaran {$subject->name} tidak bisa dihapus karena masih diampu di kelas/guru. Hapus relasinya terlebih dahulu."
+            );
+        }
+    
         try {
             $subject->delete();
-
+    
             return redirect()
                 ->route('admin.subjects.index')
                 ->with('success', 'Mata Pelajaran berhasil dihapus.');
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Gagal menghapus! Mata pelajaran ini sedang digunakan di relasi kelas/guru.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Cadangan jika masih ada relasi lain yang diblokir foreign key
+            return back()->with('error', 'Gagal menghapus! Mata pelajaran ini masih terhubung dengan data lain.');
         }
     }
 }

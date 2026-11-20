@@ -130,17 +130,98 @@ class TeacherController extends Controller
             ->with('success', 'Data guru berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus guru beserta akun pengguna-nya.
+     *
+     * Ditolak jika:
+     *  1. Status guru masih "aktif" (ubah dulu ke cuti / pensiun / resign lewat Edit), atau
+     *  2. Guru masih terhubung dengan data lain (kelas mapel, wali kelas,
+     *     nilai, jawaban ujian, pengumuman).
+     */
     public function destroy(string $nip)
     {
-        $teacher = Teacher::on('mysql_admin')->with('user')->findOrFail($nip);
+        try {
+            $hasil = DB::connection('mysql_admin')->transaction(function () use ($nip) {
+                // Kunci baris dulu, lalu cek di dalam transaksi
+                $teacher = Teacher::on('mysql_admin')
+                    ->with('user')
+                    ->where('nip', $nip)
+                    ->lockForUpdate()
+                    ->first();
 
-        DB::connection('mysql_admin')->transaction(function () use ($teacher) {
-            $teacher->delete();
-            $teacher->user?->delete();
-        });
+                if (! $teacher) {
+                    return ['status' => 'hilang'];
+                }
+
+                $nama = $teacher->user->name ?? $teacher->nip;
+
+                // Guru yang masih aktif tidak boleh dihapus
+                if (strtolower(trim((string) $teacher->status)) === 'aktif') {
+                    return ['status' => 'aktif', 'nama' => $nama];
+                }
+
+                $terpakai = $this->blockers($teacher->nip);
+
+                if (! empty($terpakai)) {
+                    return [
+                        'status' => 'ditolak',
+                        'nama'   => $nama,
+                        'detail' => collect($terpakai)
+                            ->map(fn ($jumlah, $label) => "{$jumlah} {$label}")
+                            ->implode(', '),
+                    ];
+                }
+
+                $teacher->delete();
+                $teacher->user?->delete();
+
+                return ['status' => 'ok', 'nama' => $nama];
+            });
+        } catch (\Throwable $e) {
+            return redirect()
+                ->route('admin.teachers.index')
+                ->with('error', 'Gagal menghapus guru: ' . $e->getMessage());
+        }
+
+        if ($hasil['status'] === 'hilang') {
+            return redirect()
+                ->route('admin.teachers.index')
+                ->with('error', 'Data guru tidak ditemukan atau sudah dihapus.');
+        }
+
+        if ($hasil['status'] === 'aktif') {
+            return redirect()
+                ->route('admin.teachers.index')
+                ->with('error', "Guru {$hasil['nama']} masih berstatus aktif sehingga tidak bisa dihapus. "
+                    . 'Ubah statusnya menjadi cuti/pensiun/resign lewat Edit terlebih dahulu.');
+        }
+
+        if ($hasil['status'] === 'ditolak') {
+            return redirect()
+                ->route('admin.teachers.index')
+                ->with('error', "Guru {$hasil['nama']} tidak bisa dihapus karena masih terhubung dengan {$hasil['detail']}. "
+                    . 'Jika sudah tidak bertugas, ubah statusnya menjadi cuti/pensiun/resign lewat Edit.');
+        }
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with('success', 'Guru berhasil dihapus.');
+            ->with('success', "Guru {$hasil['nama']} berhasil dihapus.");
+    }
+
+    /**
+     * Data yang menghalangi penghapusan guru. Mengembalikan [label => jumlah] untuk yang > 0.
+     * (hapus baris yang tidak ingin ikut memblokir)
+     */
+    private function blockers(string $nip): array
+    {
+        $conn = DB::connection('mysql_admin');
+
+        return array_filter([
+            'kelas mapel yang diampu'     => $conn->table('class_subject_teacher')->where('teacher_id', $nip)->count(),
+            'kelas sebagai wali kelas'    => $conn->table('classes')->where('homeroom_teacher_id', $nip)->count(),
+            'nilai yang diinput'          => $conn->table('grades')->where('graded_by', $nip)->count(),
+            'jawaban ujian yang dinilai'  => $conn->table('exam_answers')->where('graded_by', $nip)->count(),
+            'pengumuman yang dibuat'      => $conn->table('announcements')->where('created_by', $nip)->count(),
+        ]);
     }
 }
