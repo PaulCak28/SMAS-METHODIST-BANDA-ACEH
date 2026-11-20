@@ -26,7 +26,7 @@ class RosterService
         'DN' => ['code' => 'DN', 'name' => 'Daniatul Hikmah, S.Pd', 'role' => 'Pembina OSIS, Wali Kelas X A', 'subject' => 'KES', 'desc' => 'PKWU / Kesenian'],
         'MS' => ['code' => 'MS', 'name' => 'Mulyadi Syahputra, M.Pd', 'role' => 'Koordinator Club BEAMS', 'subject' => 'B.ING', 'desc' => 'Bahasa Inggris'],
         'AP' => ['code' => 'AP', 'name' => 'Ajeng Prasasti, S.Pd', 'role' => 'Wali Kelas X B', 'subject' => 'SEJ / SOS', 'desc' => 'Sejarah & Sosiologi'],
-        'RH' => ['code' => 'RH', 'name' => 'Rahmat Hidayat, S.Pd., Gr.', 'role' => 'Waka Kurikulum Peningkatan Mutu, Wali Kelas XII B', 'subject' => 'KIM', 'desc' => 'Kimia'],
+        'RH' => ['code' => 'RH', 'name' => 'Rahmat Hidayat, S.Pd., M.Pd., Gr.', 'role' => 'Waka Kurikulum Peningkatan Mutu, Wali Kelas XII B', 'subject' => 'KIM', 'desc' => 'Kimia'],
         'NR' => ['code' => 'NR', 'name' => 'Nisrina Umar Abbas, S.Pd.', 'role' => 'Wali Kelas XII A', 'subject' => 'BIO', 'desc' => 'Biologi'],
         'RZ' => ['code' => 'RZ', 'name' => 'Reza Fachrulrazi, S.Pd., Gr.', 'role' => 'Wali Kelas XI B', 'subject' => 'B.INDO', 'desc' => 'Bahasa Indonesia'],
         'MT' => ['code' => 'MT', 'name' => 'Drs. Muhammad Toha', 'role' => 'Guru Bidang Studi', 'subject' => 'FISIKA', 'desc' => 'Fisika'],
@@ -118,7 +118,7 @@ class RosterService
         ],
         [
             'no' => 9,
-            'name' => 'Rahmat Hidayat, S.Pd., Gr.',
+            'name' => 'Rahmat Hidayat, S.Pd., M.Pd., Gr.',
             'role' => 'Waka Kurikulum Peningkatan Mutu / Wali Kelas XII B',
             'subject' => 'Kimia',
             'hours' => ['X IPAS A' => 3, 'X IPAS B' => 3, 'XI A' => 5, 'XI B' => 4, 'XII A' => 5, 'XII B' => 4],

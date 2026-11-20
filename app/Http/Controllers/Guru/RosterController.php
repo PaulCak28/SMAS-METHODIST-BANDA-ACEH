@@ -56,8 +56,7 @@ class RosterController extends Controller
         } elseif (str_contains($userName, 'geore') || str_contains($userName, 'george') || str_contains($userName, 'rendy')) {
             $currentTeacherCodes = ['GR'];
         } elseif (str_contains($userName, 'budi')) {
-            // Demo account Budi Santoso (Matematika & Geografi)
-            $currentTeacherCodes = ['NN', 'OS'];
+            $currentTeacherCodes = ['RH'];
         } elseif (str_contains($userName, 'siti')) {
             $currentTeacherCodes = ['MT', 'WH'];
         } elseif (str_contains($userName, 'andi')) {

@@ -9,14 +9,13 @@ use Illuminate\Database\Seeder;
 class TeacherSeeder extends Seeder
 {
     public const TEACHERS = [
-        ['Budi Santoso', 'budi.guru', 'Matematika & Geografi', 'S2'],
+        ['Rahmat Hidayat, S.Pd., M.Pd., Gr.', 'rahmat.guru', 'Kimia', 'S2', '9438-7666-6713-0073'],
         ['Nasrul Hanafiah', 'nasrul.guru', 'Matematika', 'S1'],
         ['Zakiyul Vuady, S.Pd', 'zakiyul.guru', 'PJOK', 'S1'],
         ['Merry Rouli Siahaan, S.Th., M.Pd.K', 'merry.guru', 'Agama Kristen & Ibadah', 'S2'],
         ['Daniatul Hikmah, S.Pd', 'daniatul.guru', 'PKWU / Kesenian', 'S1'],
         ['Mulyadi Syahputra, M.Pd', 'mulyadi.guru', 'Bahasa Inggris', 'S2'],
         ['Ajeng Prasasti, S.Pd', 'ajeng.guru', 'Sejarah & Sosiologi', 'S1'],
-        ['Rahmat Hidayat, S.Pd., Gr.', 'rahmat.guru', 'Kimia', 'S1'],
         ['Nisrina Umar Abbas, S.Pd.', 'nisrina.guru', 'Biologi', 'S1'],
         ['Reza Fachrulrazi, S.Pd., Gr.', 'reza.guru', 'Bahasa Indonesia', 'S1'],
         ['Drs. Muhammad Toha', 'toha.guru', 'Fisika', 'S1'],
@@ -34,8 +33,13 @@ class TeacherSeeder extends Seeder
 
     public function run(): void
     {
-        foreach (self::TEACHERS as $i => [$name, $mail, $spec, $edu]) {
-            $nip = 1234567899887 + $i;
+        foreach (self::TEACHERS as $i => $item) {
+            $name = $item[0];
+            $mail = $item[1];
+            $spec = $item[2];
+            $edu = $item[3] ?? 'S1';
+            $nip = $item[4] ?? (string) (1234567899887 + $i);
+
             User::updateOrCreate(['user_id' => $nip], [
                 'name' => $name,
                 'email' => $mail.'@methodistbandaaceh.sch.id',

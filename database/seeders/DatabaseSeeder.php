@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             KimiaSoalSeeder::class,
             AnnouncementSeeder::class,
             AccountTesterSeeder::class,
+            RosterScheduleSeeder::class,
             DemoDataSeeder::class,
         ]);
     }
