@@ -1,6 +1,6 @@
 
 <?php
-
+use App\Http\Controllers\CekNilaiController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
@@ -39,10 +39,10 @@ Route::get('/pengumuman', [AnnouncementController::class, 'index'])
 Route::get('/pengumuman/{announcement:slug}', [AnnouncementController::class, 'show'])
     ->name('announcements.show');
 
-Route::get('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examForm'])
+Route::get('/cek-nilai-ujian', [CekNilaiController::class, 'examForm'])
     ->name('cek-nilai-ujian.index');
 
-Route::post('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examResults'])
+Route::post('/cek-nilai-ujian', [CekNilaiController::class, 'examResults'])
     ->middleware('throttle:5,1')
     ->name('cek-nilai-ujian.show');
 
