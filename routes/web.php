@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncement;
 use App\Http\Controllers\Guru\ClassroomController as GuruClassroom;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
 use App\Http\Controllers\Guru\ExamController as GuruExam;
+use App\Http\Controllers\Guru\RosterController as GuruRoster;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Siswa\ClassroomController as SiswaClassroom;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
@@ -122,6 +123,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
 
     Route::get('/guru', [GuruDashboard::class, 'index'])
         ->name('guru.dashboard');
+
+    Route::get('/guru/roster', [GuruRoster::class, 'index'])
+        ->name('guru.roster');
 
 
     // =====================================================

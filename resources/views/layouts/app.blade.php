@@ -6,6 +6,7 @@
             ['label' => 'Dashboard', 'route' => 'guru.dashboard', 'active' => 'guru.dashboard', 'icon' => 'dashboard'],
             ['label' => 'E-Class', 'route' => 'guru.classes.index', 'active' => 'guru.classes.*', 'icon' => 'class'],
             ['label' => 'E-Exam', 'route' => 'guru.exams.index', 'active' => 'guru.exams.*', 'icon' => 'exam'],
+            ['label' => 'Roster Pelajaran', 'route' => 'guru.roster', 'active' => 'guru.roster*', 'icon' => 'roster'],
         ],
         'siswa' => [
             ['label' => 'Dashboard', 'route' => 'siswa.dashboard', 'active' => 'siswa.dashboard', 'icon' => 'dashboard'],
@@ -75,6 +76,9 @@
                                     <rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>
                                 @elseif ($item['icon'] === 'class')
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 016.5 3H20v17H6.5A2.5 2.5 0 014 17.5v-12zM4 16a2 2 0 012-2h14M8 7h8M8 10h6"/>
+                                @elseif ($item['icon'] === 'roster')
+                                    <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01M16 17h.01"/>
                                 @else
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7 3.75h7l4 4V20a1.25 1.25 0 01-1.25 1.25h-9.5A1.25 1.25 0 016 20V5a1.25 1.25 0 011.25-1.25zM14 4v4h4M9 13h6M9 16.5h6"/>
                                 @endif
@@ -283,6 +287,13 @@
                                            class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
                                             <span class="text-[#8eadd0]">→</span>
                                             E-Exam (Kelola Ujian)
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('guru.roster') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            Roster Pelajaran Resmi
                                         </a>
                                     </li>
                                 @elseif ($user?->isSiswa())

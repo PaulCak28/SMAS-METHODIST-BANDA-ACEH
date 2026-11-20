@@ -347,9 +347,15 @@
         /* SPLIT PORTAL HUB CARDS */
         .academy-hub-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 20px;
             margin-top: 26px;
+        }
+
+        @media (max-width: 1024px) {
+            .academy-hub-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
         }
 
         .academy-hub-card {
@@ -741,6 +747,15 @@
                             <span>Buka E-Exam (Kelola Ujian)</span>
                             <span class="ml-1 font-bold">→</span>
                         </a>
+
+                        {{-- TOMBOL ROSTER PELAJARAN --}}
+                        <a href="{{ route('guru.roster') }}"
+                           class="academy-button bg-white text-[#123B60] border-slate-200 hover:border-[#267BB5] hover:bg-slate-50 shadow-sm"
+                           title="Buka Roster Pelajaran">
+                            <span class="text-sm">📅</span>
+                            <span>Roster Pelajaran</span>
+                            <span class="ml-1 font-bold">↗</span>
+                        </a>
                     </div>
 
                     <div class="mt-8 flex flex-wrap gap-7">
@@ -875,6 +890,114 @@
                         </div>
                     </div>
                 </a>
+
+                {{-- CARD ROSTER: Seluruh kartu langsung navigasi ke Roster --}}
+                <a href="{{ route('guru.roster') }}"
+                   class="academy-hub-card group relative border-slate-200 hover:border-[#267BB5] hover:shadow-md">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-50 text-2xl text-[#123B60] transition group-hover:scale-105 group-hover:bg-[#123B60] group-hover:text-white">
+                            📅
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-[11px] font-bold text-[#123B60] group-hover:bg-sky-100 transition">
+                            Ke Roster Resmi <span>→</span>
+                        </span>
+                    </div>
+
+                    <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60] group-hover:text-[#267BB5] transition">
+                        Roster &amp; Jadwal Mengajar
+                    </h3>
+
+                    <p class="mt-2 text-xs leading-6 text-slate-500">
+                        Jadwal pelajaran resmi TP 2026-2027 seluruh kelas (X IPAS A s/d XII B), filter per hari, dan jadwal mengajar pribadi.
+                    </p>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4 text-xs">
+                        <div>
+                            <span class="font-extrabold text-[#123B60]">6</span>
+                            <span class="text-slate-500">Hari Pembelajaran</span>
+                        </div>
+                        <span class="text-slate-300">·</span>
+                        <div>
+                            <span class="font-extrabold text-[#123B60]">6</span>
+                            <span class="text-slate-500">Kelas Terdaftar</span>
+                        </div>
+                        <span class="text-slate-300">·</span>
+                        <div>
+                            <span class="font-extrabold text-emerald-600">{{ $schedule->count() }}</span>
+                            <span class="text-slate-500">Sesi Mengajar Anda</span>
+                        </div>
+                    </div>
+                </a>
+            </section>
+
+            {{-- ==========================================
+                 JADWAL TATAP MUKA ANDA (DARI ROSTER RESMI)
+            =========================================== --}}
+            <section class="academy-section">
+                <div class="academy-section-heading">
+                    <div>
+                        <p class="academy-section-label">Jadwal Mengajar Terjadwal</p>
+                        <h2 class="academy-section-title">
+                            Jadwal Tatap Muka Anda
+                        </h2>
+                        <p class="academy-section-description">
+                            Jadwal pembelajaran resmi berdasarkan Roster Pelajaran Kurikulum TP 2026-2027.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('guru.roster') }}"
+                       class="academy-button bg-white text-[#123B60] border-slate-200 hover:border-[#267BB5] text-xs py-2 px-4 shadow-sm">
+                        <span>Lihat Roster Lengkap Sekolah</span>
+                        <span class="font-bold">↗</span>
+                    </a>
+                </div>
+
+                @if ($schedule->isEmpty())
+                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-400">
+                        <p class="font-bold text-slate-600">Belum ada jadwal tatap muka yang dijadwalkan.</p>
+                        <a href="{{ route('guru.roster') }}" class="mt-2 inline-block text-xs font-bold text-[#267BB5] underline">
+                            Buka Roster Sekolah untuk melihat pembagian jam pelajaran
+                        </a>
+                    </div>
+                @else
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        @php
+                            $groupedSchedules = $schedule->groupBy('day');
+                            $dayOrder = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+                        @endphp
+                        @foreach ($dayOrder as $d)
+                            @if ($groupedSchedules->has($d))
+                                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:border-[#267BB5] transition">
+                                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                        <span class="font-black text-xs uppercase tracking-wider text-[#123B60] flex items-center gap-1.5">
+                                            <span>📅</span>
+                                            <span>{{ ucfirst($d) }}</span>
+                                        </span>
+                                        <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-[#123B60]">
+                                            {{ $groupedSchedules[$d]->count() }} Sesi
+                                        </span>
+                                    </div>
+
+                                    <div class="mt-3 space-y-2.5">
+                                        @foreach ($groupedSchedules[$d] as $item)
+                                            <div class="rounded-xl bg-slate-50 p-2.5 text-xs border border-slate-100">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-black text-slate-800">{{ $item->class_name }}</span>
+                                                    <span class="rounded bg-[#123B60] px-1.5 py-0.5 text-[9px] font-bold text-white">
+                                                        {{ $item->subject_name }}
+                                                    </span>
+                                                </div>
+                                                <p class="mt-1 font-semibold text-slate-500 text-[11px]">
+                                                    ⏰ {{ substr($item->start_time, 0, 5) }} - {{ substr($item->end_time, 0, 5) }} WIB
+                                                </p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             </section>
 
             {{-- ==========================================
