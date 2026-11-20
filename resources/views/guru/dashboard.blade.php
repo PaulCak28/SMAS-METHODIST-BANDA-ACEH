@@ -268,6 +268,120 @@
             border-color: #C2D8E8 !important;
         }
 
+        /* E-CLASS MENU SELECTOR (RESPONSIVE & COHESIVE) */
+        .eclass-menu-nav {
+            margin-top: 24px;
+        }
+
+        .eclass-menu-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 11px;
+            color: #5A7184;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .eclass-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 600px;
+        }
+
+        .eclass-menu-pill {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: #FFFFFF;
+            border: 1px solid #DFE7EE;
+            box-shadow: 0 4px 14px rgba(18, 59, 96, .05);
+            text-decoration: none;
+            color: inherit;
+            transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .eclass-menu-pill:hover {
+            transform: translateY(-2px);
+            border-color: #267BB5;
+            box-shadow: 0 8px 24px rgba(38, 123, 181, .14);
+        }
+
+        .eclass-menu-pill:active {
+            transform: scale(0.97);
+        }
+
+        .eclass-pill-icon {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all .22s ease;
+        }
+
+        .eclass-pill-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex-grow: 1;
+        }
+
+        .eclass-pill-title {
+            color: #123B60;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color .2s ease;
+        }
+
+        .eclass-pill-desc {
+            color: #8292A1;
+            font-size: 10.5px;
+            font-weight: 500;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .eclass-pill-arrow {
+            flex-shrink: 0;
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .eclass-menu-pill:hover .eclass-pill-arrow {
+            color: #123B60;
+            transform: translateX(2px);
+        }
+
+        @media (max-width: 640px) {
+            .eclass-menu-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .eclass-menu-pill {
+                padding: 12px 16px;
+            }
+        }
+
         /* HERO VISUAL */
         .academy-visual {
             position: relative;
@@ -282,15 +396,33 @@
             inset: 8px 12px;
             overflow: hidden;
             border-radius: 26px;
-            background:
-                linear-gradient(145deg, rgba(18,59,96,.85), rgba(38,123,181,.75)),
-                linear-gradient(135deg, #123B60, #7AB6D9);
-            box-shadow: 0 20px 40px rgba(18,59,96,.15);
+            background: #10243E;
+            box-shadow: 0 20px 40px rgba(18,59,96,.20);
+        }
+
+        .academy-visual-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .academy-visual-main:hover .academy-visual-img {
+            transform: scale(1.06);
+        }
+
+        .academy-visual-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 26, 47, 0.88) 0%, rgba(18, 59, 96, 0.75) 60%, rgba(20, 45, 75, 0.60) 100%);
         }
 
         .academy-visual-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             display: flex;
             height: 100%;
             min-height: 290px;
@@ -750,35 +882,57 @@
                     </p>
 
                     {{-- ==========================================
-                         TOMBOL NAVIGASI LANGSUNG KE E-CLASS & E-EXAM
+                         PILIHAN MENU E-CLASS (RESPONSIF & HARMONIS)
                     =========================================== --}}
-                    <div class="mt-7 flex flex-wrap items-center gap-3">
-                        {{-- TOMBOL E-CLASS: Langsung navigasi ke halaman E-Class --}}
-                        <a href="{{ route('guru.classes.index') }}"
-                           class="academy-button academy-button-primary shadow-lg"
-                           title="Buka halaman E-Class">
-                            <span class="text-sm">📚</span>
-                            <span>Buka E-Class (Ruang Kelas)</span>
-                            <span class="ml-1 font-bold">→</span>
-                        </a>
+                    <div class="eclass-menu-nav">
+                        <div class="eclass-menu-label">
+                            <span class="inline-block w-2 h-2 rounded-full bg-[#267BB5]"></span>
+                            <span>Pilih Menu E-Class</span>
+                        </div>
 
-                        {{-- TOMBOL E-EXAM: Langsung navigasi ke halaman E-Exam --}}
-                        <a href="{{ route('guru.exams.index') }}"
-                           class="academy-button academy-button-secondary"
-                           title="Buka halaman E-Exam">
-                            <span class="text-sm">📋</span>
-                            <span>Buka E-Exam (Kelola Ujian)</span>
-                            <span class="ml-1 font-bold">→</span>
-                        </a>
+                        <div class="eclass-menu-grid">
+                            {{-- MENU 1: E-CLASS --}}
+                            <a href="{{ route('guru.classes.index') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Ruang Kelas (E-Class)">
+                                <span class="eclass-pill-icon bg-blue-50 text-[#123B60] border border-blue-100 group-hover:bg-[#123B60] group-hover:text-white group-hover:border-[#123B60]">
+                                    📚
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#267BB5]">E-Class</span>
+                                    <span class="eclass-pill-desc">Ruang Kelas</span>
+                                </div>
+                                <span class="eclass-pill-arrow">→</span>
+                            </a>
 
-                        {{-- TOMBOL ROSTER PELAJARAN --}}
-                        <a href="{{ route('guru.roster') }}"
-                           class="academy-button bg-white text-[#123B60] border-slate-200 hover:border-[#267BB5] hover:bg-slate-50 shadow-sm"
-                           title="Buka Roster Pelajaran">
-                            <span class="text-sm">📅</span>
-                            <span>Roster Pelajaran</span>
-                            <span class="ml-1 font-bold">↗</span>
-                        </a>
+                            {{-- MENU 2: E-EXAM --}}
+                            <a href="{{ route('guru.exams.index') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Kelola Ujian (E-Exam)">
+                                <span class="eclass-pill-icon bg-indigo-50 text-[#4338A8] border border-indigo-100 group-hover:bg-[#4338A8] group-hover:text-white group-hover:border-[#4338A8]">
+                                    📋
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#4338A8]">E-Exam</span>
+                                    <span class="eclass-pill-desc">Kelola Ujian</span>
+                                </div>
+                                <span class="eclass-pill-arrow">→</span>
+                            </a>
+
+                            {{-- MENU 3: ROSTER PELAJARAN --}}
+                            <a href="{{ route('guru.roster') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Roster & Jadwal Mengajar">
+                                <span class="eclass-pill-icon bg-sky-50 text-[#0284C7] border border-sky-100 group-hover:bg-[#0284C7] group-hover:text-white group-hover:border-[#0284C7]">
+                                    📅
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#0284C7]">Roster</span>
+                                    <span class="eclass-pill-desc">Jadwal Resmi</span>
+                                </div>
+                                <span class="eclass-pill-arrow">↗</span>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="mt-8 flex flex-wrap gap-7">
@@ -817,21 +971,26 @@
 
                 {{-- HERO VISUAL --}}
                 <div class="academy-visual">
-                    <div class="academy-visual-main">
+                    <div class="academy-visual-main group">
+                        <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                             alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                             class="academy-visual-img">
+                        <div class="academy-visual-overlay"></div>
+
                         <div class="academy-visual-content">
-                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-100 uppercase">
+                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-200 uppercase drop-shadow-sm">
                                 Methodist Learning Space
                             </p>
 
-                            <div class="academy-visual-symbol">
+                            <div class="academy-visual-symbol drop-shadow-md">
                                 M.
                             </div>
 
-                            <p class="academy-serif mt-2 text-xl font-semibold">
+                            <p class="academy-serif mt-2 text-xl font-bold drop-shadow-md">
                                 Belajar. Tumbuh. Berprestasi.
                             </p>
 
-                            <p class="mt-2 max-w-xs text-xs leading-6 text-sky-100">
+                            <p class="mt-2 max-w-xs text-xs leading-6 text-slate-100 font-medium drop-shadow">
                                 Mewujudkan pendidikan bermutu dengan pembelajaran yang bermakna.
                             </p>
                         </div>

@@ -252,26 +252,34 @@
             overflow: hidden;
             padding: 30px;
             border-radius: 25px;
-            background: linear-gradient(140deg,#123B60,#267BB5);
-            box-shadow: 0 20px 40px rgba(18,59,96,.18);
+            background: #10243E;
+            box-shadow: 0 20px 40px rgba(18,59,96,.20);
             color: white;
         }
 
-        .eclass-hero-art::after {
-            content: "M";
+        .eclass-hero-art-img {
             position: absolute;
-            right: 12px;
-            bottom: -75px;
-            color: rgba(255,255,255,.10);
-            font-family: 'Playfair Display',serif;
-            font-size: 270px;
-            font-weight: 700;
-            line-height: 1;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .eclass-hero-art > * {
+        .eclass-hero-art:hover .eclass-hero-art-img {
+            transform: scale(1.06);
+        }
+
+        .eclass-hero-art-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 26, 47, 0.88) 0%, rgba(18, 59, 96, 0.75) 60%, rgba(20, 45, 75, 0.60) 100%);
+        }
+
+        .eclass-hero-art-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .eclass-hero-art .art-symbol {
@@ -780,21 +788,28 @@
 
                 <div class="eclass-hero-visual">
 
-                    <div class="eclass-hero-art">
+                    <div class="eclass-hero-art group">
 
-                        <p class="text-[10px] font-bold tracking-[.2em] text-sky-100">
-                            METHODIST LEARNING SPACE
-                        </p>
+                        <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                             alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                             class="eclass-hero-art-img">
+                        <div class="eclass-hero-art-overlay"></div>
 
-                        <div class="art-symbol">M.</div>
+                        <div class="eclass-hero-art-content">
+                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-200 uppercase drop-shadow-sm">
+                                METHODIST LEARNING SPACE
+                            </p>
 
-                        <h2 class="eclass-serif mt-3 text-2xl font-bold">
-                            Belajar. Tumbuh. Berprestasi.
-                        </h2>
+                            <div class="art-symbol drop-shadow-md">M.</div>
 
-                        <p class="mt-2 text-xs text-sky-100">
-                            Mewujudkan prestasi melalui pendidikan bermutu.
-                        </p>
+                            <h2 class="eclass-serif mt-3 text-2xl font-bold drop-shadow-md">
+                                Belajar. Tumbuh. Berprestasi.
+                            </h2>
+
+                            <p class="mt-2 text-xs text-slate-100 font-medium drop-shadow">
+                                Mewujudkan prestasi melalui pendidikan bermutu.
+                            </p>
+                        </div>
 
                     </div>
 
