@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#051326"/>
+            <stop offset="50%" stop-color="#0D3559"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#38BDF8" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#00E5FF" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#38BDF8" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Optics / Laser / Prism / Atom -->
+            <g opacity="0.25">
+                <circle cx="960" cy="540" r="320" stroke="#00E5FF" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+                <circle cx="960" cy="540" r="480" stroke="#38BDF8" stroke-width="1" stroke-dasharray="8 8" fill="none"/>
+                <ellipse cx="960" cy="540" rx="380" ry="140" stroke="#00E5FF" stroke-width="2" fill="none" transform="rotate(-30 960 540)"/>
+                <ellipse cx="960" cy="540" rx="380" ry="140" stroke="#38BDF8" stroke-width="2" fill="none" transform="rotate(30 960 540)"/>
+                <ellipse cx="960" cy="540" rx="380" ry="140" stroke="#818CF8" stroke-width="2" fill="none" transform="rotate(90 960 540)"/>
+                <circle cx="960" cy="540" r="36" fill="#00E5FF" filter="drop-shadow(0 0 20px #00E5FF)"/>
+            </g>
+            <!-- Prism Light Dispersion -->
+            <polygon points="1200,680 1350,420 1500,680" stroke="#38BDF8" stroke-width="3" fill="rgba(56,189,248,0.08)"/>
+            <path d="M1000 580 L1280 540" stroke="#FFFFFF" stroke-width="3" opacity="0.7"/>
+            <path d="M1320 535 L1600 480" stroke="#F43F5E" stroke-width="3" opacity="0.8"/>
+            <path d="M1320 538 L1620 520" stroke="#FBBF24" stroke-width="3" opacity="0.8"/>
+            <path d="M1320 542 L1630 560" stroke="#10B981" stroke-width="3" opacity="0.8"/>
+            <path d="M1320 545 L1620 600" stroke="#06B6D4" stroke-width="3" opacity="0.8"/>
+            <path d="M1320 548 L1600 640" stroke="#8B5CF6" stroke-width="3" opacity="0.8"/>
+            <!-- Wave Grid -->
+            <path d="M0 800 Q 480 650 960 800 T 1920 800" fill="none" stroke="#00E5FF" stroke-width="2" opacity="0.15"/>
+            <path d="M0 850 Q 480 700 960 850 T 1920 850" fill="none" stroke="#38BDF8" stroke-width="1.5" opacity="0.1"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

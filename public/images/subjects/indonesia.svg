@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#20090D"/>
+            <stop offset="50%" stop-color="#4A151E"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#F43F5E" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#FB7185" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#F43F5E" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#FB7185" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Open Classic Book & Quill & Cultural Motif -->
+            <g opacity="0.22" transform="translate(960, 500)">
+                <path d="M-260 80 C -120 -20, -40 20, 0 60 C 40 20, 120 -20, 260 80 L 260 -100 C 120 -200, 40 -160, 0 -120 C -40 -160, -120 -200, -260 -100 Z" fill="none" stroke="#FB7185" stroke-width="4"/>
+                <path d="M0 -120 L 0 60" stroke="#F43F5E" stroke-width="3"/>
+                <path d="M-220 20 C -130 -40, -40 -10, 0 20" stroke="#F43F5E" stroke-width="2" fill="none"/>
+                <path d="M220 20 C 130 -40, 40 -10, 0 20" stroke="#F43F5E" stroke-width="2" fill="none"/>
+            </g>
+            <!-- Feather Quill -->
+            <g opacity="0.3" transform="translate(1300, 360) rotate(25)">
+                <path d="M0 0 Q 60 -120 180 -180 C 160 -100 120 -40 40 40 Z" fill="rgba(251,113,133,0.15)" stroke="#FB7185" stroke-width="2"/>
+                <path d="M0 0 L 180 -180" stroke="#F43F5E" stroke-width="2"/>
+                <path d="M0 0 L -20 40" stroke="#FFFFFF" stroke-width="3"/>
+            </g>
+            <!-- Literary Flourish arcs -->
+            <circle cx="960" cy="540" r="450" stroke="#FB7185" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.15"/>
+            <circle cx="960" cy="540" r="320" stroke="#F43F5E" stroke-width="1.5" fill="none" opacity="0.12"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#200A10"/>
+            <stop offset="50%" stop-color="#4D1525"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#EF4444" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#FCA5A5" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#EF4444" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#FCA5A5" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Shield / Crest of Justice & Ribbon & Scales -->
+            <g opacity="0.25" transform="translate(1100, 520)">
+                <!-- Shield Contour -->
+                <path d="M-150 -160 L 150 -160 Q 170 50 0 200 Q -170 50 -150 -160 Z" fill="rgba(239,68,68,0.08)" stroke="#FCA5A5" stroke-width="3"/>
+                <path d="M-120 -130 L 120 -130 Q 135 40 0 160 Q -135 40 -120 -130 Z" stroke="#EF4444" stroke-width="2" fill="none"/>
+                <!-- Star / Pancasila centerpiece -->
+                <polygon points="0,-80 18,-25 76,-25 30,10 47,65 0,30 -47,65 -30,10 -76,-25 -18,-25" fill="#FBBF24" opacity="0.6"/>
+            </g>
+            <!-- Pillars of Constitution -->
+            <circle cx="960" cy="540" r="420" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="12 8" fill="none" opacity="0.15"/>
+            <circle cx="960" cy="540" r="540" stroke="#EF4444" stroke-width="1" fill="none" opacity="0.1"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

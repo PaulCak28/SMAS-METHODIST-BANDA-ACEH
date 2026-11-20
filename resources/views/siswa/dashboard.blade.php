@@ -21,6 +21,85 @@
         </div>
     </x-slot>
 
+    @php
+        $getSubjectTheme = function($subjectName, $subjectCode = null) {
+            $name = strtolower($subjectName ?? '');
+            $code = strtolower($subjectCode ?? '');
+
+            $themes = [
+                'matematika' => ['symbol' => 'MAT', 'category' => 'MATEMATIKA', 'image' => 'matematika.jpg', 'gradient' => 'linear-gradient(135deg, #0d2847 0%, #174e7d 100%)'],
+                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.svg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
+                'biologi' => ['symbol' => 'BIO', 'category' => 'BIOLOGI', 'image' => 'biologi.jpg', 'gradient' => 'linear-gradient(135deg, #06282d 0%, #0d5f66 100%)'],
+                'kimia' => ['symbol' => 'KIM', 'category' => 'KIMIA', 'image' => 'kimia.jpg', 'gradient' => 'linear-gradient(135deg, #10263f 0%, #1a568a 100%)'],
+                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.svg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
+                'inggris' => ['symbol' => 'ENG', 'category' => 'BAHASA INGGRIS', 'image' => 'inggris.svg', 'gradient' => 'linear-gradient(135deg, #18223c 0%, #29457a 100%)'],
+                'informatika' => ['symbol' => 'TIK', 'category' => 'INFORMATIKA', 'image' => 'informatika.jpg', 'gradient' => 'linear-gradient(135deg, #092338 0%, #104a75 100%)'],
+                'sejarah' => ['symbol' => 'SEJ', 'category' => 'SEJARAH', 'image' => 'sejarah.svg', 'gradient' => 'linear-gradient(135deg, #2b1f13 0%, #694a28 100%)'],
+                'geografi' => ['symbol' => 'GEO', 'category' => 'GEOGRAFI', 'image' => 'geografi.svg', 'gradient' => 'linear-gradient(135deg, #0f281e 0%, #1f6146 100%)'],
+                'ekonomi' => ['symbol' => 'EKO', 'category' => 'EKONOMI', 'image' => 'ekonomi.svg', 'gradient' => 'linear-gradient(135deg, #132438 0%, #1f5080 100%)'],
+                'sosiologi' => ['symbol' => 'SOS', 'category' => 'SOSIOLOGI', 'image' => 'sosiologi.svg', 'gradient' => 'linear-gradient(135deg, #281a33 0%, #5a3575 100%)'],
+                'agama' => ['symbol' => 'AGM', 'category' => 'PENDIDIKAN AGAMA', 'image' => 'agama.svg', 'gradient' => 'linear-gradient(135deg, #1f2716 0%, #4a5c2d 100%)'],
+                'pjok' => ['symbol' => 'PJK', 'category' => 'PJOK', 'image' => 'pjok.svg', 'gradient' => 'linear-gradient(135deg, #162a33 0%, #255d73 100%)'],
+                'seni' => ['symbol' => 'SBD', 'category' => 'SENI BUDAYA', 'image' => 'seni-budaya.svg', 'gradient' => 'linear-gradient(135deg, #2d182b 0%, #6e2e68 100%)'],
+                'pkn' => ['symbol' => 'PKN', 'category' => 'PPKN', 'image' => 'ppkn.svg', 'gradient' => 'linear-gradient(135deg, #30141b 0%, #732a3d 100%)'],
+            ];
+
+            $aliases = [
+                'mtk' => 'matematika', 'fis' => 'fisika', 'bio' => 'biologi', 'kim' => 'kimia',
+                'bin' => 'indonesia', 'bahasa indonesia' => 'indonesia', 'big' => 'inggris',
+                'bahasa inggris' => 'inggris', 'sej' => 'sejarah', 'inf' => 'informatika',
+                'tik' => 'informatika', 'komputer' => 'informatika', 'eko' => 'ekonomi',
+                'geo' => 'geografi', 'sos' => 'sosiologi', 'agm' => 'agama',
+                'pendidikan agama' => 'agama', 'penjas' => 'pjok', 'sbd' => 'seni',
+                'seni budaya' => 'seni', 'ppkn' => 'pkn',
+            ];
+
+            $matchedKey = null;
+            foreach ($aliases as $alias => $target) {
+                if (str_contains($name, $alias) || str_contains($code, $alias)) {
+                    $matchedKey = $target;
+                    break;
+                }
+            }
+
+            if (!$matchedKey) {
+                foreach (array_keys($themes) as $k) {
+                    if (str_contains($name, $k) || str_contains($code, $k)) {
+                        $matchedKey = $k;
+                        break;
+                    }
+                }
+            }
+
+            $t = $matchedKey ? $themes[$matchedKey] : [
+                'symbol' => 'MLS', 'category' => 'KELAS AKADEMIK', 'image' => null,
+                'gradient' => 'linear-gradient(135deg, #123B60 0%, #267BB5 100%)',
+            ];
+
+            $imgUrl = null;
+            if (!empty($t['image'])) {
+                if (file_exists(public_path('images/subjects/' . $t['image']))) {
+                    $imgUrl = asset('images/subjects/' . $t['image']);
+                } else {
+                    $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
+                    $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
+                    if (file_exists(public_path('images/subjects/' . $svgName))) {
+                        $imgUrl = asset('images/subjects/' . $svgName);
+                    } elseif (file_exists(public_path('images/subjects/' . $jpgName))) {
+                        $imgUrl = asset('images/subjects/' . $jpgName);
+                    }
+                }
+            }
+
+            if (!$imgUrl && file_exists(public_path('images/hero-school.jpg'))) {
+                $imgUrl = asset('images/hero-school.jpg');
+            }
+
+            $t['imageUrl'] = $imgUrl;
+            return $t;
+        };
+    @endphp
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -883,45 +962,57 @@
                         </div>
 
                         @if ($joinedClasses->isNotEmpty())
-                            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                            <div class="mt-6 grid gap-5 sm:grid-cols-2">
                                 @foreach ($joinedClasses as $cst)
-                                    <article class="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/50 p-5 transition hover:-translate-y-1 hover:border-blue-400 hover:bg-white hover:shadow-lg">
-                                        <div>
-                                            <div class="flex items-start justify-between gap-2">
-                                                <span class="rounded-lg bg-blue-100 px-2.5 py-1 text-[11px] font-bold text-blue-800">
-                                                    {{ $cst->subject_code }}
+                                    @php
+                                        $subName = $cst->subject->name ?? $cst->subject_code ?? 'Mata Pelajaran';
+                                        $subTheme = $getSubjectTheme($subName, $cst->subject_code);
+                                        $clsName = $cst->schoolClass->name ?? '';
+                                    @endphp
+                                    <article class="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:border-[#BBD7E9] hover:shadow-lg">
+                                        {{-- Mini Header Cover --}}
+                                        <div class="relative min-h-[90px] p-4 text-white overflow-hidden flex flex-col justify-between" style="{{ empty($subTheme['imageUrl']) ? 'background: ' . $subTheme['gradient'] : 'background-color: #123B60;' }}">
+                                            @if(!empty($subTheme['imageUrl']))
+                                                <img src="{{ $subTheme['imageUrl'] }}" alt="{{ $subName }}" class="absolute inset-0 h-full w-full object-cover transition transform group-hover:scale-105 duration-300">
+                                                <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/90 to-[#123B60]/70 pointer-events-none"></div>
+                                            @endif
+                                            <div class="relative z-10 flex items-center justify-between gap-2">
+                                                <span class="rounded bg-white/20 backdrop-blur-md px-2 py-0.5 text-[10px] font-extrabold text-white border border-white/20">
+                                                    {{ $subTheme['symbol'] }}
                                                 </span>
-                                                <span class="text-[11px] font-semibold text-slate-400">
-                                                    {{ $cst->schoolClass->name ?? '' }}
+                                                <span class="text-[10px] font-bold text-cyan-200">
+                                                    {{ $clsName }}
                                                 </span>
                                             </div>
-
-                                            <h4 class="mt-3 font-serif text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">
-                                                {{ $cst->subject->name ?? $cst->subject_code }}
+                                            <h4 class="relative z-10 mt-2 font-serif text-base font-bold text-white truncate">
+                                                {{ $subName }}
                                             </h4>
-
-                                            <p class="mt-1 text-xs text-slate-500 flex items-center gap-1.5">
-                                                <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                </svg>
-                                                <span>{{ $cst->teacher?->user?->name ?? 'Guru Pengampu' }}</span>
-                                            </p>
                                         </div>
 
-                                        <div class="mt-5 border-t border-slate-200/80 pt-3">
-                                            <div class="flex items-center justify-between text-xs text-slate-500">
-                                                <span>{{ $cst->materials_count }} Materi</span>
-                                                <span>&bull;</span>
-                                                <span>{{ $cst->assignments_count }} Tugas</span>
-                                                <span>&bull;</span>
-                                                <span>{{ $cst->exams_count }} Ujian</span>
-                                            </div>
+                                        {{-- Body --}}
+                                        <div class="p-4 flex flex-col flex-grow justify-between">
+                                            <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                                                <svg class="h-3.5 w-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                <span class="truncate">{{ $cst->teacher?->user?->name ?? 'Guru Pengampu' }}</span>
+                                            </p>
 
-                                            <a href="{{ route('siswa.classes.show', $cst->cst_id) }}"
-                                               class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-white border border-slate-200 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-blue-600 hover:text-white hover:border-blue-600">
-                                                <span>Masuk Kelas</span>
-                                                <span>&rarr;</span>
-                                            </a>
+                                            <div class="mt-4 border-t border-slate-100 pt-3">
+                                                <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                                                    <span>{{ $cst->materials_count }} Materi</span>
+                                                    <span>&bull;</span>
+                                                    <span>{{ $cst->assignments_count }} Tugas</span>
+                                                    <span>&bull;</span>
+                                                    <span>{{ $cst->exams_count }} Ujian</span>
+                                                </div>
+
+                                                <a href="{{ route('siswa.classes.show', $cst->cst_id) }}"
+                                                   class="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 py-2 text-xs font-bold text-[#123B60] transition hover:bg-[#123B60] hover:text-white hover:border-[#123B60]">
+                                                    <span>Masuk Kelas</span>
+                                                    <span>&rarr;</span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </article>
                                 @endforeach
@@ -929,7 +1020,7 @@
                         @else
                             {{-- Empty State: Belum Ada Kelas --}}
                             <div class="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-8 text-center">
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-[#123B60]">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
                                     </svg>
@@ -1009,40 +1100,44 @@
 
                 </div>
 
-            {{-- INFORMASI DAN MOTIVASI --}}
-            <div class="bottom-grid">
+                {{-- KOLOM KANAN (4 COLS): GABUNG KELAS, JADWAL UJIAN, WARTA --}}
+                <div class="space-y-6 lg:col-span-4">
 
-                <section class="info-card">
-                    <div class="info-heading">
-                        <div class="info-heading-icon">
-                            <svg fill="none" stroke="currentColor"
-                                 stroke-width="1.7" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M12 18h.01M8.2 9a4 4 0 117.6 1.7c-.8 1.1-2.8 1.8-3.3 3.3M12 22a10 10 0 110-20 10 10 0 010 20z"/>
-                            </svg>
+                    {{-- Widget 1: Gabung Kelas Baru --}}
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#123B60]">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">Gabung Kelas Baru</h3>
+                                <p class="text-[11px] text-slate-400">Punya kode dari guru mapel?</p>
+                            </div>
                         </div>
 
-                        <form action="{{ route('siswa.classes.join') }}" method="POST" class="mt-5 space-y-3">
+                        <form action="{{ route('siswa.classes.join') }}" method="POST" class="mt-4 space-y-3">
                             @csrf
                             <div>
                                 <label for="join_code" class="block text-xs font-semibold text-slate-700">
-                                    Kode Kelas (8 Karakter)
+                                    Kode Kelas (6-8 Karakter)
                                 </label>
                                 <input
                                     id="join_code"
                                     name="join_code"
                                     type="text"
                                     maxlength="8"
-                                    placeholder="Contoh: 10AMAT1"
+                                    placeholder="CONTOH: 10AMAT1"
                                     required
                                     style="text-transform: uppercase;"
-                                    class="mt-1.5 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-center font-mono text-sm tracking-wider uppercase text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    class="mt-1.5 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-center font-mono text-sm tracking-wider uppercase text-slate-800 placeholder-slate-400 focus:border-[#267BB5] focus:outline-none focus:ring-2 focus:ring-blue-100"
                                 >
                             </div>
 
                             <button
                                 type="submit"
-                                class="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99]"
+                                class="w-full rounded-xl bg-[#123B60] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#267BB5] active:scale-[0.99]"
                             >
                                 Gabung ke Rombel
                             </button>
@@ -1087,7 +1182,7 @@
                                         </p>
 
                                         <a href="{{ route('siswa.exams.show', $exam->exam_id) }}"
-                                           class="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg {{ $isOpen ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300' }} py-1.5 text-xs font-bold transition">
+                                           class="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg {{ $isOpen ? 'bg-[#123B60] text-white hover:bg-[#267BB5]' : 'bg-slate-200 text-slate-700 hover:bg-slate-300' }} py-1.5 text-xs font-bold transition">
                                             <span>{{ $isOpen ? 'Mulai Kerjakan Ujian' : 'Lihat Informasi' }}</span>
                                             <span>&rarr;</span>
                                         </a>
