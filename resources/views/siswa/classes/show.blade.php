@@ -1,26 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between gap-3">
-            <div class="flex min-w-0 items-center gap-3">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
-                    </svg>
-                </div>
-                <div class="min-w-0">
-                    <h2 class="truncate text-lg font-extrabold tracking-tight text-slate-800">Ruang Kelas</h2>
-                    <p class="truncate text-xs font-medium text-slate-500">E-Class Student Portal</p>
-                </div>
+        <div class="flex flex-col gap-1.5 py-0.5">
+            <div>
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
+                <h2 class="truncate text-xl font-extrabold tracking-tight text-slate-800 leading-tight">
+                    Ruang Kelas: {{ $cst->subject->name ?? 'Mata Pelajaran' }}
+                </h2>
             </div>
-
-            <a href="{{ route('siswa.classes.index') }}"
-                class="hidden shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 sm:inline-flex">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 18-6-6 6-6"/>
-                </svg>
-                Semua kelas
-            </a>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    {{ $cst->schoolClass->name ?? 'Kelas' }} &bull; {{ $cst->teacher->user->name ?? 'Guru' }}
+                </span>
+            </div>
         </div>
     </x-slot>
 
@@ -165,6 +157,23 @@
                     <span class="pt-1">{{ $errors->first() }}</span>
                 </div>
             @endif
+
+            {{-- BREADCRUMB & TOMBOL KEMBALI (DI BAWAH HEADER) --}}
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+                    <a href="{{ route('siswa.classes.index') }}" class="hover:text-blue-600 transition">
+                        E-Class Siswa
+                    </a>
+                    <span>/</span>
+                    <span class="font-bold text-blue-700">{{ $cst->subject->name ?? 'Ruang Kelas' }}</span>
+                </div>
+
+                <a href="{{ route('siswa.classes.index') }}"
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span>←</span>
+                    <span>Semua Kelas</span>
+                </a>
+            </div>
 
             {{-- CLASS HERO --}}
             <section class="hero-pattern relative isolate overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#102d5e] via-[#1554a5] to-[#1685d4] px-6 py-8 text-white shadow-2xl shadow-blue-200/60 sm:px-9 sm:py-10 lg:px-12 lg:py-12">

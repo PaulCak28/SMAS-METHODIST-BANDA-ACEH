@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold text-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
                     Dashboard Guru
                 </h2>
             </div>
 
-            <div class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Ruang Kerja Guru
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Ruang Kerja Guru
+                </span>
             </div>
         </div>
     </x-slot>

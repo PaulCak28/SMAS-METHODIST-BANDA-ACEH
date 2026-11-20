@@ -1,31 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold text-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
                     Roster Pelajaran &amp; Jadwal Mengajar
                 </h2>
             </div>
 
-            <div class="mt-2 flex flex-wrap items-center gap-2 sm:mt-0">
-                <span class="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-[#123B60]">
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-[#123B60] shadow-sm">
                     <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     Tahun Pelajaran {{ $metadata['academic_year'] }}
                 </span>
-
-                <button
-                    type="button"
-                    onclick="window.print()"
-                    class="inline-flex items-center gap-2 rounded-full bg-[#123B60] px-4 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#267BB5] focus:outline-none"
-                >
-                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    <span>Cetak Roster Resmi</span>
-                </button>
             </div>
         </div>
     </x-slot>
@@ -48,6 +37,34 @@
         }"
         class="space-y-6 py-4"
     >
+        {{-- BREADCRUMB & TOMBOL AKSI (DI BAWAH HEADER) --}}
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-2 print:hidden">
+            <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+                <a href="{{ route('guru.dashboard') }}" class="transition hover:text-blue-600">
+                    Dashboard
+                </a>
+                <span>/</span>
+                <span class="font-bold text-blue-700">Roster Pelajaran</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+                <a href="{{ route('guru.dashboard') }}"
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span>←</span>
+                    <span>Kembali ke Dashboard</span>
+                </a>
+                <button
+                    type="button"
+                    onclick="window.print()"
+                    class="inline-flex items-center gap-2 rounded-xl bg-[#123B60] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#267BB5] focus:outline-none"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    <span>Cetak Roster Resmi</span>
+                </button>
+            </div>
+        </div>
         {{-- ========================================================
              BANNER DOKUMEN RESMI (KOP ROSTER)
              ======================================================== --}}
@@ -221,6 +238,29 @@
                     </button>
                 </div>
             </template>
+
+            {{-- KOTAK KETERANGAN KELAS YANG DIFILTER --}}
+            <template x-if="activeClass !== 'all'">
+                <div class="mt-2.5 flex items-center justify-between rounded-xl bg-sky-50 px-4 py-2.5 text-xs border border-sky-200">
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#267BB5] text-[10px] font-black text-white">
+                            🏫
+                        </span>
+                        <span class="text-slate-700">
+                            Menampilkan jadwal khusus kelas:
+                            <strong class="font-bold text-[#123B60]" x-text="activeClass"></strong>
+                        </span>
+                    </div>
+
+                    <button
+                        type="button"
+                        @click="activeClass = 'all'"
+                        class="text-[11px] font-bold text-[#267BB5] hover:text-[#123B60] underline"
+                    >
+                        Tampilkan Semua Kelas (Reset)
+                    </button>
+                </div>
+            </template>
         </div>
 
         {{-- ========================================================
@@ -280,40 +320,27 @@
              ======================================================== --}}
         <div x-show="viewMode === 'matrix'" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:rounded-none print:border-black print:shadow-none">
             <div class="overflow-x-auto">
-                <table class="w-full min-w-[1200px] table-fixed border-collapse text-center text-xs print:text-[9px]">
-                    <colgroup>
-                        <col style="width: 80px;">  {{-- Hari --}}
-                        <col style="width: 45px;">  {{-- Les --}}
-                        <col style="width: 105px;"> {{-- Waktu --}}
-                        {{-- 6 Kelas x 2 kolom = 12 kolom --}}
-                        <col style="width: 80px;">  {{-- X IPAS A Mapel --}}
-                        <col style="width: 65px;">  {{-- X IPAS A Guru --}}
-                        <col style="width: 80px;">  {{-- X IPAS B Mapel --}}
-                        <col style="width: 65px;">  {{-- X IPAS B Guru --}}
-                        <col style="width: 80px;">  {{-- XI A Mapel --}}
-                        <col style="width: 65px;">  {{-- XI A Guru --}}
-                        <col style="width: 80px;">  {{-- XI B Mapel --}}
-                        <col style="width: 65px;">  {{-- XI B Guru --}}
-                        <col style="width: 80px;">  {{-- XII A Mapel --}}
-                        <col style="width: 65px;">  {{-- XII A Guru --}}
-                        <col style="width: 80px;">  {{-- XII B Mapel --}}
-                        <col style="width: 65px;">  {{-- XII B Guru --}}
-                    </colgroup>
+                <table
+                    class="w-full border-collapse text-center text-xs print:text-[9px]"
+                    :class="activeClass === 'all' ? 'min-w-[1200px] table-fixed' : 'min-w-[620px] max-w-4xl mx-auto'"
+                >
                     <thead class="sticky top-0 z-20">
                         <tr class="border-b border-white/20 bg-[#123B60] text-white print:bg-slate-200 print:text-black">
-                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black w-20 min-w-[80px]">
                                 Hari
                             </th>
-                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black w-12 min-w-[45px]">
                                 Les
                             </th>
-                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black">
+                            <th rowspan="2" class="border-r border-white/20 px-2 py-3 font-bold uppercase tracking-wider print:border-black w-28 min-w-[105px]">
                                 Waktu
                             </th>
                             @foreach ($classes as $classKey => $classMeta)
                                 <th
                                     colspan="2"
+                                    x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
                                     class="border-r border-white/20 px-2 py-2 font-black uppercase tracking-wider last:border-r-0 print:border-black"
+                                    style="min-width: 145px;"
                                 >
                                     {{ $classKey }}
                                 </th>
@@ -321,10 +348,16 @@
                         </tr>
                         <tr class="border-b border-slate-200 bg-[#1B4D7E] text-[10px] font-bold text-slate-100 print:bg-slate-100 print:text-black">
                             @foreach ($classes as $classKey => $classMeta)
-                                <th class="border-r border-white/20 px-1 py-1.5 print:border-black">
+                                <th
+                                    x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
+                                    class="border-r border-white/20 px-1 py-1.5 print:border-black w-20 min-w-[80px]"
+                                >
                                     Bid Studi
                                 </th>
-                                <th class="border-r border-white/20 px-1 py-1.5 last:border-r-0 print:border-black">
+                                <th
+                                    x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
+                                    class="border-r border-white/20 px-1 py-1.5 last:border-r-0 print:border-black w-16 min-w-[65px]"
+                                >
                                     Kode Guru
                                 </th>
                             @endforeach
@@ -337,7 +370,7 @@
                                 x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
                                 class="bg-[#123B60] text-white print:bg-slate-200 print:text-black border-y-2 border-[#123B60]"
                             >
-                                <td colspan="15" class="py-2.5 px-4 text-left font-black tracking-wider uppercase text-xs">
+                                <td :colspan="activeClass === 'all' ? 15 : 5" class="py-2.5 px-4 text-left font-black tracking-wider uppercase text-xs">
                                     <span class="inline-flex items-center gap-2">
                                         <span>📅</span>
                                         <span>HARI {{ $day['day_name'] }}</span>
@@ -363,7 +396,7 @@
                                             {{ $row['time'] }}
                                         </td>
                                         <td
-                                            colspan="12"
+                                            :colspan="activeClass === 'all' ? 12 : 2"
                                             class="py-2.5 text-center text-xs font-black uppercase tracking-[.3em] text-[#123B60] bg-gradient-to-r from-blue-50/60 via-indigo-50/70 to-blue-50/60 border-y border-blue-200/50 print:border-black"
                                         >
                                             {{ $row['special_title'] }}
@@ -385,7 +418,7 @@
                                             {{ $row['time'] }}
                                         </td>
                                         <td
-                                            colspan="12"
+                                            :colspan="activeClass === 'all' ? 12 : 2"
                                             class="py-1.5 text-center text-[11px] font-black uppercase tracking-[.3em] text-slate-500 print:border-black"
                                         >
                                             {{ $row['break_title'] }}
@@ -420,6 +453,7 @@
 
                                             {{-- Kolom Bid Studi --}}
                                             <td
+                                                x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
                                                 class="border-r border-slate-200 px-1.5 py-2 font-bold transition print:border-black align-middle"
                                                 :class="{
                                                     'ring-2 ring-blue-500 ring-inset bg-blue-100 font-black': highlightTeacher('{{ $teacherCode }}'),
@@ -441,6 +475,7 @@
 
                                             {{-- Kolom Kode Guru --}}
                                             <td
+                                                x-show="activeClass === 'all' || activeClass === '{{ $classKey }}'"
                                                 class="border-r border-slate-200 px-1 py-2 font-black text-slate-800 last:border-r-0 transition print:border-black align-middle"
                                                 :class="{
                                                     'ring-2 ring-blue-500 ring-inset bg-blue-100 text-blue-900 scale-105 font-black': highlightTeacher('{{ $teacherCode }}'),
@@ -510,7 +545,10 @@
             @else
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($mySchedule as $dayKey => $group)
-                        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                        <div
+                            x-show="activeDay === 'all' || activeDay === '{{ $dayKey }}'"
+                            class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                        >
                             <div class="border-b border-slate-100 bg-gradient-to-r from-blue-50/80 to-white px-5 py-3.5 flex items-center justify-between">
                                 <h4 class="font-black text-sm uppercase text-[#123B60] flex items-center gap-2">
                                     <span>📅</span>
@@ -526,7 +564,10 @@
                                     @php
                                         $subStyle = $subjectStyles[$item['subject']] ?? ['bg' => '#123B60', 'text' => '#fff'];
                                     @endphp
-                                    <div class="flex items-center justify-between rounded-xl p-3 hover:bg-slate-50 transition">
+                                    <div
+                                        x-show="activeClass === 'all' || activeClass === '{{ $item['class'] }}'"
+                                        class="flex items-center justify-between rounded-xl p-3 hover:bg-slate-50 transition"
+                                    >
                                         <div class="flex items-center gap-3">
                                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-extrabold text-xs text-[#123B60]">
                                                 Les {{ $item['les'] }}

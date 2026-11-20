@@ -1,20 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-800">
-                    {{ __('Dashboard Siswa') }}
-                </h2>
-                <p class="text-xs text-slate-500">
-                    Methodist Learning Space &bull; SMAS Methodist Banda Aceh
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                    Methodist Learning Space
                 </p>
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
+                    Dashboard Siswa
+                </h2>
             </div>
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
-                <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2"/>
-                    <path stroke-linecap="round" stroke-width="2" d="M16 3v4M8 3v4M3 10h18"/>
-                </svg>
-                <span>{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
+            <div>
+                <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">
+                    <svg class="h-3.5 w-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2"/>
+                        <path stroke-linecap="round" stroke-width="2" d="M16 3v4M8 3v4M3 10h18"/>
+                    </svg>
+                    <span>{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
+                </span>
             </div>
         </div>
     </x-slot>

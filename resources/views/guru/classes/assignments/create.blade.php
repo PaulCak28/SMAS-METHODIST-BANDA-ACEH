@@ -9,28 +9,21 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <a href="{{ route('guru.classes.index') }}" class="hover:text-blue-600 transition">E-Class</a>
-                    <span>/</span>
-                    <a href="{{ route('guru.classes.show', $cst) }}" class="hover:text-blue-600 transition">{{ $fullClassTitle }}</a>
-                    <span>/</span>
-                    <span class="text-indigo-700 font-bold">Buat Tugas</span>
-                </div>
-                <h2 class="text-xl font-extrabold text-slate-800 mt-1">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                    Methodist Learning Space
+                </p>
+                <h2 class="text-xl font-extrabold text-slate-800 leading-tight">
                     Buat Tugas Baru
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">
-                    Ruang Kelas: <span class="font-bold text-[#123B60]">{{ $fullClassTitle }}</span> (T.A. {{ $cst->academic_year }} · Semester {{ ucfirst($cst->semester) }})
-                </p>
             </div>
-
-            <a href="{{ route('guru.classes.show', $cst) }}"
-               class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
-                <span>←</span>
-                Kembali ke Kelas
-            </a>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+                    {{ $fullClassTitle }} (T.A. {{ $cst->academic_year }})
+                </span>
+            </div>
         </div>
     </x-slot>
 
@@ -121,6 +114,23 @@
 
     <div class="lms-page min-h-screen bg-[#f5f8fc] py-6 sm:py-8">
         <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+
+            {{-- BREADCRUMB & TOMBOL KEMBALI (DI BAWAH HEADER) --}}
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                    <a href="{{ route('guru.classes.index') }}" class="hover:text-blue-600 transition">E-Class</a>
+                    <span>/</span>
+                    <a href="{{ route('guru.classes.show', $cst) }}" class="hover:text-blue-600 transition">{{ $fullClassTitle }}</a>
+                    <span>/</span>
+                    <span class="text-indigo-700 font-bold">Buat Tugas</span>
+                </div>
+
+                <a href="{{ route('guru.classes.show', $cst) }}"
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span>←</span>
+                    <span>Kembali ke Kelas</span>
+                </a>
+            </div>
 
             {{-- NOTIFIKASI ERROR --}}
             @if ($errors->any())

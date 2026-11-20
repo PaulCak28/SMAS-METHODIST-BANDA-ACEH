@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold text-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
                     Profil Akun
                 </h2>
             </div>
 
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                <span>Akun Terverifikasi</span>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Akun Terverifikasi</span>
+                </span>
             </div>
         </div>
     </x-slot>
@@ -38,18 +40,29 @@
 
         /* BANNER YOUTUBE / INSTAGRAM GRADIENT */
         .profile-banner {
-            background: linear-gradient(135deg, #091a30 0%, #102a4e 40%, #1e4b85 75%, #2563eb 100%);
+            background-color: #091a30;
             position: relative;
             overflow: hidden;
         }
 
-        .profile-banner::before {
-            content: "";
+        .profile-banner-img {
             position: absolute;
             inset: 0;
-            background-image: 
-                radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.25) 0%, transparent 45%),
-                radial-gradient(circle at 15% 85%, rgba(37, 99, 235, 0.35) 0%, transparent 50%);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-banner:hover .profile-banner-img {
+            transform: scale(1.04);
+        }
+
+        .profile-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(9, 26, 48, 0.90) 0%, rgba(16, 42, 78, 0.78) 50%, rgba(18, 59, 96, 0.65) 100%);
         }
 
         .profile-banner-grid {
@@ -100,17 +113,22 @@
             <div class="overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-xl shadow-slate-200/50">
 
                 {{-- WIDE CINEMATIC BANNER (YOUTUBE STYLE) --}}
-                <div class="profile-banner h-48 sm:h-56 md:h-64 flex flex-col justify-between p-6 sm:p-8 text-white">
+                <div class="profile-banner h-48 sm:h-56 md:h-64 flex flex-col justify-between p-6 sm:p-8 text-white relative overflow-hidden group">
+                    <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                         alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                         class="profile-banner-img">
+
+                    <div class="profile-banner-overlay"></div>
                     <div class="profile-banner-grid"></div>
 
                     {{-- TOP BANNER BADGE --}}
                     <div class="relative z-10 flex items-center justify-between">
-                        <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/25 px-3.5 py-1 text-[11px] font-bold backdrop-blur-md">
+                        <div class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/35 px-3.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm">
                             <span class="text-amber-300">✦</span>
                             <span class="tracking-wider">SMAS METHODIST BANDA ACEH</span>
                         </div>
 
-                        <div class="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1 text-[11px] font-semibold text-slate-200 backdrop-blur-md">
+                        <div class="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/25 px-3.5 py-1 text-[11px] font-semibold text-slate-100 backdrop-blur-md shadow-sm">
                             <span>Portal Akademik Resmi</span>
                         </div>
                     </div>
@@ -118,12 +136,12 @@
                     {{-- BOTTOM BANNER WATERMARK / MOTTO --}}
                     <div class="relative z-10 hidden sm:flex items-end justify-between">
                         <div>
-                            <p class="text-xs font-semibold tracking-wider text-sky-200 uppercase">Methodist Learning Space</p>
-                            <p class="font-serif-title text-xl font-bold tracking-tight text-white drop-shadow-sm">
+                            <p class="text-xs font-semibold tracking-wider text-sky-200 uppercase drop-shadow-sm">Methodist Learning Space</p>
+                            <p class="font-serif-title text-xl font-bold tracking-tight text-white drop-shadow-md">
                                 Belajar &bull; Bertumbuh &bull; Berprestasi
                             </p>
                         </div>
-                        <div class="font-serif-title text-5xl font-extrabold text-white/15 select-none pointer-events-none">
+                        <div class="font-serif-title text-5xl font-extrabold text-white/25 select-none pointer-events-none drop-shadow-sm">
                             M.
                         </div>
                     </div>
@@ -194,15 +212,29 @@
                                 </div>
 
                                 {{-- BIO LINE --}}
-                                <p class="text-xs sm:text-sm text-slate-600 max-w-xl pt-1">
+                                <div class="text-xs sm:text-sm text-slate-600 max-w-xl pt-1 space-y-1">
                                     @if($isStudent && $profile)
-                                        Siswa aktif SMAS Methodist Banda Aceh rombel <strong class="text-slate-800">{{ $profile->schoolClass->name ?? 'Kelas Aktif' }}</strong>. Terdaftar dengan NIS: <strong class="text-slate-800">{{ $profile->nis }}</strong>.
+                                        <p>
+                                            Siswa aktif SMAS Methodist Banda Aceh rombel <strong class="text-slate-800">{{ $profile->schoolClass->name ?? 'Kelas Aktif' }}</strong>.
+                                        </p>
+                                        @if($profile->nis)
+                                            <p class="text-xs text-slate-500">
+                                                NIS: <strong class="text-slate-800 font-mono tracking-wide">{{ $profile->nis }}</strong>
+                                            </p>
+                                        @endif
                                     @elseif($user->isGuru() && $profile)
-                                        Guru pendidik SMAS Methodist Banda Aceh bidang <strong class="text-slate-800">{{ $profile->specialization ?? 'Mata Pelajaran' }}</strong>. NIP: <strong class="text-slate-800">{{ $profile->nip }}</strong>.
+                                        <p>
+                                            Guru pendidik SMAS Methodist Banda Aceh bidang <strong class="text-slate-800">{{ $profile->specialization ?? 'Mata Pelajaran' }}</strong>.
+                                        </p>
+                                        @if($profile->nip)
+                                            <p class="text-xs text-slate-500">
+                                                NIP: <strong class="text-slate-800 font-mono tracking-wide">{{ $profile->nip }}</strong>
+                                            </p>
+                                        @endif
                                     @else
-                                        Anggota terdaftar platform pembelajaran Methodist Learning Space.
+                                        <p>Anggota terdaftar platform pembelajaran Methodist Learning Space.</p>
                                     @endif
-                                </p>
+                                </div>
                             </div>
 
                         </div>
@@ -430,26 +462,39 @@
                                 $targetUrl = $isStudent 
                                     ? route('siswa.classes.show', $cstId) 
                                     : route('guru.classes.show', $cstId);
+
+                                $subjectLower = strtolower($subjectTitle);
+                                $subjectCoverImage = null;
+                                if (str_contains($subjectLower, 'kimia') && file_exists(public_path('images/subjects/kimia.jpg'))) {
+                                    $subjectCoverImage = asset('images/subjects/kimia.jpg');
+                                }
                             @endphp
 
-                            <article class="feed-card rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-sm">
+                            <article class="feed-card rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition">
                                 <div>
                                     {{-- CARD THUMBNAIL / TOP BANNER --}}
-                                    <div class="h-28 bg-gradient-to-br from-[#123B60] to-[#267BB5] p-4 text-white flex flex-col justify-between relative overflow-hidden">
-                                        <div class="absolute -right-4 -top-6 text-7xl font-serif-title font-extrabold text-white/10 select-none">
-                                            {{ strtoupper(substr($subjectTitle, 0, 1)) }}
-                                        </div>
+                                    <div class="h-28 relative overflow-hidden p-4 text-white flex flex-col justify-between {{ empty($subjectCoverImage) ? 'bg-gradient-to-br from-[#123B60] to-[#267BB5]' : '' }}">
+                                        @if($subjectCoverImage)
+                                            <img src="{{ $subjectCoverImage }}"
+                                                 alt="{{ $subjectTitle }}"
+                                                 class="absolute inset-0 h-full w-full object-cover">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-[#091a30]/90 via-[#10243E]/55 to-[#123B60]/35"></div>
+                                        @else
+                                            <div class="absolute -right-4 -top-6 text-7xl font-serif-title font-extrabold text-white/10 select-none">
+                                                {{ strtoupper(substr($subjectTitle, 0, 1)) }}
+                                            </div>
+                                        @endif
 
                                         <div class="flex items-center justify-between relative z-10">
-                                            <span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm">
+                                            <span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm shadow-sm">
                                                 {{ $className }}
                                             </span>
-                                            <span class="text-xs text-white/80">
+                                            <span class="text-xs text-white/90 drop-shadow-sm">
                                                 📚
                                             </span>
                                         </div>
 
-                                        <h4 class="font-serif-title text-base font-bold truncate relative z-10">
+                                        <h4 class="font-serif-title text-base font-bold truncate relative z-10 drop-shadow-md">
                                             {{ $subjectTitle }}
                                         </h4>
                                     </div>
