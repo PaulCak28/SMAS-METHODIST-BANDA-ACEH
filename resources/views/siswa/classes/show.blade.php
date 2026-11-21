@@ -1,34 +1,110 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between gap-3">
-            <div class="flex min-w-0 items-center gap-3">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
-                    </svg>
-                </div>
-                <div class="min-w-0">
-                    <h2 class="truncate text-lg font-extrabold tracking-tight text-slate-800">Ruang Kelas</h2>
-                    <p class="truncate text-xs font-medium text-slate-500">E-Class Student Portal</p>
-                </div>
+        <div class="flex flex-col gap-1.5 py-0.5">
+            <div>
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
+                <h2 class="truncate text-xl font-extrabold tracking-tight text-slate-800 leading-tight">
+                    Ruang Kelas: {{ $cst->subject->name ?? 'Mata Pelajaran' }}
+                </h2>
             </div>
-
-            <a href="{{ route('siswa.classes.index') }}"
-                class="hidden shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 sm:inline-flex">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 18-6-6 6-6"/>
-                </svg>
-                Semua kelas
-            </a>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    {{ $cst->schoolClass->name ?? 'Kelas' }} &bull; {{ $cst->teacher->user->name ?? 'Guru' }}
+                </span>
+            </div>
         </div>
     </x-slot>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    @php
+        $getSubjectTheme = function($subjectName, $subjectCode = null) {
+            $name = strtolower($subjectName ?? '');
+            $code = strtolower($subjectCode ?? '');
+
+            $themes = [
+                'matematika' => ['symbol' => 'MAT', 'category' => 'MATEMATIKA', 'image' => 'matematika.jpg', 'gradient' => 'linear-gradient(135deg, #0d2847 0%, #174e7d 100%)'],
+                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.svg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
+                'biologi' => ['symbol' => 'BIO', 'category' => 'BIOLOGI', 'image' => 'biologi.jpg', 'gradient' => 'linear-gradient(135deg, #06282d 0%, #0d5f66 100%)'],
+                'kimia' => ['symbol' => 'KIM', 'category' => 'KIMIA', 'image' => 'kimia.jpg', 'gradient' => 'linear-gradient(135deg, #10263f 0%, #1a568a 100%)'],
+                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.svg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
+                'inggris' => ['symbol' => 'ENG', 'category' => 'BAHASA INGGRIS', 'image' => 'inggris.svg', 'gradient' => 'linear-gradient(135deg, #18223c 0%, #29457a 100%)'],
+                'informatika' => ['symbol' => 'TIK', 'category' => 'INFORMATIKA', 'image' => 'informatika.jpg', 'gradient' => 'linear-gradient(135deg, #092338 0%, #104a75 100%)'],
+                'sejarah' => ['symbol' => 'SEJ', 'category' => 'SEJARAH', 'image' => 'sejarah.svg', 'gradient' => 'linear-gradient(135deg, #2b1f13 0%, #694a28 100%)'],
+                'geografi' => ['symbol' => 'GEO', 'category' => 'GEOGRAFI', 'image' => 'geografi.svg', 'gradient' => 'linear-gradient(135deg, #0f281e 0%, #1f6146 100%)'],
+                'ekonomi' => ['symbol' => 'EKO', 'category' => 'EKONOMI', 'image' => 'ekonomi.svg', 'gradient' => 'linear-gradient(135deg, #132438 0%, #1f5080 100%)'],
+                'sosiologi' => ['symbol' => 'SOS', 'category' => 'SOSIOLOGI', 'image' => 'sosiologi.svg', 'gradient' => 'linear-gradient(135deg, #281a33 0%, #5a3575 100%)'],
+                'agama' => ['symbol' => 'AGM', 'category' => 'PENDIDIKAN AGAMA', 'image' => 'agama.svg', 'gradient' => 'linear-gradient(135deg, #1f2716 0%, #4a5c2d 100%)'],
+                'pjok' => ['symbol' => 'PJK', 'category' => 'PJOK', 'image' => 'pjok.svg', 'gradient' => 'linear-gradient(135deg, #162a33 0%, #255d73 100%)'],
+                'seni' => ['symbol' => 'SBD', 'category' => 'SENI BUDAYA', 'image' => 'seni-budaya.svg', 'gradient' => 'linear-gradient(135deg, #2d182b 0%, #6e2e68 100%)'],
+                'pkn' => ['symbol' => 'PKN', 'category' => 'PPKN', 'image' => 'ppkn.svg', 'gradient' => 'linear-gradient(135deg, #30141b 0%, #732a3d 100%)'],
+            ];
+
+            $aliases = [
+                'mtk' => 'matematika', 'fis' => 'fisika', 'bio' => 'biologi', 'kim' => 'kimia',
+                'bin' => 'indonesia', 'bahasa indonesia' => 'indonesia', 'big' => 'inggris',
+                'bahasa inggris' => 'inggris', 'sej' => 'sejarah', 'inf' => 'informatika',
+                'tik' => 'informatika', 'komputer' => 'informatika', 'eko' => 'ekonomi',
+                'geo' => 'geografi', 'sos' => 'sosiologi', 'agm' => 'agama',
+                'pendidikan agama' => 'agama', 'penjas' => 'pjok', 'sbd' => 'seni',
+                'seni budaya' => 'seni', 'ppkn' => 'pkn',
+            ];
+
+            $matchedKey = null;
+            foreach ($aliases as $alias => $target) {
+                if (str_contains($name, $alias) || str_contains($code, $alias)) {
+                    $matchedKey = $target;
+                    break;
+                }
+            }
+
+            if (!$matchedKey) {
+                foreach (array_keys($themes) as $k) {
+                    if (str_contains($name, $k) || str_contains($code, $k)) {
+                        $matchedKey = $k;
+                        break;
+                    }
+                }
+            }
+
+            $t = $matchedKey ? $themes[$matchedKey] : [
+                'symbol' => 'MLS', 'category' => 'KELAS AKADEMIK', 'image' => null,
+                'gradient' => 'linear-gradient(135deg, #123B60 0%, #267BB5 100%)',
+            ];
+
+            $imgUrl = null;
+            if (!empty($t['image'])) {
+                if (file_exists(public_path('images/subjects/' . $t['image']))) {
+                    $imgUrl = asset('images/subjects/' . $t['image']);
+                } else {
+                    $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
+                    $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
+                    if (file_exists(public_path('images/subjects/' . $svgName))) {
+                        $imgUrl = asset('images/subjects/' . $svgName);
+                    } elseif (file_exists(public_path('images/subjects/' . $jpgName))) {
+                        $imgUrl = asset('images/subjects/' . $jpgName);
+                    }
+                }
+            }
+
+            if (!$imgUrl && file_exists(public_path('images/hero-school.jpg'))) {
+                $imgUrl = asset('images/hero-school.jpg');
+            }
+
+            $t['imageUrl'] = $imgUrl;
+            return $t;
+        };
+
+        $subjectName = $cst->subject->name ?? $cst->subject_code ?? 'Mata Pelajaran';
+        $theme = $getSubjectTheme($subjectName, $cst->subject_code);
+        $className = $cst->schoolClass->name ?? ('Kelas ' . $cst->class_id);
+    @endphp
+
+    <style>
         .classroom-page {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
         }
 
         .classroom-page .rich {
@@ -147,7 +223,11 @@
             {{-- ALERTS --}}
             @if(session('success'))
                 <div role="status" class="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800">
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-bold">✓</span>
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </span>
                     <span class="pt-1">{{ session('success') }}</span>
                 </div>
             @endif
@@ -166,105 +246,93 @@
                 </div>
             @endif
 
-            {{-- CLASS HERO --}}
-            <section class="hero-pattern relative isolate overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#102d5e] via-[#1554a5] to-[#1685d4] px-6 py-8 text-white shadow-2xl shadow-blue-200/60 sm:px-9 sm:py-10 lg:px-12 lg:py-12">
-                <div class="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full border-[42px] border-white/[0.07]"></div>
-                <div class="pointer-events-none absolute -bottom-36 right-[25%] h-80 w-80 rounded-full bg-cyan-300/10 blur-3xl"></div>
-                <div class="pointer-events-none absolute right-[8%] top-[40%] h-32 w-32 rounded-full border border-white/10"></div>
+            {{-- BREADCRUMB & TOMBOL KEMBALI (DI BAWAH HEADER) --}}
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+                    <a href="{{ route('siswa.classes.index') }}" class="hover:text-blue-600 transition">
+                        E-Class Siswa
+                    </a>
+                    <span>/</span>
+                    <span class="font-bold text-blue-700">{{ $cst->subject->name ?? 'Ruang Kelas' }}</span>
+                </div>
 
-                <div class="relative grid items-center gap-9 lg:grid-cols-[1fr_280px]">
+                <a href="{{ route('siswa.classes.index') }}"
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span>←</span>
+                    <span>Semua Kelas</span>
+                </a>
+            </div>
+
+            {{-- CLASS HERO --}}
+            <section class="relative isolate overflow-hidden rounded-[28px] bg-[#10243E] px-6 py-8 sm:px-10 sm:py-12 text-white shadow-xl">
+                @if(!empty($theme['imageUrl']))
+                    <img src="{{ $theme['imageUrl'] }}" alt="{{ $subjectName }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/95 via-[#102a4e]/85 to-[#164273]/65 pointer-events-none"></div>
+                @else
+                    <div class="absolute inset-0" style="background: {{ $theme['gradient'] }};"></div>
+                @endif
+
+                <div class="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full border-[35px] border-white/5"></div>
+                <div class="pointer-events-none absolute -bottom-36 right-52 h-72 w-72 rounded-full bg-cyan-400/10 blur-2xl"></div>
+
+                <div class="relative grid items-center gap-8 lg:grid-cols-[1fr_auto]">
                     <div class="max-w-3xl">
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-2 text-[10px] font-extrabold uppercase tracking-[.16em] text-blue-50 backdrop-blur sm:text-xs">
-                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
-                                {{ $cst->schoolClass->name ?? 'Ruang Kelas' }}
+                            <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-white backdrop-blur sm:text-xs">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                {{ $className }}
                             </span>
 
-                            <span class="rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-[10px] font-bold text-white backdrop-blur sm:text-xs">
-                                {{ ucfirst($cst->semester ?? 'Semester') }}
+                            <span class="rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[10px] font-bold text-cyan-200 backdrop-blur sm:text-xs">
+                                Semester {{ ucfirst($cst->semester ?? 'Ganjil') }} &bull; TP {{ $cst->academic_year ?? (date('Y').'/'.(date('Y')+1)) }}
+                            </span>
+
+                            <span class="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-2.5 py-1 text-[11px] font-extrabold text-white border border-white/30 tracking-wider">
+                                {{ $theme['symbol'] }}
                             </span>
                         </div>
 
-                        <p class="mt-7 text-[10px] font-extrabold uppercase tracking-[.22em] text-blue-200 sm:text-xs">
-                            STUDENT CLASSROOM
+                        <p class="mt-4 text-[10px] sm:text-xs font-bold uppercase tracking-[.22em] text-cyan-200">
+                            METHODIST LEARNING SPACE &bull; {{ $theme['category'] }}
                         </p>
 
-                        <h1 class="mt-2 max-w-2xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-[2.8rem]">
-                            {{ $cst->subject->name ?? $cst->subject_code }}
+                        <h1 class="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl font-serif text-white leading-tight">
+                            {{ $subjectName }}
                         </h1>
 
-                        <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-blue-100">
-                            <div class="inline-flex items-center gap-2.5">
-                                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/10">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
-                                    </svg>
+                        <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-blue-100">
+                            <div class="inline-flex items-center gap-3">
+                                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 border border-white/20 text-white font-bold backdrop-blur">
+                                    {{ strtoupper(substr($cst->teacher->user->name ?? 'G', 0, 1)) }}
                                 </span>
-                                <span>
-                                    <span class="block text-[10px] font-medium text-blue-200">Pengajar</span>
+                                <div>
+                                    <span class="block text-[10px] font-semibold uppercase tracking-wider text-cyan-200">Guru Pengampu</span>
                                     <strong class="font-bold text-white">{{ $cst->teacher->user->name ?? 'Guru' }}</strong>
-                                </span>
-                            </div>
-
-                            <div class="inline-flex items-center gap-2.5">
-                                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/10">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <rect x="3" y="4" width="18" height="17" rx="2" stroke-width="1.8"/>
-                                        <path stroke-linecap="round" stroke-width="1.8" d="M16 2v4M8 2v4M3 10h18"/>
-                                    </svg>
-                                </span>
-                                <span>
-                                    <span class="block text-[10px] font-medium text-blue-200">Tahun ajaran</span>
-                                    <strong class="font-bold text-white">{{ $cst->academic_year ?? '-' }}</strong>
-                                </span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mt-8 flex flex-wrap gap-2.5">
-                            <a href="#materi" class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-extrabold text-blue-800 shadow-lg transition hover:-translate-y-0.5 hover:bg-blue-50 sm:text-sm">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/>
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <a href="#materi" class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-[#123B60] shadow-md transition hover:-translate-y-0.5 hover:bg-slate-100">
+                                <svg class="h-4 w-4 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
                                 </svg>
-                                Materi
+                                <span>Materi ({{ $cst->materials->count() }})</span>
                             </a>
 
-                            <a href="#tugas" class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-xs font-extrabold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:text-sm">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                            <a href="#tugas" class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-xs font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">
+                                <svg class="h-4 w-4 text-cyan-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                 </svg>
-                                Tugas
+                                <span>Tugas ({{ $cst->assignments->count() }})</span>
                             </a>
 
-                            <a href="#ujian" class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-xs font-extrabold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:text-sm">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2H9V5Z"/>
+                            <a href="#ujian" class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-xs font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">
+                                <svg class="h-4 w-4 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                Ujian
+                                <span>Ujian ({{ $exams->count() }})</span>
                             </a>
-                        </div>
-                    </div>
-
-                    {{-- HERO DECORATION --}}
-                    <div class="relative hidden h-56 items-center justify-center lg:flex">
-                        <div class="absolute h-56 w-56 rounded-full border border-white/10"></div>
-                        <div class="absolute h-44 w-44 rounded-full border border-white/10"></div>
-
-                        <div class="relative flex h-36 w-36 rotate-3 items-center justify-center rounded-[2rem] border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl">
-                            <svg class="h-20 w-20 text-white" viewBox="0 0 100 100" fill="none">
-                                <path d="M13 28.5 50 14l37 14.5v43L50 86 13 71.5v-43Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                <path d="M13 28.5 50 44l37-15.5M50 44v42" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                <path d="M32 54h12m-12 9h24" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-
-                        <div class="absolute right-0 top-5 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-                            <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-100">Learning space</p>
-                            <p class="mt-1 text-sm font-extrabold">Explore & Learn</p>
-                        </div>
-
-                        <div class="absolute bottom-3 left-0 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-                            <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-100">Your progress</p>
-                            <p class="mt-1 text-sm font-extrabold">Keep Growing ✦</p>
                         </div>
                     </div>
                 </div>
@@ -272,39 +340,39 @@
 
             {{-- QUICK COUNTS --}}
             <section class="grid grid-cols-3 gap-3 sm:gap-5">
-                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100/50 sm:flex sm:items-center sm:gap-4 sm:p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12 sm:rounded-2xl">
-                        <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/>
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:flex sm:items-center sm:gap-4 sm:p-5">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-[#123B60]">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5c1.75 0 3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18c-1.75 0-3.33.48-4.5 1.25"/>
                         </svg>
                     </div>
-                    <div class="mt-3 sm:mt-0">
-                        <p class="text-xl font-extrabold tracking-tight text-blue-700 sm:text-2xl">{{ $cst->materials->count() }}</p>
-                        <p class="text-[10px] font-semibold text-slate-500 sm:text-xs">Materi</p>
+                    <div class="mt-2 sm:mt-0">
+                        <p class="text-xl font-black text-slate-800 sm:text-2xl">{{ $cst->materials->count() }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Materi Terbit</p>
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-100/50 sm:flex sm:items-center sm:gap-4 sm:p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 sm:h-12 sm:w-12 sm:rounded-2xl">
-                        <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:flex sm:items-center sm:gap-4 sm:p-5">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
-                    <div class="mt-3 sm:mt-0">
-                        <p class="text-xl font-extrabold tracking-tight text-indigo-700 sm:text-2xl">{{ $cst->assignments->count() }}</p>
-                        <p class="text-[10px] font-semibold text-slate-500 sm:text-xs">Tugas</p>
+                    <div class="mt-2 sm:mt-0">
+                        <p class="text-xl font-black text-slate-800 sm:text-2xl">{{ $cst->assignments->count() }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tugas Kelas</p>
                     </div>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-sky-100/50 sm:flex sm:items-center sm:gap-4 sm:p-6">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700 sm:h-12 sm:w-12 sm:rounded-2xl">
-                        <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2H9V5Z"/>
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:flex sm:items-center sm:gap-4 sm:p-5">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <div class="mt-3 sm:mt-0">
-                        <p class="text-xl font-extrabold tracking-tight text-sky-700 sm:text-2xl">{{ $exams->count() }}</p>
-                        <p class="text-[10px] font-semibold text-slate-500 sm:text-xs">Ujian</p>
+                    <div class="mt-2 sm:mt-0">
+                        <p class="text-xl font-black text-slate-800 sm:text-2xl">{{ $exams->count() }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Ujian Online</p>
                     </div>
                 </div>
             </section>

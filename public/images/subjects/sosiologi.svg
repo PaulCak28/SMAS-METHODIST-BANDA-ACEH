@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1A0C26"/>
+            <stop offset="50%" stop-color="#421E61"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#C084FC" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#E879F9" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#C084FC" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#E879F9" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Interconnected Network Nodes & Social Ties -->
+            <g opacity="0.28">
+                <!-- Lines connecting nodes -->
+                <line x1="880" y1="440" x2="1120" y2="360" stroke="#C084FC" stroke-width="2"/>
+                <line x1="1120" y1="360" x2="1320" y2="480" stroke="#E879F9" stroke-width="2"/>
+                <line x1="1120" y1="360" x2="1180" y2="640" stroke="#C084FC" stroke-width="2"/>
+                <line x1="880" y1="440" x2="960" y2="680" stroke="#E879F9" stroke-width="2"/>
+                <line x1="960" y1="680" x2="1180" y2="640" stroke="#C084FC" stroke-width="2"/>
+                <line x1="1180" y1="640" x2="1420" y2="680" stroke="#E879F9" stroke-width="2"/>
+                <line x1="1320" y1="480" x2="1420" y2="680" stroke="#C084FC" stroke-width="2"/>
+                <line x1="880" y1="440" x2="720" y2="580" stroke="#C084FC" stroke-width="1.5"/>
+                
+                <!-- Person / Node circles -->
+                <circle cx="880" cy="440" r="22" fill="#C084FC"/>
+                <circle cx="1120" cy="360" r="28" fill="#E879F9"/>
+                <circle cx="1320" cy="480" r="24" fill="#C084FC"/>
+                <circle cx="960" cy="680" r="20" fill="#E879F9"/>
+                <circle cx="1180" cy="640" r="26" fill="#C084FC"/>
+                <circle cx="1420" cy="680" r="18" fill="#E879F9"/>
+                <circle cx="720" cy="580" r="16" fill="#C084FC"/>
+
+                <circle cx="1120" cy="360" r="60" stroke="#E879F9" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+                <circle cx="1180" cy="640" r="54" stroke="#C084FC" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+            </g>
+            <circle cx="960" cy="540" r="460" stroke="#C084FC" stroke-width="1" fill="none" opacity="0.14"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

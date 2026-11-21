@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#071F2B"/>
+            <stop offset="50%" stop-color="#0E4966"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#67E8F9" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#06B6D4" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#67E8F9" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Stadium Track Arcs & Pulse Dynamics & Stopwatch -->
+            <g opacity="0.25" transform="translate(1120, 520)">
+                <!-- Running Track Oval Loops -->
+                <ellipse cx="0" cy="0" rx="300" ry="160" stroke="#67E8F9" stroke-width="3" fill="none"/>
+                <ellipse cx="0" cy="0" rx="250" ry="130" stroke="#06B6D4" stroke-width="2.5" fill="none"/>
+                <ellipse cx="0" cy="0" rx="200" ry="100" stroke="#67E8F9" stroke-width="2" fill="none"/>
+                <ellipse cx="0" cy="0" rx="150" ry="70" stroke="#06B6D4" stroke-width="1.5" fill="none"/>
+            </g>
+            <!-- Vitality Heartbeat Pulse Wave -->
+            <path d="M200 680 L 700 680 L 740 600 L 780 760 L 830 520 L 880 740 L 920 640 L 960 680 L 1720 680" fill="none" stroke="#22D3EE" stroke-width="3.5" opacity="0.3"/>
+            <circle cx="960" cy="540" r="440" stroke="#06B6D4" stroke-width="1" stroke-dasharray="8 8" fill="none" opacity="0.15"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

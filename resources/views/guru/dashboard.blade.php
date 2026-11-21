@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold text-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
                     Dashboard Guru
                 </h2>
             </div>
 
-            <div class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Ruang Kerja Guru
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Ruang Kerja Guru
+                </span>
             </div>
         </div>
     </x-slot>
@@ -36,84 +38,85 @@
         */
         $subjectThemes = [
             'matematika' => [
-                'icon' => '∑',
+                'icon' => 'MAT',
                 'label' => 'MATEMATIKA',
                 'description' => 'Eksplorasi angka, pola, dan logika berpikir',
-                'background' => 'linear-gradient(135deg,#164E86,#4299D5)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'bahasa indonesia' => [
-                'icon' => 'Aa',
+                'icon' => 'IDN',
                 'label' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
-                'background' => 'linear-gradient(135deg,#9F3447,#E87986)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'bahasa inggris' => [
-                'icon' => 'Ab',
+                'icon' => 'ENG',
                 'label' => 'BAHASA INGGRIS',
                 'description' => 'Berkomunikasi dan terhubung secara global',
-                'background' => 'linear-gradient(135deg,#4338A8,#818CF8)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'biologi' => [
-                'icon' => '✿',
+                'icon' => 'BIO',
                 'label' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
-                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'fisika' => [
-                'icon' => '⚛',
+                'icon' => 'FIS',
                 'label' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
-                'background' => 'linear-gradient(135deg,#5B3C99,#A78BFA)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'kimia' => [
-                'icon' => '⚗',
+                'icon' => 'KIM',
                 'label' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
-                'background' => 'linear-gradient(135deg,#A45D14,#F2B84B)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/kimia.jpg'),
             ],
             'sejarah' => [
-                'icon' => '◷',
+                'icon' => 'SEJ',
                 'label' => 'SEJARAH',
                 'description' => 'Mengambil hikmah dan perjalanan masa lalu',
-                'background' => 'linear-gradient(135deg,#9A4B21,#E99A61)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'informatika' => [
-                'icon' => '</>',
+                'icon' => 'TIK',
                 'label' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
-                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'agama' => [
-                'icon' => '✧',
+                'icon' => 'AGM',
                 'label' => 'PENDIDIKAN AGAMA',
                 'description' => 'Membina karakter, iman, dan pekerti mulia',
-                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'ekonomi' => [
-                'icon' => '↗',
+                'icon' => 'EKO',
                 'label' => 'EKONOMI',
                 'description' => 'Memahami pasar, bisnis, dan keuangan',
-                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'geografi' => [
-                'icon' => '🌍',
+                'icon' => 'GEO',
                 'label' => 'GEOGRAFI',
                 'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
-                'background' => 'linear-gradient(135deg,#1b6e53,#56ab7c)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
             'sosiologi' => [
-                'icon' => '👥',
+                'icon' => 'SOS',
                 'label' => 'SOSIOLOGI',
                 'description' => 'Memahami struktur sosial dan dinamika masyarakat',
-                'background' => 'linear-gradient(135deg,#843b62,#d46a92)',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             ],
         ];
 
         $defaultTheme = [
-            'icon' => '▤',
+            'icon' => 'MLS',
             'label' => 'KELAS AKADEMIK',
             'description' => 'Ruang belajar dan berkembang bersama',
-            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
+            'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
         ];
     @endphp
 
@@ -267,6 +270,120 @@
             border-color: #C2D8E8 !important;
         }
 
+        /* E-CLASS MENU SELECTOR (RESPONSIVE & COHESIVE) */
+        .eclass-menu-nav {
+            margin-top: 24px;
+        }
+
+        .eclass-menu-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 11px;
+            color: #5A7184;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .eclass-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 600px;
+        }
+
+        .eclass-menu-pill {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: #FFFFFF;
+            border: 1px solid #DFE7EE;
+            box-shadow: 0 4px 14px rgba(18, 59, 96, .05);
+            text-decoration: none;
+            color: inherit;
+            transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .eclass-menu-pill:hover {
+            transform: translateY(-2px);
+            border-color: #267BB5;
+            box-shadow: 0 8px 24px rgba(38, 123, 181, .14);
+        }
+
+        .eclass-menu-pill:active {
+            transform: scale(0.97);
+        }
+
+        .eclass-pill-icon {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all .22s ease;
+        }
+
+        .eclass-pill-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex-grow: 1;
+        }
+
+        .eclass-pill-title {
+            color: #123B60;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color .2s ease;
+        }
+
+        .eclass-pill-desc {
+            color: #8292A1;
+            font-size: 10.5px;
+            font-weight: 500;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .eclass-pill-arrow {
+            flex-shrink: 0;
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .eclass-menu-pill:hover .eclass-pill-arrow {
+            color: #123B60;
+            transform: translateX(2px);
+        }
+
+        @media (max-width: 640px) {
+            .eclass-menu-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .eclass-menu-pill {
+                padding: 12px 16px;
+            }
+        }
+
         /* HERO VISUAL */
         .academy-visual {
             position: relative;
@@ -281,15 +398,33 @@
             inset: 8px 12px;
             overflow: hidden;
             border-radius: 26px;
-            background:
-                linear-gradient(145deg, rgba(18,59,96,.85), rgba(38,123,181,.75)),
-                linear-gradient(135deg, #123B60, #7AB6D9);
-            box-shadow: 0 20px 40px rgba(18,59,96,.15);
+            background: #10243E;
+            box-shadow: 0 20px 40px rgba(18,59,96,.20);
+        }
+
+        .academy-visual-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .academy-visual-main:hover .academy-visual-img {
+            transform: scale(1.06);
+        }
+
+        .academy-visual-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 26, 47, 0.88) 0%, rgba(18, 59, 96, 0.75) 60%, rgba(20, 45, 75, 0.60) 100%);
         }
 
         .academy-visual-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             display: flex;
             height: 100%;
             min-height: 290px;
@@ -347,9 +482,15 @@
         /* SPLIT PORTAL HUB CARDS */
         .academy-hub-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 20px;
             margin-top: 26px;
+        }
+
+        @media (max-width: 1024px) {
+            .academy-hub-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
         }
 
         .academy-hub-card {
@@ -466,9 +607,10 @@
             overflow: hidden;
             padding: 22px;
             color: white;
+            background-color: #123B60;
         }
 
-        .academy-class-cover::before {
+        .academy-class-cover:not(.has-image)::before {
             content: "";
             position: absolute;
             width: 155px;
@@ -480,6 +622,27 @@
             box-shadow:
                 0 0 0 22px rgba(255,255,255,.06),
                 0 0 0 45px rgba(255,255,255,.035);
+        }
+
+        .academy-cover-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .academy-class-card:hover .academy-cover-image {
+            transform: scale(1.08);
+        }
+
+        .academy-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(8, 22, 40, 0.88) 0%, rgba(18, 59, 96, 0.72) 55%, rgba(18, 59, 96, 0.38) 100%);
+            pointer-events: none;
         }
 
         .academy-class-cover-info {
@@ -505,16 +668,16 @@
             position: relative;
             z-index: 1;
             display: grid;
-            width: 62px;
-            height: 62px;
+            width: 58px;
+            height: 58px;
             flex-shrink: 0;
             place-items: center;
             border: 1px solid rgba(255,255,255,.35);
             border-radius: 18px;
             background: rgba(255,255,255,.16);
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .08em;
             backdrop-filter: blur(8px);
         }
 
@@ -706,7 +869,10 @@
             <section class="academy-hero">
                 <div class="academy-hero-content">
                     <span class="academy-eyebrow">
-                        ✦ SMAS METHODIST BANDA ACEH
+                        <svg class="h-3 w-3 text-[#185B87]" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>SMAS METHODIST BANDA ACEH</span>
                     </span>
 
                     <h1 class="academy-hero-title">
@@ -721,26 +887,77 @@
                     </p>
 
                     {{-- ==========================================
-                         TOMBOL NAVIGASI LANGSUNG KE E-CLASS & E-EXAM
+                         PILIHAN MENU E-CLASS (RESPONSIF & HARMONIS)
                     =========================================== --}}
-                    <div class="mt-7 flex flex-wrap items-center gap-3">
-                        {{-- TOMBOL E-CLASS: Langsung navigasi ke halaman E-Class --}}
-                        <a href="{{ route('guru.classes.index') }}"
-                           class="academy-button academy-button-primary shadow-lg"
-                           title="Buka halaman E-Class">
-                            <span class="text-sm">📚</span>
-                            <span>Buka E-Class (Ruang Kelas)</span>
-                            <span class="ml-1 font-bold">→</span>
-                        </a>
+                    <div class="eclass-menu-nav">
+                        <div class="eclass-menu-label">
+                            <span class="inline-block w-2 h-2 rounded-full bg-[#267BB5]"></span>
+                            <span>Pilih Menu E-Class</span>
+                        </div>
 
-                        {{-- TOMBOL E-EXAM: Langsung navigasi ke halaman E-Exam --}}
-                        <a href="{{ route('guru.exams.index') }}"
-                           class="academy-button academy-button-secondary"
-                           title="Buka halaman E-Exam">
-                            <span class="text-sm">📋</span>
-                            <span>Buka E-Exam (Kelola Ujian)</span>
-                            <span class="ml-1 font-bold">→</span>
-                        </a>
+                        <div class="eclass-menu-grid">
+                            {{-- MENU 1: E-CLASS --}}
+                            <a href="{{ route('guru.classes.index') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Ruang Kelas (E-Class)">
+                                <span class="eclass-pill-icon bg-blue-50 text-[#123B60] border border-blue-100 group-hover:bg-[#123B60] group-hover:text-white group-hover:border-[#123B60]">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="18" height="12" x="3" y="4" rx="2.5"/>
+                                        <path d="M3 13h18"/>
+                                        <path d="M8 21h8"/>
+                                        <path d="M12 17v4"/>
+                                        <circle cx="8" cy="8.5" r="1" fill="currentColor"/>
+                                        <path d="M11 8.5h5"/>
+                                    </svg>
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#267BB5]">E-Class</span>
+                                    <span class="eclass-pill-desc">Ruang Kelas</span>
+                                </div>
+                                <span class="eclass-pill-arrow">→</span>
+                            </a>
+
+                            {{-- MENU 2: E-EXAM --}}
+                            <a href="{{ route('guru.exams.index') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Kelola Ujian (E-Exam)">
+                                <span class="eclass-pill-icon bg-indigo-50 text-[#4338A8] border border-indigo-100 group-hover:bg-[#4338A8] group-hover:text-white group-hover:border-[#4338A8]">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 11 3 3L22 4"/>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                        <path d="M7 10h4"/>
+                                        <path d="M7 14h6"/>
+                                        <path d="M7 18h8"/>
+                                    </svg>
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#4338A8]">E-Exam</span>
+                                    <span class="eclass-pill-desc">Kelola Ujian</span>
+                                </div>
+                                <span class="eclass-pill-arrow">→</span>
+                            </a>
+
+                            {{-- MENU 3: ROSTER PELAJARAN --}}
+                            <a href="{{ route('guru.roster') }}"
+                               class="eclass-menu-pill group"
+                               title="Buka Roster & Jadwal Mengajar">
+                                <span class="eclass-pill-icon bg-sky-50 text-[#0284C7] border border-sky-100 group-hover:bg-[#0284C7] group-hover:text-white group-hover:border-[#0284C7]">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="18" height="18" x="3" y="4" rx="2.5"/>
+                                        <path d="M16 2v4"/>
+                                        <path d="M8 2v4"/>
+                                        <path d="M3 10h18"/>
+                                        <circle cx="12" cy="15" r="2.5"/>
+                                        <path d="M12 14v1l1 .5"/>
+                                    </svg>
+                                </span>
+                                <div class="eclass-pill-content">
+                                    <span class="eclass-pill-title group-hover:text-[#0284C7]">Roster</span>
+                                    <span class="eclass-pill-desc">Jadwal Resmi</span>
+                                </div>
+                                <span class="eclass-pill-arrow">↗</span>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="mt-8 flex flex-wrap gap-7">
@@ -779,21 +996,26 @@
 
                 {{-- HERO VISUAL --}}
                 <div class="academy-visual">
-                    <div class="academy-visual-main">
+                    <div class="academy-visual-main group">
+                        <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                             alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                             class="academy-visual-img">
+                        <div class="academy-visual-overlay"></div>
+
                         <div class="academy-visual-content">
-                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-100 uppercase">
+                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-200 uppercase drop-shadow-sm">
                                 Methodist Learning Space
                             </p>
 
-                            <div class="academy-visual-symbol">
+                            <div class="academy-visual-symbol drop-shadow-md">
                                 M.
                             </div>
 
-                            <p class="academy-serif mt-2 text-xl font-semibold">
+                            <p class="academy-serif mt-2 text-xl font-bold drop-shadow-md">
                                 Belajar. Tumbuh. Berprestasi.
                             </p>
 
-                            <p class="mt-2 max-w-xs text-xs leading-6 text-sky-100">
+                            <p class="mt-2 max-w-xs text-xs leading-6 text-slate-100 font-medium drop-shadow">
                                 Mewujudkan pendidikan bermutu dengan pembelajaran yang bermakna.
                             </p>
                         </div>
@@ -809,8 +1031,15 @@
                 <a href="{{ route('guru.classes.index') }}"
                    class="academy-hub-card group relative border-slate-200 hover:border-[#267BB5] hover:shadow-md">
                     <div class="flex items-start justify-between gap-4">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl text-[#123B60] transition group-hover:scale-105 group-hover:bg-[#123B60] group-hover:text-white">
-                            📚
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#123B60] transition group-hover:scale-105 group-hover:bg-[#123B60] group-hover:text-white">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="12" x="3" y="4" rx="2.5"/>
+                                <path d="M3 13h18"/>
+                                <path d="M8 21h8"/>
+                                <path d="M12 17v4"/>
+                                <circle cx="8" cy="8.5" r="1" fill="currentColor"/>
+                                <path d="M11 8.5h5"/>
+                            </svg>
                         </div>
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-[#123B60] group-hover:bg-blue-100 transition">
                             Ke Halaman E-Class <span>→</span>
@@ -847,8 +1076,14 @@
                 <a href="{{ route('guru.exams.index') }}"
                    class="academy-hub-card group relative border-slate-200 hover:border-[#4338A8] hover:shadow-md">
                     <div class="flex items-start justify-between gap-4">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-2xl text-[#4338A8] transition group-hover:scale-105 group-hover:bg-[#4338A8] group-hover:text-white">
-                            📋
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-[#4338A8] transition group-hover:scale-105 group-hover:bg-[#4338A8] group-hover:text-white">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 11 3 3L22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                <path d="M7 10h4"/>
+                                <path d="M7 14h6"/>
+                                <path d="M7 18h8"/>
+                            </svg>
                         </div>
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-bold text-[#4338A8] group-hover:bg-indigo-100 transition">
                             Ke Halaman E-Exam <span>→</span>
@@ -875,6 +1110,124 @@
                         </div>
                     </div>
                 </a>
+
+                {{-- CARD ROSTER: Seluruh kartu langsung navigasi ke Roster --}}
+                <a href="{{ route('guru.roster') }}"
+                   class="academy-hub-card group relative border-slate-200 hover:border-[#267BB5] hover:shadow-md">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-50 text-[#123B60] transition group-hover:scale-105 group-hover:bg-[#123B60] group-hover:text-white">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="4" rx="2.5"/>
+                                <path d="M16 2v4"/>
+                                <path d="M8 2v4"/>
+                                <path d="M3 10h18"/>
+                                <circle cx="12" cy="15" r="2.5"/>
+                                <path d="M12 14v1l1 .5"/>
+                            </svg>
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-[11px] font-bold text-[#123B60] group-hover:bg-sky-100 transition">
+                            Ke Roster Resmi <span>→</span>
+                        </span>
+                    </div>
+
+                    <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60] group-hover:text-[#267BB5] transition">
+                        Roster &amp; Jadwal Mengajar
+                    </h3>
+
+                    <p class="mt-2 text-xs leading-6 text-slate-500">
+                        Jadwal pelajaran resmi TP 2026-2027 seluruh kelas (X IPAS A s/d XII B), filter per hari, dan jadwal mengajar pribadi.
+                    </p>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4 text-xs">
+                        <div>
+                            <span class="font-extrabold text-[#123B60]">6</span>
+                            <span class="text-slate-500">Hari Pembelajaran</span>
+                        </div>
+                        <span class="text-slate-300">·</span>
+                        <div>
+                            <span class="font-extrabold text-[#123B60]">6</span>
+                            <span class="text-slate-500">Kelas Terdaftar</span>
+                        </div>
+                        <span class="text-slate-300">·</span>
+                        <div>
+                            <span class="font-extrabold text-emerald-600">{{ $schedule->count() }}</span>
+                            <span class="text-slate-500">Sesi Mengajar Anda</span>
+                        </div>
+                    </div>
+                </a>
+            </section>
+
+            {{-- ==========================================
+                 JADWAL TATAP MUKA ANDA (DARI ROSTER RESMI)
+            =========================================== --}}
+            <section class="academy-section">
+                <div class="academy-section-heading">
+                    <div>
+                        <p class="academy-section-label">Jadwal Mengajar Terjadwal</p>
+                        <h2 class="academy-section-title">
+                            Jadwal Tatap Muka Anda
+                        </h2>
+                        <p class="academy-section-description">
+                            Jadwal pembelajaran resmi berdasarkan Roster Pelajaran Kurikulum TP 2026-2027.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('guru.roster') }}"
+                       class="academy-button bg-white text-[#123B60] border-slate-200 hover:border-[#267BB5] text-xs py-2 px-4 shadow-sm">
+                        <span>Lihat Roster Lengkap Sekolah</span>
+                        <span class="font-bold">↗</span>
+                    </a>
+                </div>
+
+                @if ($schedule->isEmpty())
+                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-400">
+                        <p class="font-bold text-slate-600">Belum ada jadwal tatap muka yang dijadwalkan.</p>
+                        <a href="{{ route('guru.roster') }}" class="mt-2 inline-block text-xs font-bold text-[#267BB5] underline">
+                            Buka Roster Sekolah untuk melihat pembagian jam pelajaran
+                        </a>
+                    </div>
+                @else
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        @php
+                            $groupedSchedules = $schedule->groupBy('day');
+                            $dayOrder = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+                        @endphp
+                        @foreach ($dayOrder as $d)
+                            @if ($groupedSchedules->has($d))
+                                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs hover:border-[#267BB5] transition">
+                                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                        <span class="font-black text-xs uppercase tracking-wider text-[#123B60] flex items-center gap-1.5">
+                                            <svg class="h-3.5 w-3.5 text-[#123B60]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 2v4M8 2v4M3 10h18"/>
+                                            </svg>
+                                            <span>{{ ucfirst($d) }}</span>
+                                        </span>
+                                        <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-[#123B60]">
+                                            {{ $groupedSchedules[$d]->count() }} Sesi
+                                        </span>
+                                    </div>
+
+                                    <div class="mt-3 space-y-2.5">
+                                        @foreach ($groupedSchedules[$d] as $item)
+                                            <div class="rounded-xl bg-slate-50 p-2.5 text-xs border border-slate-100">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-black text-slate-800">{{ $item->class_name }}</span>
+                                                    <span class="rounded bg-[#123B60] px-1.5 py-0.5 text-[9px] font-bold text-white">
+                                                        {{ $item->subject_name }}
+                                                    </span>
+                                                </div>
+                                                <p class="mt-1 font-semibold text-slate-500 text-[11px]">
+                                                    ⏰ {{ substr($item->start_time, 0, 5) }} - {{ substr($item->end_time, 0, 5) }} WIB
+                                                </p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             </section>
 
             {{-- ==========================================
@@ -896,7 +1249,11 @@
                 <div class="academy-stats">
                     <a href="{{ route('guru.classes.index') }}" class="academy-stat cursor-pointer hover:border-[#267BB5] hover:ring-2 hover:ring-blue-100 transition">
                         <div class="academy-stat-top">
-                            <div class="academy-stat-icon">▤</div>
+                            <div class="academy-stat-icon">
+                                <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                                </svg>
+                            </div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
                                 E-CLASS
                             </span>
@@ -907,7 +1264,11 @@
 
                     <a href="{{ route('guru.classes.index') }}" class="academy-stat cursor-pointer hover:border-[#267BB5] hover:ring-2 hover:ring-blue-100 transition">
                         <div class="academy-stat-top">
-                            <div class="academy-stat-icon">♙</div>
+                            <div class="academy-stat-icon">
+                                <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-5.25 6.557q.75.31 1.5.586"/>
+                                </svg>
+                            </div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
                                 SISWA
                             </span>
@@ -918,7 +1279,11 @@
 
                     <a href="{{ route('guru.classes.index') }}" class="academy-stat cursor-pointer hover:border-[#267BB5] hover:ring-2 hover:ring-blue-100 transition">
                         <div class="academy-stat-top">
-                            <div class="academy-stat-icon">✎</div>
+                            <div class="academy-stat-icon">
+                                <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                </svg>
+                            </div>
                             <span class="text-[10px] font-bold tracking-wider text-blue-600">
                                 TUGAS
                             </span>
@@ -929,7 +1294,11 @@
 
                     <a href="{{ route('guru.exams.index') }}" class="academy-stat cursor-pointer hover:border-[#4338A8] hover:ring-2 hover:ring-indigo-100 transition">
                         <div class="academy-stat-top">
-                            <div class="academy-stat-icon">✓</div>
+                            <div class="academy-stat-icon">
+                                <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
                             <span class="text-[10px] font-bold tracking-wider text-indigo-600">
                                 E-EXAM
                             </span>
@@ -973,6 +1342,9 @@
                                 foreach ($subjectThemes as $key => $value) {
                                     if (str_contains($subjectLower, $key)) {
                                         $theme = $value;
+                                        if (empty($theme['image']) && file_exists(public_path('images/subjects/' . $key . '.jpg'))) {
+                                            $theme['image'] = asset('images/subjects/' . $key . '.jpg');
+                                        }
                                         break;
                                     }
                                 }
@@ -983,8 +1355,16 @@
                                class="academy-class-card group"
                                title="Klik untuk membuka kelas {{ $class->class_name }} {{ $class->subject_name }}">
 
-                                <div class="academy-class-cover"
-                                     style="background: {{ $theme['background'] }}">
+                                <div class="academy-class-cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
+                                     style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}">
+
+                                    @if(!empty($theme['image']))
+                                        <img src="{{ $theme['image'] }}"
+                                             alt="{{ $class->subject_name }}"
+                                             class="academy-cover-image">
+                                        <div class="academy-cover-overlay"></div>
+                                    @endif
+
                                     <div class="academy-class-cover-info">
                                         <p class="academy-class-cover-label">
                                             {{ $theme['label'] }}
@@ -992,7 +1372,7 @@
                                         <h3 class="academy-class-cover-title">
                                             {{ $class->subject_name }}
                                         </h3>
-                                        <p class="mt-1 text-[10px] text-white/80">
+                                        <p class="mt-1 text-[10px] text-white/90">
                                             {{ $theme['description'] }}
                                         </p>
                                     </div>
@@ -1057,8 +1437,10 @@
                             </a>
                         @empty
                             <div class="col-span-full rounded-2xl border border-dashed border-blue-200 bg-white px-6 py-14 text-center">
-                                <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-3xl text-blue-600">
-                                    ▤
+                                <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-blue-600">
+                                    <svg class="h-8 w-8 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                                    </svg>
                                 </div>
                                 <h3 class="academy-serif mt-5 text-2xl font-bold text-[#123B60]">
                                     Belum Ada Kelas yang Diampu
@@ -1092,7 +1474,9 @@
                             </div>
 
                             <div class="academy-panel-icon">
-                                ✎
+                                <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                </svg>
                             </div>
                         </div>
 
@@ -1249,8 +1633,14 @@
                             </article>
                         @empty
                             <div class="col-span-full rounded-2xl border border-dashed border-indigo-200 bg-white p-12 text-center">
-                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-2xl text-indigo-600 mb-4">
-                                    📋
+                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 mb-4">
+                                    <svg class="h-7 w-7 text-[#4338A8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m9 11 3 3L22 4"/>
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                        <path d="M7 10h4"/>
+                                        <path d="M7 14h6"/>
+                                        <path d="M7 18h8"/>
+                                    </svg>
                                 </div>
                                 <h3 class="text-base font-bold text-slate-800">Belum Ada Ujian Terdaftar</h3>
                                 <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
@@ -1258,7 +1648,7 @@
                                 </p>
                                 <a href="{{ route('guru.exams.create') }}"
                                    class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#123B60] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#0B2B48] transition">
-                                    <span>＋</span>
+                                    <span class="text-sm font-bold">+</span>
                                     <span>Buat Ujian Baru</span>
                                 </a>
                             </div>
@@ -1267,23 +1657,6 @@
                 </section>
 
             </div>
-
-            {{-- ==========================================
-                 FOOTER
-            =========================================== --}}
-            <footer class="academy-footer">
-                <p class="academy-serif text-base font-bold text-[#123B60]">
-                    Methodist Learning Space
-                </p>
-
-                <p class="mt-2 text-slate-500">
-                    MENGINSPIRASI MINAT · MENGEMBANGKAN POTENSI · MEMBANGUN PRESTASI
-                </p>
-
-                <p class="mt-2 text-slate-400">
-                    © {{ date('Y') }} SMAS Methodist Banda Aceh. Seluruh hak cipta dilindungi.
-                </p>
-            </footer>
 
         </div>
     </main>

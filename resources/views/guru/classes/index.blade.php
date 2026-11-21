@@ -2,27 +2,29 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-[10px] font-extrabold uppercase tracking-[.2em] text-blue-600">
+                <p class="text-[10px] sm:text-xs font-extrabold uppercase tracking-[.2em] text-blue-600">
                     Methodist Learning Space
                 </p>
-                <h2 class="text-xl font-bold text-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 leading-tight">
                     E-Class Guru
                 </h2>
             </div>
 
-            <span class="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Ruang Kerja Guru
-            </span>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Ruang Kerja Guru
+                </span>
+            </div>
         </div>
     </x-slot>
 
     @php
         $subjectThemes = [
             'matematika' => [
-                'symbol' => '∑',
+                'symbol' => 'MAT',
                 'category' => 'MATEMATIKA',
                 'description' => 'Eksplorasi angka, pola, dan logika berpikir',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
@@ -30,100 +32,101 @@
                 'accent' => '#267BB5',
             ],
             'bahasa indonesia' => [
-                'symbol' => 'Aa',
+                'symbol' => 'IDN',
                 'category' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
-                'background' => 'linear-gradient(135deg,#8F344A,#D97786)',
-                'light' => '#FBECEF',
-                'accent' => '#A63D55',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'bahasa inggris' => [
-                'symbol' => 'Ab',
+                'symbol' => 'ENG',
                 'category' => 'BAHASA INGGRIS',
                 'description' => 'Berkomunikasi dan terhubung secara global',
-                'background' => 'linear-gradient(135deg,#373B8D,#777CE0)',
-                'light' => '#EEEEFF',
-                'accent' => '#5559B7',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'biologi' => [
-                'symbol' => '✿',
+                'symbol' => 'BIO',
                 'category' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
-                'background' => 'linear-gradient(135deg,#176B50,#4DBB8B)',
-                'light' => '#E7F5EE',
-                'accent' => '#26835F',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'fisika' => [
-                'symbol' => '⚛',
+                'symbol' => 'FIS',
                 'category' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
-                'background' => 'linear-gradient(135deg,#513B8B,#9A82DC)',
-                'light' => '#F0ECFA',
-                'accent' => '#7255B2',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'kimia' => [
-                'symbol' => '⚗',
+                'symbol' => 'KIM',
                 'category' => 'KIMIA',
                 'description' => 'Mempelajari materi, zat, dan reaksi kimia',
-                'background' => 'linear-gradient(135deg,#98551A,#E5A64D)',
-                'light' => '#FBF1E2',
-                'accent' => '#B77927',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/kimia.jpg'),
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'sejarah' => [
-                'symbol' => '◷',
+                'symbol' => 'SEJ',
                 'category' => 'SEJARAH',
                 'description' => 'Mengambil hikmah dan perjalanan masa lalu',
-                'background' => 'linear-gradient(135deg,#854522,#D88D5A)',
-                'light' => '#F8EDE5',
-                'accent' => '#A65C30',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'informatika' => [
-                'symbol' => '</>',
+                'symbol' => 'TIK',
                 'category' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
-                'background' => 'linear-gradient(135deg,#08677F,#36B7D2)',
-                'light' => '#E5F5F8',
-                'accent' => '#16839C',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'agama' => [
-                'symbol' => '✧',
+                'symbol' => 'AGM',
                 'category' => 'PENDIDIKAN AGAMA',
                 'description' => 'Membina karakter, iman, dan pekerti mulia',
-                'background' => 'linear-gradient(135deg,#72502D,#C49B65)',
-                'light' => '#F6EFE4',
-                'accent' => '#987342',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'ekonomi' => [
-                'symbol' => '↗',
+                'symbol' => 'EKO',
                 'category' => 'EKONOMI',
                 'description' => 'Memahami pasar, bisnis, dan keuangan',
-                'background' => 'linear-gradient(135deg,#126C78,#4BB7BD)',
-                'light' => '#E5F4F3',
-                'accent' => '#23858B',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'geografi' => [
-                'symbol' => '🌍',
+                'symbol' => 'GEO',
                 'category' => 'GEOGRAFI',
                 'description' => 'Mempelajari bumi, ruang, dan interaksi lingkungan',
-                'background' => 'linear-gradient(135deg,#1b6e53,#56ab7c)',
-                'light' => '#E5F5EE',
-                'accent' => '#1b6e53',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
             'sosiologi' => [
-                'symbol' => '👥',
+                'symbol' => 'SOS',
                 'category' => 'SOSIOLOGI',
                 'description' => 'Memahami struktur sosial dan dinamika masyarakat',
-                'background' => 'linear-gradient(135deg,#843b62,#d46a92)',
-                'light' => '#F8EBF2',
-                'accent' => '#843b62',
+                'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'light' => '#E8F1F8',
+                'accent' => '#267BB5',
             ],
         ];
 
         $defaultTheme = [
-            'symbol' => '▤',
+            'symbol' => 'MLS',
             'category' => 'KELAS AKADEMIK',
             'description' => 'Ruang belajar dan berkembang bersama',
-            'background' => 'linear-gradient(135deg,#123B60,#4299D5)',
+            'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
             'light' => '#E8F1F8',
             'accent' => '#267BB5',
         ];
@@ -251,33 +254,42 @@
             overflow: hidden;
             padding: 30px;
             border-radius: 25px;
-            background: linear-gradient(140deg,#123B60,#267BB5);
-            box-shadow: 0 20px 40px rgba(18,59,96,.18);
+            background: #10243E;
+            box-shadow: 0 20px 40px rgba(18,59,96,.20);
             color: white;
         }
 
-        .eclass-hero-art::after {
-            content: "M";
+        .eclass-hero-art-img {
             position: absolute;
-            right: 12px;
-            bottom: -75px;
-            color: rgba(255,255,255,.10);
-            font-family: 'Playfair Display',serif;
-            font-size: 270px;
-            font-weight: 700;
-            line-height: 1;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .eclass-hero-art > * {
+        .eclass-hero-art:hover .eclass-hero-art-img {
+            transform: scale(1.06);
+        }
+
+        .eclass-hero-art-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 26, 47, 0.88) 0%, rgba(18, 59, 96, 0.75) 60%, rgba(20, 45, 75, 0.60) 100%);
+        }
+
+        .eclass-hero-art-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .eclass-hero-art .art-symbol {
             font-family: 'Playfair Display',serif;
-            font-size: 78px;
+            font-size: clamp(36px, 4.2vw, 52px);
             font-weight: 700;
-            line-height: 1;
+            line-height: 1.1;
+            letter-spacing: -1px;
         }
 
         /* SUMMARY */
@@ -414,9 +426,10 @@
             overflow: hidden;
             padding: 24px;
             color: white;
+            background-color: #123B60;
         }
 
-        .eclass-card-cover::before {
+        .eclass-card-cover:not(.has-image)::before {
             content: "";
             position: absolute;
             width: 190px;
@@ -430,7 +443,7 @@
                 0 0 0 55px rgba(255,255,255,.035);
         }
 
-        .eclass-card-cover::after {
+        .eclass-card-cover:not(.has-image)::after {
             content: "";
             position: absolute;
             width: 110px;
@@ -439,6 +452,27 @@
             left: 30%;
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 50%;
+        }
+
+        .eclass-cover-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .eclass-card:hover .eclass-cover-image {
+            transform: scale(1.08);
+        }
+
+        .eclass-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(8, 22, 40, 0.88) 0%, rgba(18, 59, 96, 0.72) 55%, rgba(18, 59, 96, 0.38) 100%);
+            pointer-events: none;
         }
 
         .eclass-cover-content {
@@ -472,17 +506,17 @@
             position: relative;
             z-index: 1;
             display: grid;
-            width: 69px;
-            height: 69px;
+            width: 60px;
+            height: 60px;
             flex-shrink: 0;
             place-items: center;
             border: 1px solid rgba(255,255,255,.36);
-            border-radius: 21px;
+            border-radius: 18px;
             background: rgba(255,255,255,.17);
             color: white;
-            font-family: 'Playfair Display',serif;
-            font-size: 29px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .08em;
             backdrop-filter: blur(8px);
         }
 
@@ -727,7 +761,10 @@
 
                 <div>
                     <span class="eclass-eyebrow">
-                        ✦ METHODIST LEARNING SPACE
+                        <svg class="h-3 w-3 text-[#185B87]" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>METHODIST LEARNING SPACE</span>
                     </span>
 
                     <h1>
@@ -757,21 +794,28 @@
 
                 <div class="eclass-hero-visual">
 
-                    <div class="eclass-hero-art">
+                    <div class="eclass-hero-art group">
 
-                        <p class="text-[10px] font-bold tracking-[.2em] text-sky-100">
-                            METHODIST LEARNING SPACE
-                        </p>
+                        <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                             alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                             class="eclass-hero-art-img">
+                        <div class="eclass-hero-art-overlay"></div>
 
-                        <div class="art-symbol">M.</div>
+                        <div class="eclass-hero-art-content">
+                            <p class="text-[10px] font-bold tracking-[.2em] text-sky-200 uppercase drop-shadow-sm">
+                                METHODIST LEARNING SPACE
+                            </p>
 
-                        <h2 class="eclass-serif mt-3 text-2xl font-bold">
-                            Belajar. Tumbuh. Berprestasi.
-                        </h2>
+                            <div class="art-symbol drop-shadow-md">E-Class.</div>
 
-                        <p class="mt-2 text-xs text-sky-100">
-                            Mewujudkan prestasi melalui pendidikan bermutu.
-                        </p>
+                            <h2 class="eclass-serif mt-3 text-2xl font-bold drop-shadow-md">
+                                Belajar. Tumbuh. Berprestasi.
+                            </h2>
+
+                            <p class="mt-2 text-xs text-slate-100 font-medium drop-shadow">
+                                Mewujudkan prestasi melalui pendidikan bermutu.
+                            </p>
+                        </div>
 
                     </div>
 
@@ -784,7 +828,11 @@
             <section class="eclass-summary">
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">▤</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalClasses }}</p>
                         <p class="summary-label">Total Kelas</p>
@@ -792,7 +840,11 @@
                 </article>
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">♙</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-5.25 6.557q.75.31 1.5.586"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalStudents }}</p>
                         <p class="summary-label">Siswa Terdaftar</p>
@@ -800,7 +852,11 @@
                 </article>
 
                 <article class="eclass-summary-card">
-                    <div class="summary-icon">▧</div>
+                    <div class="summary-icon">
+                        <svg class="h-6 w-6 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                        </svg>
+                    </div>
                     <div>
                         <p class="summary-number">{{ $totalMaterials }}</p>
                         <p class="summary-label">Materi Pembelajaran</p>
@@ -840,7 +896,9 @@
                     <div class="eclass-empty">
 
                         <div class="eclass-empty-icon">
-                            ▤
+                            <svg class="h-8 w-8 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                            </svg>
                         </div>
 
                         <h3>
@@ -872,6 +930,9 @@
                                 foreach ($subjectThemes as $key => $value) {
                                     if (str_contains($subjectLower, $key)) {
                                         $theme = $value;
+                                        if (empty($theme['image']) && file_exists(public_path('images/subjects/' . $key . '.jpg'))) {
+                                            $theme['image'] = asset('images/subjects/' . $key . '.jpg');
+                                        }
                                         break;
                                     }
                                 }
@@ -883,8 +944,15 @@
 
                                 {{-- SUBJECT COVER --}}
 
-                                <div class="eclass-card-cover"
-                                     style="background: {{ $theme['background'] }}">
+                                <div class="eclass-card-cover {{ !empty($theme['image']) ? 'has-image' : '' }}"
+                                     style="{{ empty($theme['image']) ? 'background: ' . $theme['background'] : '' }}">
+
+                                    @if(!empty($theme['image']))
+                                        <img src="{{ $theme['image'] }}"
+                                             alt="{{ $subjectName }}"
+                                             class="eclass-cover-image">
+                                        <div class="eclass-cover-overlay"></div>
+                                    @endif
 
                                     <div class="eclass-cover-content">
 
@@ -978,24 +1046,6 @@
                 @endif
 
             </section>
-
-            {{-- FOOTER --}}
-
-            <footer class="eclass-footer">
-
-                <p class="eclass-serif text-base font-bold text-[#123B60]">
-                    Methodist Learning Space
-                </p>
-
-                <p class="mt-2 text-slate-500">
-                    MENGINSPIRASI MINAT · MENGEMBANGKAN POTENSI · MEMBANGUN PRESTASI
-                </p>
-
-                <p class="mt-2 text-slate-400">
-                    © {{ date('Y') }} SMAS Methodist Banda Aceh. Seluruh hak cipta dilindungi.
-                </p>
-
-            </footer>
 
         </div>
     </main>

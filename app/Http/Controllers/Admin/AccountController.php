@@ -54,7 +54,7 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'  => 'required|string|max:18|unique:mysql_admin.users,user_id',
+            'user_id'  => 'required|string|max:30|unique:mysql_admin.users,user_id',
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|max:255|unique:mysql_admin.users,email',
             'role'     => 'required|in:admin,guru,siswa,orangtua',
@@ -124,7 +124,7 @@ class AccountController extends Controller
         $user = User::on('mysql_admin')->where('user_id', $id)->firstOrFail();
 
         $request->validate([
-            'user_id'  => ['required', 'string', 'max:18', Rule::unique('mysql_admin.users', 'user_id')->ignore($user->user_id, 'user_id')],
+            'user_id'  => ['required', 'string', 'max:30', Rule::unique('mysql_admin.users', 'user_id')->ignore($user->user_id, 'user_id')],
             'name'     => 'required|string|max:100',
             'email'    => ['required', 'email', 'max:255', Rule::unique('mysql_admin.users', 'email')->ignore($user->user_id, 'user_id')],
             'role'     => 'required|in:admin,guru,siswa,orangtua',

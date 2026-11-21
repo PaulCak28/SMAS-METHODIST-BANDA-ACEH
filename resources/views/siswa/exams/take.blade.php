@@ -43,7 +43,11 @@
 {{-- ===== Modal mulai (fullscreen) ===== --}}
 <div class="modal-overlay is-open" id="start-modal">
     <div class="modal">
-        <div class="modal__icon">📝</div>
+        <div class="modal__icon">
+            <svg style="width: 2.5rem; height: 2.5rem; margin: 0 auto; color: var(--primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+        </div>
         <h2>Siap mengerjakan?</h2>
         <p>Ujian berjalan dalam layar penuh. Berpindah tab/jendela, keluar dari layar penuh, atau menyalin teks
             akan dicatat sebagai pelanggaran. Maksimal {{ $maxViolations }} pelanggaran, setelah itu ujian
@@ -57,7 +61,11 @@
 {{-- ===== Modal pelanggaran ===== --}}
 <div class="modal-overlay" id="warn-modal">
     <div class="modal is-danger">
-        <div class="modal__icon">⚠️</div>
+        <div class="modal__icon">
+            <svg style="width: 2.5rem; height: 2.5rem; margin: 0 auto; color: #dc2626;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
         <h2>Pelanggaran Terdeteksi</h2>
         <p id="warn-text"></p>
         <div class="modal__actions">
@@ -69,7 +77,11 @@
 {{-- ===== Modal konfirmasi selesai ===== --}}
 <div class="modal-overlay" id="finish-modal">
     <div class="modal">
-        <div class="modal__icon">✅</div>
+        <div class="modal__icon">
+            <svg style="width: 2.5rem; height: 2.5rem; margin: 0 auto; color: #059669;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
         <h2>Akhiri ujian?</h2>
         <p id="finish-text"></p>
         <div class="modal__actions">
@@ -185,7 +197,7 @@
             });
             if (res.status === 403) { return autoFinish(); }
             if (!res.ok) throw new Error();
-            setStatus('Tersimpan ✓', true);
+            setStatus('Tersimpan', true);
         } catch (e) {
             setStatus('Gagal menyimpan, periksa koneksi.');
         }

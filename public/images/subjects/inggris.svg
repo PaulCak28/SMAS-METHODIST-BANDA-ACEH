@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#081730"/>
+            <stop offset="50%" stop-color="#133566"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#93C5FD" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#60A5FA" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#93C5FD" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Globe Meridians & Letters & Communication -->
+            <g opacity="0.22" transform="translate(1050, 540)">
+                <circle cx="0" cy="0" r="280" stroke="#60A5FA" stroke-width="2.5" fill="none"/>
+                <ellipse cx="0" cy="0" rx="140" ry="280" stroke="#93C5FD" stroke-width="2" fill="none"/>
+                <line x1="-280" y1="0" x2="280" y2="0" stroke="#60A5FA" stroke-width="2"/>
+                <line x1="-240" y1="-140" x2="240" y2="-140" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="8 6"/>
+                <line x1="-240" y1="140" x2="240" y2="140" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="8 6"/>
+            </g>
+            <!-- Elegant Alphabet Monograms (A, B, C) in outline -->
+            <text x="1420" y="420" font-family="'Playfair Display', serif" font-size="160" font-weight="700" fill="none" stroke="#93C5FD" stroke-width="3" opacity="0.18">A</text>
+            <text x="1560" y="580" font-family="'Playfair Display', serif" font-size="200" font-weight="700" fill="none" stroke="#60A5FA" stroke-width="3" opacity="0.14">B</text>
+            <text x="1460" y="740" font-family="'Playfair Display', serif" font-size="140" font-weight="700" fill="none" stroke="#93C5FD" stroke-width="3" opacity="0.18">C</text>
+            <!-- Orbit rings -->
+            <circle cx="960" cy="540" r="460" stroke="#60A5FA" stroke-width="1" stroke-dasharray="10 10" fill="none" opacity="0.15"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

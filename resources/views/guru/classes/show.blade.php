@@ -50,19 +50,21 @@
     @endphp
 
     <x-slot name="header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">
                     E-Class Guru · SMAS Methodist Banda Aceh
                 </p>
-                <h2 class="text-xl font-extrabold text-slate-800">
+                <h2 class="text-xl font-extrabold text-slate-800 leading-tight">
                     {{ $fullClassTitle }}
                 </h2>
             </div>
 
-            <div class="mt-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800 sm:mt-0">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Kelas Aktif · {{ $class->academic_year }} ({{ ucfirst($class->semester) }})
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Kelas Aktif · {{ $class->academic_year }} ({{ ucfirst($class->semester) }})
+                </span>
             </div>
         </div>
     </x-slot>
@@ -280,7 +282,22 @@
             {{-- ==========================================
                  HERO SECTION: NAMA KELAS SANGAT JELAS (CONTOH: X-IPA 1 - GEOGRAFI)
             =========================================== --}}
-            <section class="lms-hero relative overflow-hidden rounded-[25px] bg-gradient-to-br from-[#123d80] via-[#1756a8] to-[#2879df] p-7 text-white shadow-xl sm:p-9">
+            <section class="lms-hero relative overflow-hidden rounded-[25px] bg-[#10243E] p-7 text-white shadow-xl sm:p-9">
+                @php
+                    $subjectLower = strtolower($subjectName);
+                    $subjectCoverImage = null;
+                    if (str_contains($subjectLower, 'kimia') && file_exists(public_path('images/subjects/kimia.jpg'))) {
+                        $subjectCoverImage = asset('images/subjects/kimia.jpg');
+                    }
+                @endphp
+
+                @if($subjectCoverImage)
+                    <img src="{{ $subjectCoverImage }}" alt="{{ $subjectName }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/95 via-[#102a4e]/85 to-[#164273]/65"></div>
+                @else
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#123d80] via-[#1756a8] to-[#2879df]"></div>
+                @endif
+
                 <div class="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full border-[35px] border-white/5"></div>
                 <div class="pointer-events-none absolute -bottom-36 right-52 h-72 w-72 rounded-full bg-blue-400/10 blur-2xl"></div>
 
@@ -351,19 +368,25 @@
                     <div class="mt-5 flex flex-wrap gap-2.5 pt-2">
                         <a href="{{ route('guru.classes.materials.create', $cst) }}"
                            class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
-                            <span>📚</span>
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
                             <span>＋ Tambah Materi</span>
                         </a>
 
                         <a href="{{ route('guru.classes.assignments.create', $cst) }}"
                            class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
-                            <span>📝</span>
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                            </svg>
                             <span>＋ Buat Tugas</span>
                         </a>
 
                         <a href="{{ route('guru.exams.create') }}"
                            class="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/15 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-white/25">
-                            <span>📋</span>
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 11 3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11M7 10h4M7 14h6M7 18h8"/>
+                            </svg>
                             <span>＋ Buat Ujian</span>
                         </a>
                     </div>
@@ -376,8 +399,10 @@
             <section class="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 <div class="lms-card lms-stat p-5">
                     <div class="flex items-center justify-between">
-                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl">
-                            📚
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
                         </div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-blue-500">
                             Materi
@@ -391,8 +416,10 @@
 
                 <div class="lms-card lms-stat p-5">
                     <div class="flex items-center justify-between">
-                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-xl">
-                            📝
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                            </svg>
                         </div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-500">
                             Tugas
@@ -406,8 +433,10 @@
 
                 <div class="lms-card lms-stat p-5">
                     <div class="flex items-center justify-between">
-                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-xl">
-                            📋
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-700">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 11 3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11M7 10h4M7 14h6M7 18h8"/>
+                            </svg>
                         </div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-violet-500">
                             Ujian
@@ -421,8 +450,11 @@
 
                 <div class="lms-card lms-stat p-5">
                     <div class="flex items-center justify-between">
-                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl">
-                            👨‍🎓
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                            </svg>
                         </div>
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
                             Siswa
@@ -442,7 +474,9 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-blue-50/70 to-white px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">◷</span>
+                            <svg class="h-5 w-5 text-[#267BB5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <h2 class="lms-section-title">Jadwal Mengajar</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-500">
@@ -481,7 +515,11 @@
                                 <tr class="hover:bg-blue-50/30 transition">
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 font-bold text-blue-800">
-                                            📅 {{ ucfirst($slot->day) }}
+                                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 2v4M8 2v4M3 10h18"/>
+                                            </svg>
+                                            <span>{{ ucfirst($slot->day) }}</span>
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 font-extrabold text-slate-800">
@@ -508,7 +546,11 @@
                             @empty
                                 <tr>
                                     <td colspan="7" class="px-6 py-10 text-center text-slate-400">
-                                        <div class="text-3xl mb-2">◷</div>
+                                        <div class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
                                         <p class="font-bold text-slate-600">Belum ada jadwal mengajar untuk kelas ini.</p>
                                         <p class="text-xs text-slate-400 mt-1">Jadwal tatap muka yang ditetapkan oleh bagian kurikulum akan ditampilkan di tabel ini.</p>
                                     </td>
@@ -522,7 +564,11 @@
             {{-- NOTIFIKASI ERROR / SUKSES --}}
             @if (session('success'))
                 <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 flex items-center gap-3">
-                    <span class="text-xl">✅</span>
+                    <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
                     <span class="font-semibold">{{ session('success') }}</span>
                 </div>
             @endif
@@ -530,7 +576,11 @@
             @if ($errors->any())
                 <div class="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
                     <div class="flex items-start gap-3">
-                        <span class="text-xl">⚠️</span>
+                        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
                         <div>
                             <p class="font-bold">Periksa kembali isian formulir Anda:</p>
                             <ul class="mt-2 list-inside list-disc space-y-1">
@@ -550,7 +600,9 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">📚</span>
+                            <svg class="h-5 w-5 text-[#267BB5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
                             <h2 class="lms-section-title">Materi Pembelajaran</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
@@ -574,8 +626,10 @@
                 @forelse ($class->materials->sortByDesc('uploaded_at') as $material)
                     <div class="lms-item flex flex-col gap-4 border-b border-slate-100 px-6 py-5 last:border-0 sm:flex-row sm:items-start sm:justify-between">
                         <div class="flex min-w-0 gap-4">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-700">
-                                📄
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#123B60]">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
                             </div>
 
                             <div class="min-w-0">
@@ -629,7 +683,11 @@
                     </div>
                 @empty
                     <div class="px-6 py-12 text-center">
-                        <div class="text-4xl">📚</div>
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 mb-3">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
+                        </div>
                         <h3 class="mt-4 text-sm font-bold text-slate-700">
                             Belum Ada Materi Pembelajaran
                         </h3>
@@ -652,7 +710,11 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">📝</span>
+                            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </div>
                             <h2 class="lms-section-title">Daftar Tugas</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
@@ -680,8 +742,10 @@
 
                     <div class="lms-item flex flex-col gap-4 border-b border-slate-100 px-6 py-5 last:border-0 xl:flex-row xl:items-center xl:justify-between">
                         <div class="flex min-w-0 gap-4">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xl text-indigo-700">
-                                📋
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                </svg>
                             </div>
 
                             <div class="min-w-0">
@@ -696,8 +760,12 @@
                                 @endif
 
                                 <div class="mt-3 flex flex-wrap gap-2">
-                                    <span class="rounded-lg bg-slate-100 px-3 py-1.5 text-[10px] font-semibold text-slate-600">
-                                        🕒 Batas: {{ $assignment->due_date?->format('d M Y, H:i') }} WIB
+                                    <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-[10px] font-semibold text-slate-600">
+                                        <svg class="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="9"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3"/>
+                                        </svg>
+                                        <span>Batas: {{ $assignment->due_date?->format('d M Y, H:i') }} WIB</span>
                                     </span>
 
                                     <span class="rounded-lg bg-blue-50 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
@@ -743,7 +811,11 @@
                     </div>
                 @empty
                     <div class="px-6 py-12 text-center">
-                        <div class="text-4xl">📝</div>
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500">
+                            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
                         <h3 class="mt-4 text-sm font-bold text-slate-700">
                             Belum Ada Tugas
                         </h3>
@@ -766,7 +838,12 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-emerald-50/70 to-white px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">👨‍🎓</span>
+                            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                </svg>
+                            </div>
                             <h2 class="lms-section-title">Direktori Siswa (Daftar Siswa Kelas)</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-500">
@@ -789,7 +866,9 @@
                                placeholder="Cari siswa berdasarkan nama atau NIS..."
                                class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-xs text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
                         <span class="pointer-events-none absolute left-3 top-2.5 text-slate-400">
-                            🔍
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
                         </span>
                     </div>
                 </div>
@@ -862,7 +941,9 @@
                                             <button type="submit"
                                                     class="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[11px] font-bold text-rose-600 hover:bg-rose-100 transition"
                                                     title="Keluarkan siswa dari kelas">
-                                                <span>✕</span>
+                                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
                                                 <span>Keluarkan</span>
                                             </button>
                                         </form>
@@ -871,7 +952,12 @@
                             @empty
                                 <tr>
                                     <td colspan="7" class="px-6 py-10 text-center text-slate-400">
-                                        <div class="text-3xl mb-2">👨‍🎓</div>
+                                        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                            </svg>
+                                        </div>
                                         <p class="font-bold text-slate-600">Belum ada siswa yang bergabung di kelas ini.</p>
                                         <p class="text-xs text-slate-400 mt-1">Bagikan kode kelas <strong>{{ $class->join_code }}</strong> kepada siswa agar mereka dapat mendaftar ke kelas ini.</p>
                                     </td>
@@ -889,7 +975,11 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-amber-50/70 to-white px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">★</span>
+                            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </div>
                             <h2 class="lms-section-title">Rekap Nilai Siswa</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-500">
@@ -963,7 +1053,11 @@
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-6 py-10 text-center text-slate-400">
-                                        <div class="text-3xl mb-2">★</div>
+                                        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+                                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        </div>
                                         <p class="font-bold text-slate-600">Belum ada nilai yang tercatat untuk kelas ini.</p>
                                         <p class="text-xs text-slate-400 mt-1">Nilai akan otomatis muncul di tabel ini setelah Anda menilai tugas atau menyelesaikan sesi ujian siswa.</p>
                                     </td>
@@ -981,7 +1075,9 @@
                 <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">📋</span>
+                            <svg class="h-5 w-5 text-[#4338A8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 11 3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11M7 10h4M7 14h6M7 18h8"/>
+                            </svg>
                             <h2 class="lms-section-title">Ujian & Kuis</h2>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
@@ -1055,7 +1151,11 @@
                     </div>
                 @empty
                     <div class="px-6 py-12 text-center">
-                        <div class="text-4xl">📋</div>
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-[#4338A8] mb-3">
+                            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 11 3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11M7 10h4M7 14h6M7 18h8"/>
+                            </svg>
+                        </div>
                         <h3 class="mt-4 text-sm font-bold text-slate-700">
                             Belum Ada Ujian untuk Kelas Ini
                         </h3>

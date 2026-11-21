@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#240A29"/>
+            <stop offset="50%" stop-color="#591666"/>
+            <stop offset="100%" stop-color="#071221"/>
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="70%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#D946EF" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#F0ABFC" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#030810" stop-opacity="0.75"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Academic Canvas Background -->
+    <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+    <rect width="1920" height="1080" fill="url(#ambientGlow)"/>
+
+    <!-- Subtle Technical Background Grid -->
+    <g opacity="0.06">
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+        </pattern>
+        <rect width="1920" height="1080" fill="url(#grid)"/>
+    </g>
+
+    <!-- Ambient Rings -->
+    <circle cx="1500" cy="540" r="420" stroke="#D946EF" stroke-width="1.5" fill="none" opacity="0.12"/>
+    <circle cx="1500" cy="540" r="600" stroke="#F0ABFC" stroke-width="1" stroke-dasharray="12 12" fill="none" opacity="0.08"/>
+
+    <!-- Subject Specific Illustration -->
+    
+            <!-- Palette / Brush & Musical Clef Wave & Creative Arcs -->
+            <g opacity="0.25" transform="translate(1080, 520)">
+                <!-- Palette Outline -->
+                <path d="M-180 -40 C -180 -160, 160 -180, 180 -40 C 190 40, 160 140, 60 140 C 20 140, 0 100, -40 100 C -90 100, -110 140, -150 120 C -180 100, -180 40, -180 -40 Z" fill="rgba(217,70,239,0.08)" stroke="#F0ABFC" stroke-width="3"/>
+                <circle cx="-90" cy="-60" r="14" fill="#F0ABFC"/>
+                <circle cx="-30" cy="-100" r="14" fill="#D946EF"/>
+                <circle cx="50" cy="-90" r="14" fill="#F0ABFC"/>
+                <circle cx="110" cy="-40" r="14" fill="#D946EF"/>
+                <circle cx="80" cy="40" r="22" stroke="#F0ABFC" stroke-width="2.5" fill="none"/>
+            </g>
+            <!-- Musical Wave -->
+            <path d="M100 400 Q 500 240 960 450 T 1820 380" fill="none" stroke="#E879F9" stroke-width="2.5" opacity="0.2"/>
+            <path d="M100 440 Q 500 280 960 490 T 1820 420" fill="none" stroke="#D946EF" stroke-width="2" opacity="0.18"/>
+            <circle cx="960" cy="540" r="480" stroke="#F0ABFC" stroke-width="1" stroke-dasharray="10 10" fill="none" opacity="0.14"/>
+        
+
+    <!-- High-End Dark Vignette Overlay -->
+    <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

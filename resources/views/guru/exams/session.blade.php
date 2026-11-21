@@ -1,18 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-1.5 py-0.5">
             <div>
-                <p class="text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
+                <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[.2em] text-[#267BB5]">Methodist Learning Space</p>
                 <h2 class="font-bold text-xl text-slate-800 leading-tight">
                     Lembar Jawaban: {{ $session->student->user->name ?? 'Anonim' }}
                 </h2>
-                <p class="text-sm text-slate-500 mt-0.5">
-                    {{ $exam->title }} — {{ $exam->classSubjectTeacher?->subject?->name }}
-                </p>
             </div>
-            <a href="{{ route('guru.exams.results', $exam) }}" class="inline-flex items-center gap-2 rounded-full border border-[#E7EDF2] bg-white px-4 py-2 text-sm font-semibold text-[#123B60] shadow-sm transition hover:border-[#267BB5] hover:bg-[#E8F1F8]">
-                <span aria-hidden="true">&larr;</span> Kembali ke Daftar Nilai
-            </a>
+            <div>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-800 shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+                    {{ $exam->title }} — {{ $exam->classSubjectTeacher?->subject?->name }}
+                </span>
+            </div>
         </div>
     </x-slot>
 
@@ -27,6 +27,23 @@
 
     <div class="min-h-screen bg-[#FAF9F6] py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+
+            {{-- BREADCRUMB & TOMBOL KEMBALI --}}
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+                    <a href="{{ route('guru.exams.results', $exam) }}" class="transition hover:text-blue-600">
+                        Hasil Ujian
+                    </a>
+                    <span>/</span>
+                    <span class="font-bold text-blue-700">Koreksi Jawaban</span>
+                </div>
+
+                <a href="{{ route('guru.exams.results', $exam) }}"
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <span>←</span>
+                    <span>Kembali ke Daftar Nilai</span>
+                </a>
+            </div>
             
             <!-- Alert Notifikasi -->
             @if (session('success'))
@@ -206,7 +223,10 @@
                                             @if(!blank($ans->answer_file))
                                                 <div class="mt-2">
                                                     <a href="{{ Storage::url($ans->answer_file) }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#123B60] hover:text-[#123B60] bg-[#E8F1F8] px-3 py-1.5 rounded-lg">
-                                                        📎 Lihat Lampiran Jawaban Esai
+                                                        <svg class="h-3.5 w-3.5 text-[#123B60]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                                        </svg>
+                                                        <span>Lihat Lampiran Jawaban Esai</span>
                                                     </a>
                                                 </div>
                                             @endif

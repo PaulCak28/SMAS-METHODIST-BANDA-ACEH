@@ -48,7 +48,7 @@ class TeacherController extends Controller
             'name'            => 'required|string|max:100',
             'email'           => 'required|email|unique:mysql_admin.users,email',
             'phone'           => 'nullable|string|max:20',
-            'nip'             => 'required|string|max:18|unique:mysql_admin.teachers,nip|unique:mysql_admin.users,user_id',
+            'nip'             => 'required|string|max:30|unique:mysql_admin.teachers,nip|unique:mysql_admin.users,user_id',
             'specialization'  => 'nullable|string|max:100',
             'education_level' => 'nullable|string|max:30',
             'address'         => 'nullable|string|max:255',
