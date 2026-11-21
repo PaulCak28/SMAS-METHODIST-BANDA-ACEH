@@ -1,6 +1,6 @@
 
 <?php
-
+use App\Http\Controllers\CekNilaiController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ClassEnrollmentController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\CstController;
 use App\Http\Controllers\Admin\TeacherController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncement;
 use App\Http\Controllers\Guru\ClassroomController as GuruClassroom;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
@@ -39,10 +40,10 @@ Route::get('/pengumuman', [AnnouncementController::class, 'index'])
 Route::get('/pengumuman/{announcement:slug}', [AnnouncementController::class, 'show'])
     ->name('announcements.show');
 
-Route::get('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examForm'])
+Route::get('/cek-nilai-ujian', [CekNilaiController::class, 'examForm'])
     ->name('cek-nilai-ujian.index');
 
-Route::post('/cek-nilai-ujian', [\App\Http\Controllers\CekNilaiController::class, 'examResults'])
+Route::post('/cek-nilai-ujian', [CekNilaiController::class, 'examResults'])
     ->middleware('throttle:5,1')
     ->name('cek-nilai-ujian.show');
 
@@ -495,6 +496,20 @@ Route::prefix('admin/announcements')
 
         Route::delete('/{teacher}', [TeacherController::class, 'destroy'])
             ->name('destroy');
+    });
+
+    // -----------------------------
+    // ADMIN PROFILE
+    // -----------------------------
+    Route::prefix('admin/profile')->name('admin.profile.')->group(function () {
+        Route::get('/', [AdminProfileController::class, 'index'])
+            ->name('index');
+
+        Route::put('/', [AdminProfileController::class, 'update'])
+            ->name('update');
+
+        Route::put('/password', [AdminProfileController::class, 'updatePassword'])
+            ->name('password');
     });
 });
 

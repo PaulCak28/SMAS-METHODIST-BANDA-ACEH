@@ -107,14 +107,22 @@
                                            class="btn btn-sm btn-outline-primary px-2" title="Edit Mata Pelajaran">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <form action="{{ route('admin.subjects.destroy', $subject->code) }}" method="POST"
-                                              onsubmit="return confirm('Yakin ingin menghapus mata pelajaran {{ $subject->name }}?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                        @if ($count > 0)
+                                            <span title="Tidak bisa dihapus: sedang diampu di {{ $count }} kelas" class="d-inline-block">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary px-2" disabled style="pointer-events:none;">
+                                                    <i class="bi bi-lock-fill"></i>
+                                                </button>
+                                            </span>
+                                        @else
+                                            <form action="{{ route('admin.subjects.destroy', $subject->code) }}" method="POST"
+                                                  onsubmit="return confirm('Yakin ingin menghapus mata pelajaran {{ $subject->name }}?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

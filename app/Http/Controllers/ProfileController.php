@@ -14,9 +14,13 @@ class ProfileController extends Controller
     /**
      * Display the user's profile page.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.profile.index');
+        }
 
         $student = $user->student;
         $teacher = $user->teacher;

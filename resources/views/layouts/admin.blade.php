@@ -268,19 +268,12 @@
                 <i class="bi bi-clock-history"></i>
                 <span>Log Aktivitas</span>
             </a>
-        </div>
 
-        <!-- Sidebar Footer (Info Akun Saja, Tanpa Logout) -->
-        <div class="sidebar-footer">
-            <div class="d-flex align-items-center gap-2">
-                <div class="user-avatar">
-                    <i class="bi bi-person"></i>
-                </div>
-                <div>
-                    <div class="text-white fw-bold" style="font-size: 0.85rem;">{{ auth()->user()->name ?? 'Administrator' }}</div>
-                    <div style="color: #94a3b8; font-size: 0.75rem;">Administrator</div>
-                </div>
-            </div>
+            <div class="menu-category">Pengaturan</div>
+            <a href="{{ Route::has('admin.profile.index') ? route('admin.profile.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                <i class="bi bi-person-gear"></i>
+                <span>Profil Saya</span>
+            </a>
         </div>
 
     </aside>
@@ -297,20 +290,32 @@
 
             <div class="d-none d-md-block"></div>
 
-            <!-- Dropdown Profil Kanan Atas (Klik untuk memunculkan menu Logout ke bawah) -->
+            <!-- Dropdown Profil Kanan Atas (Klik untuk memunculkan menu Profil & Logout) -->
             <div class="dropdown ms-auto">
                 <button class="profile-dropdown-btn dropdown-toggle shadow-sm" type="button" id="adminProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
-                        <i class="bi bi-person-fill small"></i>
+                    <div class="bg-white border rounded-circle d-flex align-items-center justify-content-center p-0.5" style="width: 28px; height: 28px;">
+                        <img src="{{ auth()->user()?->avatar_url ?? asset('images/methodist-logo.png') }}" 
+                             alt="{{ auth()->user()->name ?? 'Admin' }}" 
+                             class="rounded-circle" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <span class="fw-semibold small text-dark">{{ auth()->user()->name ?? 'Administrator Sekolah' }}</span>
                 </button>
 
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" aria-labelledby="adminProfileDropdown" style="min-width: 210px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" aria-labelledby="adminProfileDropdown" style="min-width: 230px;">
                     <li class="px-3 py-2 border-bottom">
-                        <div class="fw-bold text-dark small">{{ auth()->user()->name ?? 'Administrator Sekolah' }}</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Role: Admin Akademik</div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <img src="{{ asset('images/methodist-logo.png') }}" alt="Logo SMAS Methodist" style="width: 20px; height: 20px; object-fit: contain;">
+                            <div class="fw-bold text-dark small">{{ auth()->user()->name ?? 'Administrator Sekolah' }}</div>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Admin Akademik &middot; SMAS Methodist</div>
                     </li>
+                    <li class="p-1">
+                        <a href="{{ route('admin.profile.index') }}" class="dropdown-item fw-medium rounded-2 d-flex align-items-center gap-2 py-2 {{ request()->routeIs('admin.profile.*') ? 'active bg-primary text-white' : 'text-dark' }}">
+                            <i class="bi bi-person-gear {{ request()->routeIs('admin.profile.*') ? 'text-white' : 'text-primary' }}"></i>
+                            <span>Profil Saya</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider my-1"></li>
                     <li class="p-1">
                         <form action="{{ Route::has('logout') ? route('logout') : '#' }}" method="POST" class="m-0">
                             @csrf
@@ -331,7 +336,7 @@
 
         <!-- FOOTER -->
         <footer class="bg-white border-top text-center py-3 mt-auto">
-            <small class="text-muted">&copy; {{ date('Y') }} MALAS - Methodist Academic Learning. All rights reserved.</small>
+            <small class="text-muted">&copy; {{ date('Y') }} Methodist Academic Learning. All rights reserved.</small>
         </footer>
 
     </div>
