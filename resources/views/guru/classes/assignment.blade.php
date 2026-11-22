@@ -62,14 +62,24 @@
             {{-- HERO KARTU TUGAS --}}
             @php
                 $subjectName = $cst->subject->name ?? $cst->subject_code ?? 'Mata Pelajaran';
-                $subjectLower = strtolower($subjectName);
+                $subjectLower = strtolower($subjectName . ' ' . ($cst->subject_code ?? ''));
                 $subjectCoverImage = null;
                 $subjectCoverMap = [
-                    'matematika' => 'matematika.jpg', 'biologi' => 'biologi.jpg', 'kimia' => 'kimia.jpg',
-                    'fisika' => 'fisika.jpg', 'indonesia' => 'indonesia.jpg', 'bahasa indonesia' => 'indonesia.jpg',
-                    'informatika' => 'informatika.jpg', 'inggris' => 'inggris.svg', 'sejarah' => 'sejarah.svg',
-                    'geografi' => 'geografi.svg', 'ekonomi' => 'ekonomi.svg', 'sosiologi' => 'sosiologi.svg',
-                    'agama' => 'agama.svg', 'pjok' => 'pjok.svg', 'seni' => 'seni-budaya.svg', 'ppkn' => 'ppkn.svg',
+                    'matematika' => 'matematika.jpg', 'mtk' => 'matematika.jpg',
+                    'biologi' => 'biologi.jpg', 'bio' => 'biologi.jpg',
+                    'kimia' => 'kimia.jpg', 'kim' => 'kimia.jpg',
+                    'fisika' => 'fisika.jpg', 'fis' => 'fisika.jpg',
+                    'indonesia' => 'indonesia.jpg', 'bin' => 'indonesia.jpg', 'bahasa indonesia' => 'indonesia.jpg',
+                    'informatika' => 'informatika.jpg', 'tik' => 'informatika.jpg', 'inf' => 'informatika.jpg',
+                    'inggris' => 'inggris.svg', 'big' => 'inggris.svg',
+                    'sejarah' => 'sejarah.svg', 'sej' => 'sejarah.svg',
+                    'geografi' => 'geografi.svg', 'geo' => 'geografi.svg',
+                    'ekonomi' => 'ekonomi.svg', 'eko' => 'ekonomi.svg',
+                    'sosiologi' => 'sosiologi.svg', 'sos' => 'sosiologi.svg',
+                    'agama' => 'agama.svg', 'agm' => 'agama.svg',
+                    'pjok' => 'pjok.svg', 'penjas' => 'pjok.svg',
+                    'seni' => 'seni-budaya.svg', 'sbd' => 'seni-budaya.svg',
+                    'ppkn' => 'ppkn.svg', 'pkn' => 'ppkn.svg',
                 ];
                 foreach ($subjectCoverMap as $k => $f) {
                     if (str_contains($subjectLower, $k)) {
@@ -92,7 +102,7 @@
             <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-[#10243E] p-6 sm:p-8 text-white shadow-xl">
                 @if($subjectCoverImage)
                     <img src="{{ $subjectCoverImage }}" alt="{{ $subjectName }}" class="absolute inset-0 h-full w-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/95 via-[#102a4e]/85 to-[#164273]/65"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#091a30]/85 via-[#102a4e]/65 to-[#164273]/45"></div>
                 @else
                     <div class="absolute inset-0 bg-gradient-to-br from-[#123B60] via-[#1A4C7A] to-[#267BB5]"></div>
                 @endif

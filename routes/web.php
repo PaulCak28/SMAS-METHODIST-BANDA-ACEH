@@ -26,6 +26,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Siswa\ClassroomController as SiswaClassroom;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\ExamController as SiswaExam;
+use App\Http\Controllers\Siswa\RosterController as SiswaRoster;
 use Illuminate\Support\Facades\Route;
 
 // =========================================================
@@ -114,6 +115,10 @@ Route::middleware(['auth', 'role:siswa'])->group(function () {
         Route::post('/{exam}/finish', [SiswaExam::class, 'finish'])
             ->name('finish');
     });
+
+    // Roster Pelajaran Siswa
+    Route::get('/siswa/roster', [SiswaRoster::class, 'index'])
+        ->name('siswa.roster');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
