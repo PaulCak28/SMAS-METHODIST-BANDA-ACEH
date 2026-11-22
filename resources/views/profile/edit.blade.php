@@ -114,9 +114,15 @@
 
                 {{-- WIDE CINEMATIC BANNER (YOUTUBE STYLE) --}}
                 <div class="profile-banner h-48 sm:h-56 md:h-64 flex flex-col justify-between p-6 sm:p-8 text-white relative overflow-hidden group">
-                    <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
-                         alt="Aktivitas Guru SMAS Methodist Banda Aceh"
-                         class="profile-banner-img">
+                    @if($isStudent && file_exists(public_path('images/methodist-students.jpg')))
+                        <img src="{{ asset('images/methodist-students.jpg') }}"
+                             alt="Siswa SMAS Methodist Banda Aceh"
+                             class="profile-banner-img">
+                    @else
+                        <img src="{{ asset('images/methodist-teachers-activity.jpg') }}"
+                             alt="Aktivitas Guru SMAS Methodist Banda Aceh"
+                             class="profile-banner-img">
+                    @endif
 
                     <div class="profile-banner-overlay"></div>
                     <div class="profile-banner-grid"></div>
@@ -454,6 +460,74 @@
                 </div>
 
                 @if($classesList->isNotEmpty())
+                    @php
+                        $getSubjectCover = function($title, $code = null) {
+                            $name = strtolower($title ?? '');
+                            $c = strtolower($code ?? '');
+
+                            $map = [
+                                'matematika' => 'matematika.jpg', 'mtk' => 'matematika.jpg',
+                                'biologi' => 'biologi.jpg', 'bio' => 'biologi.jpg',
+                                'kimia' => 'kimia.jpg', 'kim' => 'kimia.jpg',
+                                'fisika' => 'fisika.jpg', 'fis' => 'fisika.jpg',
+                                'indonesia' => 'indonesia.jpg', 'bin' => 'indonesia.jpg', 'bahasa indonesia' => 'indonesia.jpg',
+                                'inggris' => 'inggris.svg', 'big' => 'inggris.svg', 'bahasa inggris' => 'inggris.svg',
+                                'informatika' => 'informatika.jpg', 'tik' => 'informatika.jpg', 'inf' => 'informatika.jpg', 'komputer' => 'informatika.jpg',
+                                'sejarah' => 'sejarah.svg', 'sej' => 'sejarah.svg',
+                                'geografi' => 'geografi.svg', 'geo' => 'geografi.svg',
+                                'ekonomi' => 'ekonomi.svg', 'eko' => 'ekonomi.svg',
+                                'sosiologi' => 'sosiologi.svg', 'sos' => 'sosiologi.svg',
+                                'agama' => 'agama.svg', 'agm' => 'agama.svg', 'pendidikan agama' => 'agama.svg',
+                                'pjok' => 'pjok.svg', 'penjas' => 'pjok.svg',
+                                'seni' => 'seni-budaya.svg', 'sbd' => 'seni-budaya.svg', 'seni budaya' => 'seni-budaya.svg',
+                                'pkn' => 'ppkn.svg', 'ppkn' => 'ppkn.svg',
+                            ];
+
+                            foreach ($map as $key => $file) {
+                                if (str_contains($name, $key) || str_contains($c, $key)) {
+                                    $jpg = preg_replace('/\.(svg|png)$/i', '.jpg', $file);
+                                    $svg = preg_replace('/\.(jpg|png)$/i', '.svg', $file);
+                                    if (file_exists(public_path('images/subjects/' . $jpg))) {
+                                        return asset('images/subjects/' . $jpg);
+                                    } elseif (file_exists(public_path('images/subjects/' . $svg))) {
+                                        return asset('images/subjects/' . $svg);
+                                    }
+                                }
+                            }
+
+                            if (file_exists(public_path('images/hero-school.jpg'))) {
+                                return asset('images/hero-school.jpg');
+                            }
+                            return null;
+                        };
+
+                        $getSubjectSymbol = function($title, $code = null) {
+                            $name = strtolower($title ?? '');
+                            $c = strtolower($code ?? '');
+                            $symbols = [
+                                'matematika' => 'MAT', 'mtk' => 'MAT',
+                                'fisika' => 'FIS', 'fis' => 'FIS',
+                                'biologi' => 'BIO', 'bio' => 'BIO',
+                                'kimia' => 'KIM', 'kim' => 'KIM',
+                                'indonesia' => 'IDN', 'bin' => 'IDN',
+                                'inggris' => 'ENG', 'big' => 'ENG',
+                                'informatika' => 'TIK', 'inf' => 'TIK',
+                                'sejarah' => 'SEJ', 'sej' => 'SEJ',
+                                'geografi' => 'GEO', 'geo' => 'GEO',
+                                'ekonomi' => 'EKO', 'eko' => 'EKO',
+                                'sosiologi' => 'SOS', 'sos' => 'SOS',
+                                'agama' => 'AGM', 'agm' => 'AGM',
+                                'pjok' => 'PJK', 'penjas' => 'PJK',
+                                'seni' => 'SBD', 'sbd' => 'SBD',
+                                'pkn' => 'PKN', 'ppkn' => 'PKN',
+                            ];
+                            foreach ($symbols as $k => $sym) {
+                                if (str_contains($name, $k) || str_contains($c, $k)) return $sym;
+                            }
+                            return strtoupper(substr($title, 0, 3));
+                        };
+                    @endphp
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach($classesList as $item)
                             @php
@@ -465,22 +539,19 @@
                                     ? route('siswa.classes.show', $cstId) 
                                     : route('guru.classes.show', $cstId);
 
-                                $subjectLower = strtolower($subjectTitle);
-                                $subjectCoverImage = null;
-                                if (str_contains($subjectLower, 'kimia') && file_exists(public_path('images/subjects/kimia.jpg'))) {
-                                    $subjectCoverImage = asset('images/subjects/kimia.jpg');
-                                }
+                                $subjectCoverImage = $getSubjectCover($subjectTitle, $item->subject_code ?? null);
+                                $subjectSymbol = $getSubjectSymbol($subjectTitle, $item->subject_code ?? null);
                             @endphp
 
-                            <article class="feed-card rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition">
+                            <a href="{{ $targetUrl }}" class="feed-card rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md hover:border-[#BBD7E9] hover:-translate-y-1 transition group">
                                 <div>
                                     {{-- CARD THUMBNAIL / TOP BANNER --}}
-                                    <div class="h-28 relative overflow-hidden p-4 text-white flex flex-col justify-between {{ empty($subjectCoverImage) ? 'bg-gradient-to-br from-[#123B60] to-[#267BB5]' : '' }}">
+                                    <div class="h-32 relative overflow-hidden p-4 text-white flex flex-col justify-between bg-[#123B60]">
                                         @if($subjectCoverImage)
                                             <img src="{{ $subjectCoverImage }}"
                                                  alt="{{ $subjectTitle }}"
-                                                 class="absolute inset-0 h-full w-full object-cover">
-                                            <div class="absolute inset-0 bg-gradient-to-t from-[#091a30]/90 via-[#10243E]/55 to-[#123B60]/35"></div>
+                                                 class="absolute inset-0 h-full w-full object-cover transition transform group-hover:scale-105 duration-300">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-[#091a30]/95 via-[#10243E]/60 to-[#123B60]/35"></div>
                                         @else
                                             <div class="absolute -right-4 -top-6 text-7xl font-serif-title font-extrabold text-white/10 select-none">
                                                 {{ strtoupper(substr($subjectTitle, 0, 1)) }}
@@ -488,17 +559,15 @@
                                         @endif
 
                                         <div class="flex items-center justify-between relative z-10">
-                                            <span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm shadow-sm">
+                                            <span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm shadow-sm border border-white/20">
                                                 {{ $className }}
                                             </span>
-                                            <span class="text-white/90 drop-shadow-sm">
-                                                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-                                                </svg>
+                                            <span class="rounded-lg bg-white/20 px-2 py-0.5 text-[10px] font-extrabold tracking-wider backdrop-blur-sm border border-white/25">
+                                                {{ $subjectSymbol }}
                                             </span>
                                         </div>
 
-                                        <h4 class="font-serif-title text-base font-bold truncate relative z-10 drop-shadow-md">
+                                        <h4 class="font-serif-title text-base font-bold truncate relative z-10 drop-shadow-md text-white group-hover:text-cyan-200 transition">
                                             {{ $subjectTitle }}
                                         </h4>
                                     </div>
@@ -523,13 +592,12 @@
 
                                 {{-- CARD FOOTER BUTTON --}}
                                 <div class="p-4 pt-0">
-                                    <a href="{{ $targetUrl }}"
-                                       class="w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 hover:bg-[#123B60] hover:text-white py-2 text-xs font-bold text-slate-700 transition">
+                                    <div class="w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 group-hover:bg-[#123B60] group-hover:text-white py-2 text-xs font-bold text-slate-700 transition">
                                         <span>Buka Ruang Kelas</span>
                                         <span>&rarr;</span>
-                                    </a>
+                                    </div>
                                 </div>
-                            </article>
+                            </a>
                         @endforeach
                     </div>
                 @else

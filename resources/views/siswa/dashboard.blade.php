@@ -28,10 +28,10 @@
 
             $themes = [
                 'matematika' => ['symbol' => 'MAT', 'category' => 'MATEMATIKA', 'image' => 'matematika.jpg', 'gradient' => 'linear-gradient(135deg, #0d2847 0%, #174e7d 100%)'],
-                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.svg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
+                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.jpg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
                 'biologi' => ['symbol' => 'BIO', 'category' => 'BIOLOGI', 'image' => 'biologi.jpg', 'gradient' => 'linear-gradient(135deg, #06282d 0%, #0d5f66 100%)'],
                 'kimia' => ['symbol' => 'KIM', 'category' => 'KIMIA', 'image' => 'kimia.jpg', 'gradient' => 'linear-gradient(135deg, #10263f 0%, #1a568a 100%)'],
-                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.svg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
+                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.jpg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
                 'inggris' => ['symbol' => 'ENG', 'category' => 'BAHASA INGGRIS', 'image' => 'inggris.svg', 'gradient' => 'linear-gradient(135deg, #18223c 0%, #29457a 100%)'],
                 'informatika' => ['symbol' => 'TIK', 'category' => 'INFORMATIKA', 'image' => 'informatika.jpg', 'gradient' => 'linear-gradient(135deg, #092338 0%, #104a75 100%)'],
                 'sejarah' => ['symbol' => 'SEJ', 'category' => 'SEJARAH', 'image' => 'sejarah.svg', 'gradient' => 'linear-gradient(135deg, #2b1f13 0%, #694a28 100%)'],
@@ -78,16 +78,12 @@
 
             $imgUrl = null;
             if (!empty($t['image'])) {
-                if (file_exists(public_path('images/subjects/' . $t['image']))) {
-                    $imgUrl = asset('images/subjects/' . $t['image']);
-                } else {
-                    $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
-                    $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
-                    if (file_exists(public_path('images/subjects/' . $svgName))) {
-                        $imgUrl = asset('images/subjects/' . $svgName);
-                    } elseif (file_exists(public_path('images/subjects/' . $jpgName))) {
-                        $imgUrl = asset('images/subjects/' . $jpgName);
-                    }
+                $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
+                $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
+                if (file_exists(public_path('images/subjects/' . $jpgName))) {
+                    $imgUrl = asset('images/subjects/' . $jpgName);
+                } elseif (file_exists(public_path('images/subjects/' . $svgName))) {
+                    $imgUrl = asset('images/subjects/' . $svgName);
                 }
             }
 
@@ -139,7 +135,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 14px;
-            margin-bottom: 26px;
+            margin-bottom: 0;
         }
 
         .welcome-breadcrumb {
@@ -755,7 +751,7 @@
     </style>
 
     <div class="student-dashboard">
-        <div class="student-wrap">
+        <div class="student-wrap space-y-7 sm:space-y-8">
 
             {{-- TOP BAR --}}
             <div class="welcome-top">
@@ -777,8 +773,19 @@
                 </div>
             @endif
 
-            {{-- HERO BANNER IDENTITAS SISWA (MODERN GLASSMORPHISM & GRADIENT) --}}
-            <section class="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-[#0e172a] via-[#101C35] to-[#1e3a8a] p-6 text-white shadow-2xl sm:p-10">
+            {{-- HERO BANNER IDENTITAS SISWA (FOTO SISWA SMAS METHODIST DENGAN OVERLAY RESMI) --}}
+            <section class="relative isolate overflow-hidden rounded-3xl bg-[#071326] p-6 text-white shadow-2xl sm:p-10">
+                {{-- Foto Siswa SMAS Methodist Banda Aceh --}}
+                <img src="{{ asset('images/methodist-students.jpg') }}"
+                     alt="Siswa SMAS Methodist Banda Aceh"
+                     class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_30%]">
+                
+                {{-- Overlay Gradien Navy Elegan untuk Keterbacaan Kontras Maksimal --}}
+                <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#061122]/95 via-[#091b36]/90 to-[#0e2a54]/80"></div>
+                
+                {{-- Aksen Grid Geometris Halus (Gaya Portal Resmi Methodist) --}}
+                <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+
                 {{-- Ambient Background Glow --}}
                 <div class="absolute -right-20 -top-20 -z-10 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
                 <div class="absolute -bottom-20 left-1/3 -z-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl"></div>

@@ -139,10 +139,10 @@
 
             $themes = [
                 'matematika' => ['symbol' => 'MAT', 'category' => 'MATEMATIKA', 'image' => 'matematika.jpg', 'gradient' => 'linear-gradient(135deg, #0d2847 0%, #174e7d 100%)'],
-                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.svg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
+                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.jpg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
                 'biologi' => ['symbol' => 'BIO', 'category' => 'BIOLOGI', 'image' => 'biologi.jpg', 'gradient' => 'linear-gradient(135deg, #06282d 0%, #0d5f66 100%)'],
                 'kimia' => ['symbol' => 'KIM', 'category' => 'KIMIA', 'image' => 'kimia.jpg', 'gradient' => 'linear-gradient(135deg, #10263f 0%, #1a568a 100%)'],
-                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.svg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
+                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.jpg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
                 'inggris' => ['symbol' => 'ENG', 'category' => 'BAHASA INGGRIS', 'image' => 'inggris.svg', 'gradient' => 'linear-gradient(135deg, #18223c 0%, #29457a 100%)'],
                 'informatika' => ['symbol' => 'TIK', 'category' => 'INFORMATIKA', 'image' => 'informatika.jpg', 'gradient' => 'linear-gradient(135deg, #092338 0%, #104a75 100%)'],
                 'sejarah' => ['symbol' => 'SEJ', 'category' => 'SEJARAH', 'image' => 'sejarah.svg', 'gradient' => 'linear-gradient(135deg, #2b1f13 0%, #694a28 100%)'],
@@ -189,16 +189,12 @@
 
             $imgUrl = null;
             if (!empty($t['image'])) {
-                if (file_exists(public_path('images/subjects/' . $t['image']))) {
-                    $imgUrl = asset('images/subjects/' . $t['image']);
-                } else {
-                    $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
-                    $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
-                    if (file_exists(public_path('images/subjects/' . $svgName))) {
-                        $imgUrl = asset('images/subjects/' . $svgName);
-                    } elseif (file_exists(public_path('images/subjects/' . $jpgName))) {
-                        $imgUrl = asset('images/subjects/' . $jpgName);
-                    }
+                $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
+                $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
+                if (file_exists(public_path('images/subjects/' . $jpgName))) {
+                    $imgUrl = asset('images/subjects/' . $jpgName);
+                } elseif (file_exists(public_path('images/subjects/' . $svgName))) {
+                    $imgUrl = asset('images/subjects/' . $svgName);
                 }
             }
 

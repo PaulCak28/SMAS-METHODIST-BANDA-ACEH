@@ -64,9 +64,27 @@
                 $subjectName = $cst->subject->name ?? $cst->subject_code ?? 'Mata Pelajaran';
                 $subjectLower = strtolower($subjectName);
                 $subjectCoverImage = null;
-                if (str_contains($subjectLower, 'kimia') && file_exists(public_path('images/subjects/kimia.jpg'))) {
-                    $subjectCoverImage = asset('images/subjects/kimia.jpg');
-                } elseif (file_exists(public_path('images/hero-school.jpg'))) {
+                $subjectCoverMap = [
+                    'matematika' => 'matematika.jpg', 'biologi' => 'biologi.jpg', 'kimia' => 'kimia.jpg',
+                    'fisika' => 'fisika.jpg', 'indonesia' => 'indonesia.jpg', 'bahasa indonesia' => 'indonesia.jpg',
+                    'informatika' => 'informatika.jpg', 'inggris' => 'inggris.svg', 'sejarah' => 'sejarah.svg',
+                    'geografi' => 'geografi.svg', 'ekonomi' => 'ekonomi.svg', 'sosiologi' => 'sosiologi.svg',
+                    'agama' => 'agama.svg', 'pjok' => 'pjok.svg', 'seni' => 'seni-budaya.svg', 'ppkn' => 'ppkn.svg',
+                ];
+                foreach ($subjectCoverMap as $k => $f) {
+                    if (str_contains($subjectLower, $k)) {
+                        $jpg = preg_replace('/\.(svg|png)$/i', '.jpg', $f);
+                        $svg = preg_replace('/\.(jpg|png)$/i', '.svg', $f);
+                        if (file_exists(public_path('images/subjects/' . $jpg))) {
+                            $subjectCoverImage = asset('images/subjects/' . $jpg);
+                            break;
+                        } elseif (file_exists(public_path('images/subjects/' . $svg))) {
+                            $subjectCoverImage = asset('images/subjects/' . $svg);
+                            break;
+                        }
+                    }
+                }
+                if (!$subjectCoverImage && file_exists(public_path('images/hero-school.jpg'))) {
                     $subjectCoverImage = asset('images/hero-school.jpg');
                 }
             @endphp
