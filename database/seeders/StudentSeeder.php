@@ -20,8 +20,18 @@ class StudentSeeder extends Seeder
 
             for ($i = 1; $i <= 5; $i++) {
 
-                // NIS siswa
-                $nis = 20260000 + $no;
+                // Siswa 1 diisi dengan data khusus: Christin Frecylia Sihotang (2858)
+                if ($no === 1) {
+                    $nis = 2858;
+                    $studentName = 'Christin Frecylia Sihotang';
+                    $studentEmail = 'christin@methodistbandaaceh.sch.id';
+                    $studentGender = 'P';
+                } else {
+                    $nis = 20260000 + $no;
+                    $studentName = 'Siswa ' . $no;
+                    $studentEmail = 'siswa' . $no . '@methodistbandaaceh.sch.id';
+                    $studentGender = $i % 2 ? 'L' : 'P';
+                }
 
                 // 1. Buat / update akun User
                 User::updateOrCreate(
@@ -29,8 +39,8 @@ class StudentSeeder extends Seeder
                         'user_id' => $nis,
                     ],
                     [
-                        'name' => 'Siswa ' . $no,
-                        'email' => 'siswa' . $no . '@methodistbandaaceh.sch.id',
+                        'name' => $studentName,
+                        'email' => $studentEmail,
                         'password' => Hash::make('password123'),
                         'role' => 'siswa',
                     ]
@@ -44,7 +54,7 @@ class StudentSeeder extends Seeder
                     [
                         'nisn' => str_pad((string) $nis, 10, '0', STR_PAD_LEFT),
                         'class_id' => $class->class_id,
-                        'gender' => $i % 2 ? 'L' : 'P',
+                        'gender' => $studentGender,
                         'pob' => 'Banda Aceh',
                         // Tanggal tetap (tidak bergantung hari seeder dijalankan)
                         'dob' => sprintf('%d-05-%02d', 2009 + ($i % 2), $i),

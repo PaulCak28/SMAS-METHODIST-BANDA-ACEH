@@ -31,7 +31,7 @@ class ExamController extends Controller
             ->withCount('questions', 'sessions')
             ->whereHas('classSubjectTeacher', fn ($q) => $q->where('teacher_id', $request->user()->teacher->nip))
             ->latest()
-            ->paginate(15);
+            ->paginate(6);
 
         $csts = ClassSubjectTeacher::with('subject', 'schoolClass')
             ->where('teacher_id', $request->user()->teacher->nip)

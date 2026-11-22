@@ -30,12 +30,14 @@
                 'category' => 'MATEMATIKA',
                 'description' => 'Eksplorasi angka, pola, dan logika berpikir',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/matematika.jpg'),
             ],
             'bahasa indonesia' => [
                 'symbol' => 'IDN',
                 'category' => 'BAHASA & SASTRA INDONESIA',
                 'description' => 'Mengembangkan literasi dan kekuatan berbahasa',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/indonesia.jpg'),
             ],
             'bahasa inggris' => [
                 'symbol' => 'ENG',
@@ -48,12 +50,14 @@
                 'category' => 'BIOLOGI',
                 'description' => 'Menjelajahi dunia kehidupan dan ekosistem',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/biologi.jpg'),
             ],
             'fisika' => [
                 'symbol' => 'FIS',
                 'category' => 'FISIKA',
                 'description' => 'Memahami hukum alam dan prinsip semesta',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/fisika.jpg'),
             ],
             'kimia' => [
                 'symbol' => 'KIM',
@@ -73,6 +77,7 @@
                 'category' => 'INFORMATIKA',
                 'description' => 'Membangun logika digital dan komputasi',
                 'background' => 'linear-gradient(135deg,#123B60,#267BB5)',
+                'image' => asset('images/subjects/informatika.jpg'),
             ],
             'agama' => [
                 'symbol' => 'AGM',
@@ -833,10 +838,29 @@
                                 foreach ($subjectThemes as $key => $value) {
                                     if (str_contains($subjectLower, $key)) {
                                         $theme = $value;
-                                        if (empty($theme['image']) && file_exists(public_path('images/subjects/' . $key . '.jpg'))) {
-                                            $theme['image'] = asset('images/subjects/' . $key . '.jpg');
-                                        }
                                         break;
+                                    }
+                                }
+
+                                if (empty($theme['image'])) {
+                                    $slugMap = [
+                                        'matematika' => 'matematika.jpg', 'biologi' => 'biologi.jpg', 'kimia' => 'kimia.jpg', 'informatika' => 'informatika.jpg',
+                                        'fisika' => 'fisika.jpg', 'bahasa indonesia' => 'indonesia.jpg', 'indonesia' => 'indonesia.jpg', 'bahasa inggris' => 'inggris.svg',
+                                        'sejarah' => 'sejarah.svg', 'geografi' => 'geografi.svg', 'ekonomi' => 'ekonomi.svg', 'sosiologi' => 'sosiologi.svg',
+                                        'agama' => 'agama.svg', 'pjok' => 'pjok.svg', 'seni' => 'seni-budaya.svg', 'ppkn' => 'ppkn.svg',
+                                    ];
+                                    foreach ($slugMap as $k => $f) {
+                                        if (str_contains($subjectLower, $k)) {
+                                            $jpgFile = preg_replace('/\.(svg|png)$/i', '.jpg', $f);
+                                            $svgFile = preg_replace('/\.(jpg|png)$/i', '.svg', $f);
+                                            if (file_exists(public_path('images/subjects/' . $jpgFile))) {
+                                                $theme['image'] = asset('images/subjects/' . $jpgFile);
+                                                break;
+                                            } elseif (file_exists(public_path('images/subjects/' . $svgFile))) {
+                                                $theme['image'] = asset('images/subjects/' . $svgFile);
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
 
