@@ -107,6 +107,38 @@
 
         <div class="mx-auto max-w-6xl space-y-6">
 
+            {{-- NOTIFIKASI SUKSES / ERROR --}}
+            @if(session('status') === 'profile-updated')
+                <div class="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                    <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Informasi akun berhasil diperbarui.</span>
+                </div>
+            @elseif(session('status') === 'password-updated')
+                <div class="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                    <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold">Kata sandi akun Anda berhasil diperbarui.</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+                    <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold">{{ session('error') }}</span>
+                </div>
+            @endif
+
             {{-- ========================================================
                  CREATOR CHANNEL HEADER (YOUTUBE BANNER + INSTAGRAM PROFILE)
             ======================================================== --}}
@@ -176,16 +208,13 @@
                                         @endif
                                     </div>
                                 </div>
-                                {{-- BUTTON UBAH FOTO LANGSUNG KE TAB EDIT --}}
-                                <button type="button"
-                                        @click="activeTab = 'edit'"
-                                        title="Ubah Foto Profil"
-                                        class="absolute bottom-0 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-[#123B60] text-white shadow-lg ring-4 ring-white transition hover:bg-[#267BB5] hover:scale-110 active:scale-95">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                {{-- BADGE AKUN RESMI TERVERIFIKASI --}}
+                                <div title="Akun Resmi Terverifikasi SMAS Methodist Banda Aceh"
+                                     class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md ring-4 ring-white">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                     </svg>
-                                </button>
+                                </div>
                             </div>
 
                             {{-- NAME, HANDLE, VERIFIED BADGE --}}
@@ -250,14 +279,14 @@
                         {{-- QUICK ACTION BUTTONS (INSTAGRAM/YOUTUBE STYLE) --}}
                         <div class="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
                             
-                            {{-- BUTTON EDIT PROFIL --}}
+                            {{-- BUTTON INFORMASI AKUN --}}
                             <button type="button"
-                                    @click="activeTab = 'edit'"
+                                    @click="activeTab = 'info'"
                                     class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:border-slate-400 active:scale-95">
                                 <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Edit Akun</span>
+                                <span>Informasi Akun</span>
                             </button>
 
                             {{-- BUTTON KE RUANG BELAJAR --}}
@@ -405,17 +434,17 @@
                     <span>Biodata Resmi</span>
                 </button>
 
-                {{-- TAB 3: EDIT PROFIL --}}
+                {{-- TAB 3: INFORMASI AKUN (READ ONLY) --}}
                 <button type="button"
-                        @click="activeTab = 'edit'"
+                        @click="activeTab = 'info'"
                         class="flex items-center gap-2 py-3 px-3 sm:px-4 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap"
-                        :class="activeTab === 'edit' 
+                        :class="activeTab === 'info' 
                             ? 'border-[#267BB5] text-[#123B60]' 
                             : 'border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-300'">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    <span>Edit Informasi</span>
+                    <span>Informasi Akun</span>
                 </button>
 
                 {{-- TAB 4: KEAMANAN --}}
@@ -766,28 +795,128 @@
             </div>
 
             {{-- ========================================================
-                 TAB CONTENT 3: FORM EDIT INFORMASI PROFIL
+                 TAB CONTENT 3: INFORMASI AKUN (HANYA DITAMPILKAN / READ-ONLY)
             ======================================================== --}}
-            <div x-show="activeTab === 'edit'" x-cloak x-transition class="space-y-6">
+            <div x-show="activeTab === 'info'" x-cloak x-transition class="space-y-6">
                 
-                <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-                    <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                {{-- PEMBERITAHUAN WEWENANG ADMINISTRATOR --}}
+                <div class="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-blue-50/90 p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-start gap-4">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#123B60] text-white shadow-sm">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
                         </div>
-                        <div>
-                            <h3 class="font-serif-title text-xl font-bold text-slate-900">
-                                Perbarui Informasi Akun
-                            </h3>
-                            <p class="text-xs text-slate-500">
-                                Sesuaikan nama tampilan dan alamat email terdaftar akun Anda.
+                        <div class="space-y-1">
+                            <h4 class="text-sm font-bold text-[#101C35]">
+                                Hak Akses Perubahan Data Dikelola Administrator
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Data informasi akun resmi sekolah (nama lengkap, alamat email terdaftar, nomor identitas induk, dan penugasan rombel/mapel) dikelola dan diperbarui secara terpusat oleh <strong>Administrator SMAS Methodist Banda Aceh</strong>. Apabila terdapat ketidaksesuaian data atau keperluan pembaruan informasi, silakan berkoordinasi dengan pihak Tata Usaha atau Tim IT Administrator.
                             </p>
                         </div>
                     </div>
+                </div>
 
-                    @include('profile.partials.update-profile-information-form')
+                {{-- KARTU DETAIL INFORMASI AKUN RESMI --}}
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-5 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-serif-title text-xl font-bold text-slate-900">
+                                    Informasi Akun Anda
+                                </h3>
+                                <p class="text-xs text-slate-500">
+                                    Rincian identitas akun yang terdaftar pada sistem akademik sekolah.
+                                </p>
+                            </div>
+                        </div>
+
+                        <span class="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-700 border border-emerald-200">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                            Status: Akun Aktif
+                        </span>
+                    </div>
+
+                    {{-- GRID PROFIL LENGKAP --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Nama Lengkap --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Nama Lengkap</span>
+                            <p class="mt-1 text-base font-extrabold text-slate-800">{{ $user->name }}</p>
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Sesuai data resmi dapodik/sekolah</span>
+                        </div>
+
+                        {{-- Alamat Email --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Alamat Email</span>
+                            <p class="mt-1 text-base font-extrabold text-slate-800 font-mono">{{ $user->email }}</p>
+                            <span class="text-[10px] text-emerald-600 mt-0.5 block font-medium">✓ Terverifikasi resmi</span>
+                        </div>
+
+                        {{-- Peran / Role --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Peran Akun</span>
+                            <p class="mt-1 text-base font-extrabold text-[#123B60]">{{ $roleName }}</p>
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Hak akses portal pembelajaran</span>
+                        </div>
+
+                        {{-- Nomor Induk --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                {{ $isStudent ? 'Nomor Induk Siswa (NIS)' : 'Nomor Induk Pegawai (NIP)' }}
+                            </span>
+                            <p class="mt-1 text-base font-extrabold text-slate-800 font-mono">
+                                {{ $isStudent ? ($profile->nis ?? '-') : ($profile->nip ?? '-') }}
+                            </p>
+                            @if($isStudent && $profile?->nisn)
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">NISN: <span class="font-mono font-semibold">{{ $profile->nisn }}</span></span>
+                            @else
+                                <span class="text-[10px] text-slate-400 mt-0.5 block">Nomor identitas pokok</span>
+                            @endif
+                        </div>
+
+                        {{-- Kelas / Spesialisasi --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                {{ $isStudent ? 'Rombongan Belajar (Kelas)' : 'Bidang / Mata Pelajaran' }}
+                            </span>
+                            <p class="mt-1 text-base font-extrabold text-slate-800">
+                                {{ $isStudent ? ($profile->schoolClass->name ?? 'Belum Ditugaskan') : ($profile->specialization ?? 'Guru Pengampu') }}
+                            </p>
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Tahun Ajaran {{ $profile->schoolClass->academic_year ?? '2025/2026' }}</span>
+                        </div>
+
+                        {{-- Nomor Telepon --}}
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Nomor Telepon / WhatsApp</span>
+                            <p class="mt-1 text-base font-extrabold text-slate-800 font-mono">
+                                {{ $user->phone ?? 'Belum ditambahkan' }}
+                            </p>
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Kontak komunikasi terdaftar</span>
+                        </div>
+                    </div>
+
+                    {{-- METADATA PENDAFTARAN --}}
+                    <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5 text-xs text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Terdaftar pada: <strong class="text-slate-600">{{ $user->created_at?->translatedFormat('d F Y') ?? '-' }}</strong></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Pembaruan terakhir: <strong class="text-slate-600">{{ $user->updated_at?->translatedFormat('d F Y, H:i') ?? '-' }} WIB</strong></span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -816,27 +945,6 @@
                     </div>
 
                     @include('profile.partials.update-password-form')
-                </div>
-
-                {{-- DANGER ZONE: HAPUS AKUN --}}
-                <div class="rounded-3xl border border-rose-200 bg-white p-6 sm:p-8 shadow-sm">
-                    <div class="flex items-center gap-3 border-b border-rose-100 pb-4 mb-6">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-serif-title text-xl font-bold text-rose-900">
-                                Zona Penghapusan Akun
-                            </h3>
-                            <p class="text-xs text-rose-600">
-                                Tindakan permanen yang menghapus seluruh data akses akun dari portal sekolah.
-                            </p>
-                        </div>
-                    </div>
-
-                    @include('profile.partials.delete-user-form')
                 </div>
 
             </div>
