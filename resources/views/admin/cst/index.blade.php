@@ -106,22 +106,33 @@
                                         {{ $cst->join_code ?? '-' }}
                                     </code>
                                 </td>
-                                <td class="text-end pe-4">
-                                    <div class="d-inline-flex gap-1">
-                                        <a href="{{ route('admin.cst.edit', $cst->cst_id) }}"
-                                           class="btn btn-sm btn-outline-primary px-2" title="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <form action="{{ route('admin.cst.destroy', $cst->cst_id) }}" method="POST"
-                                              onsubmit="return confirm('Yakin ingin menghapus kelas mapel ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+<td class="text-end pe-4">
+    <div class="d-inline-flex gap-1">
+        <a href="{{ route('admin.cst.edit', $cst->cst_id) }}"
+           class="btn btn-sm btn-outline-primary px-2" title="Edit">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+
+        @if ($terkunci->has($cst->cst_id))
+            <span class="d-inline-block"
+                  title="Tidak bisa dihapus: sudah punya siswa/jadwal/ujian/nilai">
+                <button type="button" class="btn btn-sm btn-outline-secondary px-2" disabled
+                        style="pointer-events:none;">
+                    <i class="bi bi-lock-fill"></i>
+                </button>
+            </span>
+        @else
+            <form action="{{ route('admin.cst.destroy', $cst->cst_id) }}" method="POST"
+                  onsubmit="return confirm('Yakin ingin menghapus kelas mapel ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        @endif
+    </div>
+</td>
                             </tr>
                         @empty
                             <tr>

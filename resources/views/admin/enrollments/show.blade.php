@@ -38,6 +38,13 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="alert alert-danger rounded-3">
                 <ul class="mb-0 small">
@@ -110,14 +117,26 @@
                                            class="btn btn-sm btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <form action="{{ route('admin.enrollments.destroy', $enr->enrollment_id) }}" method="POST"
-                                              onsubmit="return confirm('Keluarkan siswa dari mata pelajaran ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+
+                                        {{-- Hapus: dikunci jika siswa sudah punya nilai/tugas/ujian di kelas mapel ini --}}
+                                        @if($terkunci->has($enr->enrollment_id))
+                                            <span class="d-inline-block"
+                                                  title="Tidak bisa dihapus: sudah ada nilai/tugas/ujian. Ubah status lewat Edit.">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled
+                                                        style="pointer-events:none;">
+                                                    <i class="bi bi-lock-fill"></i>
+                                                </button>
+                                            </span>
+                                        @else
+                                            <form action="{{ route('admin.enrollments.destroy', $enr->enrollment_id) }}" method="POST"
+                                                  onsubmit="return confirm('Keluarkan siswa dari mata pelajaran ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

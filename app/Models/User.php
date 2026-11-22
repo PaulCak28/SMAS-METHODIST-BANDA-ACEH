@@ -71,4 +71,15 @@ class User extends Authenticatable
     {
         return ['admin' => 'Administrator', 'guru' => 'Guru', 'siswa' => 'Siswa'][$this->role] ?? $this->role;
     }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->photo)) {
+            return asset('storage/' . $this->photo);
+        }
+        if ($this->photo && file_exists(public_path($this->photo))) {
+            return asset($this->photo);
+        }
+        return asset('images/methodist-logo.png');
+    }
 }

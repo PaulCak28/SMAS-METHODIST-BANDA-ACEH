@@ -24,9 +24,15 @@
                 Selamat datang, {{ auth()->user()->name ?? 'Administrator' }}. Pantau dan kelola seluruh aktivitas belajar mengajar.
             </p>
         </div>
-        <div class="portal-badge px-3 py-2 rounded-3">
-            <i class="bi bi-calendar3 me-2"></i>
-            {{ now()->translatedFormat('l, d F Y') }}
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="{{ route('admin.profile.index') }}" class="btn btn-outline-primary btn-sm rounded-3 d-flex align-items-center gap-2 px-3 py-2 shadow-sm bg-white">
+                <i class="bi bi-person-circle"></i>
+                <span class="fw-semibold">Profil Saya</span>
+            </a>
+            <div class="portal-badge px-3 py-2 rounded-3">
+                <i class="bi bi-calendar3 me-2"></i>
+                {{ now()->translatedFormat('l, d F Y') }}
+            </div>
         </div>
     </div>
 
@@ -203,6 +209,15 @@
                             <div class="flex-grow-1">
                                 <div class="fw-semibold text-dark">Buat Pengumuman</div>
                                 <div class="text-muted-portal small">Kirim info ke guru & siswa</div>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted-portal"></i>
+                        </a>
+
+                        <a href="{{ route('admin.profile.index') }}" class="action-btn">
+                            <div class="icon-wrapper" style="background: #e0e7ff; color: #4338ca;"><i class="bi bi-person-gear"></i></div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold text-dark">Profil & Keamanan Akun</div>
+                                <div class="text-muted-portal small">Kelola data profil admin & kata sandi</div>
                             </div>
                             <i class="bi bi-chevron-right text-muted-portal"></i>
                         </a>

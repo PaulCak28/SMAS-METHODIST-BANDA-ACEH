@@ -12,6 +12,22 @@ use Illuminate\Support\Facades\DB;
 
 class CstController extends Controller
 {
+    /**
+     * Tabel yang merujuk cst_id. Kelas mapel TIDAK bisa dihapus
+     * selama masih ada baris di salah satu tabel ini.
+     * tabel => label untuk pesan error
+     * (hapus baris yang tidak ingin ikut memblokir)
+     */
+    private const DEPENDENTS = [
+        'cst_students'      => 'siswa terdaftar',
+        'class_enrollments' => 'data pendaftaran kelas',
+        'schedules'         => 'jadwal',
+        'exams'             => 'ujian',
+        'materials'         => 'materi',
+        'assignments'       => 'tugas',
+        'grades'            => 'nilai',
+    ];
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -29,7 +45,18 @@ class CstController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.cst.index', compact('csts', 'search'));
+        // cst_id (halaman ini) yang sudah dipakai => tombol hapus dikunci di view.
+        // Satu query per tabel terkait, bukan per baris.
+        $ids = $csts->pluck('cst_id')->all();
+        $terkunci = collect();
+        foreach (array_keys(self::DEPENDENTS) as $table) {
+            $terkunci = $terkunci->merge(
+                DB::table($table)->whereIn('cst_id', $ids)->distinct()->pluck('cst_id')
+            );
+        }
+        $terkunci = $terkunci->unique()->flip();
+
+        return view('admin.cst.index', compact('csts', 'search', 'terkunci'));
     }
 
     public function create()
@@ -160,22 +187,45 @@ class CstController extends Controller
             // [ATOMICITY] Memulai transaksi penghapusan
             DB::beginTransaction();
 
-            // [ISOLATION] Mengunci baris sebelum dihapus untuk mencegah race condition dengan pendaftar baru
+            // [ISOLATION] Kunci baris dulu, lalu cek ketergantungan di dalam transaksi
+            // supaya siswa yang mendaftar bersamaan tidak lolos dari pengecekan.
             $lockedCst = ClassSubjectTeacher::where('cst_id', $cst->cst_id)->lockForUpdate()->first();
-            
-            if ($lockedCst) {
-                $lockedCst->delete();
+
+            if (! $lockedCst) {
+                DB::rollBack();
+                return back()->with('error', 'Data kelas mapel tidak ditemukan.');
             }
+
+            // [CONSISTENCY] Tidak boleh dihapus jika masih dipakai data lain
+            $terpakai = [];
+            foreach (self::DEPENDENTS as $table => $label) {
+                $jumlah = DB::table($table)->where('cst_id', $lockedCst->cst_id)->count();
+
+                if ($jumlah > 0) {
+                    $terpakai[] = "{$jumlah} {$label}";
+                }
+            }
+
+            if (! empty($terpakai)) {
+                DB::rollBack();
+
+                return back()->with(
+                    'error',
+                    'Kelas mapel tidak bisa dihapus karena masih memiliki ' . implode(', ', $terpakai) . '.'
+                );
+            }
+
+            $lockedCst->delete();
 
             // [DURABILITY] Konfirmasi penghapusan permanen
             DB::commit();
 
             return redirect()->route('admin.cst.index')->with('success', 'Kelas mapel berhasil dihapus.');
         } catch (\Exception $e) {
-            // [ATOMICITY] Batalkan jika melanggar Foreign Key (misalnya masih ada data di cst_students / schedules / exams)
+            // [ATOMICITY] Batalkan jika terjadi error tak terduga (mis. foreign key lain)
             DB::rollBack();
 
-            return back()->with('error', 'Gagal menghapus! Kelas ini sudah memiliki siswa terdaftar (Enrollment).');
+            return back()->with('error', 'Gagal menghapus kelas mapel: ' . $e->getMessage());
         }
     }
 }
