@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
-use App\Http\Controllers\Admin\GradeLogController;
 use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Middleware\EnsureAdmin;
@@ -279,8 +278,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
    Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
     Route::get('/', [MonitoringController::class, 'index'])->name('index');
-    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams'); // Tambahan route kelas
-    Route::get('/monitoring/class/{classId}', [MonitoringController::class, 'classExams'])->name('admin.monitoring.class.exams');
+    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams');
     Route::get('/exam/{id}', [MonitoringController::class, 'show'])->name('show');
 });
 
@@ -391,13 +389,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::delete('/records/{enrollment}', [ClassEnrollmentController::class, 'destroy'])
             ->name('destroy');
-    });
-
-    //grade logs
-    Route::prefix('admin/activity-logs')
-    ->name('admin.activity-logs.')
-    ->group(function () {
-        Route::get('/', [GradeLogController::class, 'index'])->name('index');
     });
 
     //classes
