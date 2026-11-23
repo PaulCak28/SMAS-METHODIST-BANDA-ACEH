@@ -1,15 +1,24 @@
 #!/bin/bash
+set -e
 
-# Bersihkan cache agar Laravel membaca langsung dari environment variabel Railway
-php artisan config:clear
-php artisan view:clear
+echo "==> Menyiapkan direktori storage & bootstrap/cache..."
+mkdir -p /var/www/html/storage/framework/sessions \
+         /var/www/html/storage/framework/views \
+         /var/www/html/storage/framework/cache/data \
+         /var/www/html/storage/logs \
+         /var/www/html/bootstrap/cache
 
-# Paksa kepemilikan seluruh file ke web server
-chown -R www-data:www-data /var/www/html
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+echo "==> Melakukan caching konfigurasi, routes, dan views..."
+php artisan config:cache
+php artisan route:cache || true
+php artisan view:cache || true
 
-# Buat symlink
+echo "==> Membuat storage symlink..."
 php artisan storage:link || true
 
-# Jalankan Apache
-apache2-foreground
+echo "==> Mengatur hak akses untuk www-data..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+echo "==> Menjalankan Apache web server..."
+exec apache2-foreground

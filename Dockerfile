@@ -18,7 +18,9 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/custom.ini \
     && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/custom.ini \
-    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/custom.ini
+    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "output_buffering = 4096" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "variables_order = 'EGPCS'" >> /usr/local/etc/php/conf.d/custom.ini
 
 # Install Composer & izinkan superuser saat build
 ENV COMPOSER_ALLOW_SUPERUSER=1
