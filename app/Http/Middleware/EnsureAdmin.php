@@ -9,9 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 /** Hanya user dengan users.role = 'admin' yang boleh lewat. */
 class EnsureAdmin
 {
-    public function handle(Request $request, Closure $next): Response
+    /**
+     * Allow the request only when the authenticated user's role
+     * matches one of the roles supplied to the middleware.
+     */
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        abort_unless($request->user() && $request->user()->role === 'admin', 403, 'Hanya admin.');
+        $user = $request->user();
+
+        if (! $user || ! in_array($user->role, $roles, true)) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
 
         return $next($request);
     }
