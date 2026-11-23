@@ -8,10 +8,17 @@ RUN apt-get update && apt-get install -y \
 # Aktifkan Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Arahkan DocumentRoot ke folder /public
+# Arahkan DocumentRoot ke folder /public & izinkan .htaccess (AllowOverride All)
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+    && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+
+# Tampilkan error PHP & naikkan batas memori agar tidak blank white screen
+RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/custom.ini
 
 # Install Composer & izinkan superuser saat build
 ENV COMPOSER_ALLOW_SUPERUSER=1
