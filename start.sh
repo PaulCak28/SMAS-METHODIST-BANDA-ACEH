@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# 1. Generate cache menggunakan environment Railway terbaru
-php artisan config:cache
-php artisan view:cache || true
+# Bersihkan cache agar Laravel membaca langsung dari environment variabel Railway
+php artisan config:clear
+php artisan view:clear
 
-# 2. PENTING: Pindahkan hak milik SELURUH file ke user Apache (www-data) SETELAH cache dibuat
+# Paksa kepemilikan seluruh file ke web server
 chown -R www-data:www-data /var/www/html
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 3. Buat symlink storage
+# Buat symlink
 php artisan storage:link || true
 
-# 4. Nyalakan web server
+# Jalankan Apache
 apache2-foreground
