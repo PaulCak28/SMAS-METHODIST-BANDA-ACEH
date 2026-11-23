@@ -102,6 +102,9 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Optimalisasi query: Ambil 5 riwayat aktivitas lintas tabel dari view log
+        $recentActivityLogs = ActivityLogController::recentAcrossTables(5);
+
         return view('admin.dashboard', compact(
             'stats',
             'sessionsRunning',
@@ -111,7 +114,8 @@ class DashboardController extends Controller
             'recentAnnouncements',
             'violations',
             'classes',
-            'recentGradeLogs'
+            'recentGradeLogs',
+            'recentActivityLogs'
         ));
     }
 }

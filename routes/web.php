@@ -401,6 +401,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     ->group(function () {
         Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
             ->name('classes.index');
+        Route::post('/classes/promote', [\App\Http\Controllers\Admin\SchoolClassController::class, 'promote'])
+            ->name('classes.promote');
     });
 
 
@@ -515,6 +517,29 @@ Route::prefix('admin/announcements')
         Route::put('/password', [AdminProfileController::class, 'updatePassword'])
             ->name('password');
     });
+
+    // -----------------------------
+    // DATABASE RECOVERY & BACKUP
+    // -----------------------------
+    Route::prefix('admin/recovery')->name('admin.recovery.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RecoveryController::class, 'index'])
+            ->name('index');
+
+        Route::post('/backup', [\App\Http\Controllers\Admin\RecoveryController::class, 'backup'])
+            ->name('backup');
+
+        Route::post('/restore', [\App\Http\Controllers\Admin\RecoveryController::class, 'restore'])
+            ->name('restore');
+
+        Route::get('/download/{filename}', [\App\Http\Controllers\Admin\RecoveryController::class, 'download'])
+            ->name('download');
+
+        Route::delete('/{filename}', [\App\Http\Controllers\Admin\RecoveryController::class, 'destroy'])
+            ->name('destroy');
+    });
+
+    Route::post('/admin/activity-logs/{table}/{id}/recover', [\App\Http\Controllers\Admin\RecoveryController::class, 'recoverRecord'])
+        ->name('admin.activity-logs.recover');
 });
 
 Route::middleware('auth')->group(function () {
