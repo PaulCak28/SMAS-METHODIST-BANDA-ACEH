@@ -1,5 +1,5 @@
-
 <?php
+
 use App\Http\Controllers\CekNilaiController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\AnnouncementImageController;
@@ -47,7 +47,6 @@ Route::get('/cek-nilai-ujian', [CekNilaiController::class, 'examForm'])
 Route::post('/cek-nilai-ujian', [CekNilaiController::class, 'examResults'])
     ->middleware('throttle:5,1')
     ->name('cek-nilai-ujian.show');
-
 
 // =========================================================
 // ROUTE YANG MEMERLUKAN LOGIN
@@ -132,69 +131,67 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/guru/roster', [GuruRoster::class, 'index'])
         ->name('guru.roster');
 
-
     // =====================================================
     // E-CLASS GURU
     // =====================================================
 
     Route::prefix('guru/e-class')->name('guru.classes.')->group(function () {
 
-    // Daftar kelas guru
-    Route::get('/', [GuruClassroom::class, 'index'])
-        ->name('index');
+        // Daftar kelas guru
+        Route::get('/', [GuruClassroom::class, 'index'])
+            ->name('index');
 
-    // Detail kelas
-    Route::get('/{cst}', [GuruClassroom::class, 'show'])
-        ->name('show');
+        // Detail kelas
+        Route::get('/{cst}', [GuruClassroom::class, 'show'])
+            ->name('show');
 
-    // Membuat ulang kode gabung kelas
-    Route::post('/{cst}/regenerate-code', [GuruClassroom::class, 'regenerateCode'])
-        ->name('regenerate-code');
+        // Membuat ulang kode gabung kelas
+        Route::post('/{cst}/regenerate-code', [GuruClassroom::class, 'regenerateCode'])
+            ->name('regenerate-code');
 
-    // Mengeluarkan siswa
-    Route::delete('/{cst}/students/{nis}', [GuruClassroom::class, 'removeStudent'])
-        ->name('students.remove');
+        // Mengeluarkan siswa
+        Route::delete('/{cst}/students/{nis}', [GuruClassroom::class, 'removeStudent'])
+            ->name('students.remove');
 
-    // Upload gambar editor materi dan tugas
-    Route::post('/{cst}/editor-images', [GuruClassroom::class, 'uploadEditorImage'])
-        ->name('editor-images.store');
+        // Upload gambar editor materi dan tugas
+        Route::post('/{cst}/editor-images', [GuruClassroom::class, 'uploadEditorImage'])
+            ->name('editor-images.store');
 
-    // MATERI
-    Route::get('/{cst}/materials/create', [GuruClassroom::class, 'createMaterial'])
-        ->name('materials.create');
+        // MATERI
+        Route::get('/{cst}/materials/create', [GuruClassroom::class, 'createMaterial'])
+            ->name('materials.create');
 
-    Route::post('/{cst}/materials', [GuruClassroom::class, 'storeMaterial'])
-        ->name('materials.store');
+        Route::post('/{cst}/materials', [GuruClassroom::class, 'storeMaterial'])
+            ->name('materials.store');
 
-    Route::put('/{cst}/materials/{material}', [GuruClassroom::class, 'updateMaterial'])
-        ->name('materials.update');
+        Route::put('/{cst}/materials/{material}', [GuruClassroom::class, 'updateMaterial'])
+            ->name('materials.update');
 
-    Route::delete('/{cst}/materials/{material}', [GuruClassroom::class, 'destroyMaterial'])
-        ->name('materials.destroy');
+        Route::delete('/{cst}/materials/{material}', [GuruClassroom::class, 'destroyMaterial'])
+            ->name('materials.destroy');
 
-    // TUGAS
-    Route::get('/{cst}/assignments/create', [GuruClassroom::class, 'createAssignment'])
-        ->name('assignments.create');
+        // TUGAS
+        Route::get('/{cst}/assignments/create', [GuruClassroom::class, 'createAssignment'])
+            ->name('assignments.create');
 
-    Route::post('/{cst}/assignments', [GuruClassroom::class, 'storeAssignment'])
-        ->name('assignments.store');
+        Route::post('/{cst}/assignments', [GuruClassroom::class, 'storeAssignment'])
+            ->name('assignments.store');
 
-    Route::put('/assignments/{assignment}', [GuruClassroom::class, 'updateAssignment'])
-        ->name('assignments.update');
+        Route::put('/assignments/{assignment}', [GuruClassroom::class, 'updateAssignment'])
+            ->name('assignments.update');
 
-    Route::get('/assignments/{assignment}', [GuruClassroom::class, 'showAssignment'])
-        ->name('assignments.show');
+        Route::get('/assignments/{assignment}', [GuruClassroom::class, 'showAssignment'])
+            ->name('assignments.show');
 
-    Route::delete('/assignments/{assignment}', [GuruClassroom::class, 'destroyAssignment'])
-        ->name('assignments.destroy');
+        Route::delete('/assignments/{assignment}', [GuruClassroom::class, 'destroyAssignment'])
+            ->name('assignments.destroy');
 
-    Route::patch('/assignments/{assignment}/students/{nis}/grade', [GuruClassroom::class, 'gradeSubmission'])
-        ->name('assignments.grade');
+        Route::patch('/assignments/{assignment}/students/{nis}/grade', [GuruClassroom::class, 'gradeSubmission'])
+            ->name('assignments.grade');
 
-    Route::get('/assignments/{assignment}/students/{nis}/download', [GuruClassroom::class, 'downloadSubmission'])
-        ->name('assignments.download');
+        Route::get('/assignments/{assignment}/students/{nis}/download', [GuruClassroom::class, 'downloadSubmission'])
+            ->name('assignments.download');
     });
-
 
     // =====================================================
     // E-EXAM GURU
@@ -271,24 +268,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])
         ->name('admin.dashboard');
 
-
     // -----------------------------
     // MONITORING
     // -----------------------------
 
-   Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
-    Route::get('/', [MonitoringController::class, 'index'])->name('index');
-    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams');
-    Route::get('/exam/{id}', [MonitoringController::class, 'show'])->name('show');
-});
-
+    Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
+        Route::get('/', [MonitoringController::class, 'index'])->name('index');
+        Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams');
+        Route::get('/exam/{id}', [MonitoringController::class, 'show'])->name('show');
+    });
 
     // -----------------------------
     // ACCOUNT MANAGEMENT
     // -----------------------------
 
     Route::prefix('admin/accounts')->name('admin.accounts.')->group(function () {
-
         Route::get('/', [AccountController::class, 'index'])
             ->name('index');
 
@@ -308,13 +302,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('destroy');
     });
 
-
     // -----------------------------
     // SUBJECT MANAGEMENT
     // -----------------------------
 
     Route::prefix('admin/subjects')->name('admin.subjects.')->group(function () {
-
         Route::get('/', [SubjectController::class, 'index'])
             ->name('index');
 
@@ -334,13 +326,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('destroy');
     });
 
-
     // -----------------------------
     // CLASS SUBJECT TEACHER
     // -----------------------------
 
     Route::prefix('admin/cst')->name('admin.cst.')->group(function () {
-
         Route::get('/', [CstController::class, 'index'])
             ->name('index');
 
@@ -359,7 +349,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::delete('/{cst}', [CstController::class, 'destroy'])
             ->name('destroy');
     });
-
 
     // -----------------------------
     // CLASS ENROLLMENT
@@ -393,17 +382,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     //classes
     Route::prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
-            ->name('classes.index');
-        Route::post('/classes/promote', [\App\Http\Controllers\Admin\SchoolClassController::class, 'promote'])
-            ->name('classes.promote');
-    });
-
+        ->name('admin.')
+        ->group(function () {
+            Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
+                ->name('classes.index');
+            Route::post('/classes/promote', [\App\Http\Controllers\Admin\SchoolClassController::class, 'promote'])
+                ->name('classes.promote');
+        });
 
     //announcements
-Route::prefix('admin/announcements')
+    Route::prefix('admin/announcements')
         ->name('admin.announcements.')
         ->group(function () {
             Route::get('/', [AdminAnnouncement::class, 'index'])->name('index');
@@ -425,33 +413,32 @@ Route::prefix('admin/announcements')
     Route::post('/admin/students/{student}/enrollments', [ClassEnrollmentController::class, 'storeFromStudent'])
         ->name('admin.students.enrollments.store');
 
-        //Logs
-      Route::middleware(['auth', EnsureAdmin::class])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        // 1) kotak-kotak semua tabel
-        Route::get('activity-logs', [ActivityLogController::class, 'index'])
-            ->name('activity-logs.index');
+    //Logs
+    Route::middleware(['auth', EnsureAdmin::class])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            // 1) kotak-kotak semua tabel
+            Route::get('activity-logs', [ActivityLogController::class, 'index'])
+                ->name('activity-logs.index');
 
-        // 2) isi log satu tabel
-        Route::get('activity-logs/{table}', [ActivityLogController::class, 'table'])
-            ->where('table', '[a-z_]+')
-            ->name('activity-logs.table');
+            // 2) isi log satu tabel
+            Route::get('activity-logs/{table}', [ActivityLogController::class, 'table'])
+                ->where('table', '[a-z_]+')
+                ->name('activity-logs.table');
 
-        // 3) detail satu log
-        Route::get('activity-logs/{table}/{id}', [ActivityLogController::class, 'show'])
-            ->where('table', '[a-z_]+')
-            ->whereNumber('id')
-            ->name('activity-logs.show');
-    });
+            // 3) detail satu log
+            Route::get('activity-logs/{table}/{id}', [ActivityLogController::class, 'show'])
+                ->where('table', '[a-z_]+')
+                ->whereNumber('id')
+                ->name('activity-logs.show');
+        });
 
     // -----------------------------
     // STUDENT MANAGEMENT
     // -----------------------------
 
     Route::prefix('admin/students')->name('admin.students.')->group(function () {
-
         Route::get('/', [StudentController::class, 'index'])
             ->name('index');
 
@@ -474,13 +461,11 @@ Route::prefix('admin/announcements')
             ->name('show');
     });
 
-
     // -----------------------------
     // TEACHER MANAGEMENT
     // -----------------------------
 
     Route::prefix('admin/teachers')->name('admin.teachers.')->group(function () {
-
         Route::get('/', [TeacherController::class, 'index'])
             ->name('index');
 
@@ -551,9 +536,7 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
-
 });
-
 
 // =========================================================
 // AUTHENTICATION ROUTES
