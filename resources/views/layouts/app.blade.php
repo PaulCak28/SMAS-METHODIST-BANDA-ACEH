@@ -12,6 +12,7 @@
             ['label' => 'Dashboard', 'route' => 'siswa.dashboard', 'active' => 'siswa.dashboard', 'icon' => 'dashboard'],
             ['label' => 'E-Class', 'route' => 'siswa.classes.index', 'active' => 'siswa.classes.*', 'icon' => 'class'],
             ['label' => 'E-Exam', 'route' => 'siswa.exams.index', 'active' => 'siswa.exams.*', 'icon' => 'exam'],
+            ['label' => 'Roster Pelajaran', 'route' => 'siswa.roster', 'active' => 'siswa.roster*', 'icon' => 'roster'],
         ],
         'admin' => [
             ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard', 'icon' => 'dashboard'],
@@ -324,6 +325,13 @@
                                            class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
                                             <span class="text-[#8eadd0]">→</span>
                                             E-Exam Siswa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('siswa.roster') }}"
+                                           class="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-300 transition hover:translate-x-1 hover:text-white">
+                                            <span class="text-[#8eadd0]">→</span>
+                                            Roster Pelajaran Siswa
                                         </a>
                                     </li>
                                 @else

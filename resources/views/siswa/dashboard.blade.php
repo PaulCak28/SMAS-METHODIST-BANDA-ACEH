@@ -28,10 +28,10 @@
 
             $themes = [
                 'matematika' => ['symbol' => 'MAT', 'category' => 'MATEMATIKA', 'image' => 'matematika.jpg', 'gradient' => 'linear-gradient(135deg, #0d2847 0%, #174e7d 100%)'],
-                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.svg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
+                'fisika' => ['symbol' => 'FIS', 'category' => 'FISIKA', 'image' => 'fisika.jpg', 'gradient' => 'linear-gradient(135deg, #091e38 0%, #15508a 100%)'],
                 'biologi' => ['symbol' => 'BIO', 'category' => 'BIOLOGI', 'image' => 'biologi.jpg', 'gradient' => 'linear-gradient(135deg, #06282d 0%, #0d5f66 100%)'],
                 'kimia' => ['symbol' => 'KIM', 'category' => 'KIMIA', 'image' => 'kimia.jpg', 'gradient' => 'linear-gradient(135deg, #10263f 0%, #1a568a 100%)'],
-                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.svg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
+                'indonesia' => ['symbol' => 'IDN', 'category' => 'BAHASA INDONESIA', 'image' => 'indonesia.jpg', 'gradient' => 'linear-gradient(135deg, #301712 0%, #7d3725 100%)'],
                 'inggris' => ['symbol' => 'ENG', 'category' => 'BAHASA INGGRIS', 'image' => 'inggris.svg', 'gradient' => 'linear-gradient(135deg, #18223c 0%, #29457a 100%)'],
                 'informatika' => ['symbol' => 'TIK', 'category' => 'INFORMATIKA', 'image' => 'informatika.jpg', 'gradient' => 'linear-gradient(135deg, #092338 0%, #104a75 100%)'],
                 'sejarah' => ['symbol' => 'SEJ', 'category' => 'SEJARAH', 'image' => 'sejarah.svg', 'gradient' => 'linear-gradient(135deg, #2b1f13 0%, #694a28 100%)'],
@@ -78,16 +78,12 @@
 
             $imgUrl = null;
             if (!empty($t['image'])) {
-                if (file_exists(public_path('images/subjects/' . $t['image']))) {
-                    $imgUrl = asset('images/subjects/' . $t['image']);
-                } else {
-                    $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
-                    $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
-                    if (file_exists(public_path('images/subjects/' . $svgName))) {
-                        $imgUrl = asset('images/subjects/' . $svgName);
-                    } elseif (file_exists(public_path('images/subjects/' . $jpgName))) {
-                        $imgUrl = asset('images/subjects/' . $jpgName);
-                    }
+                $jpgName = preg_replace('/\.(svg|png)$/i', '.jpg', $t['image']);
+                $svgName = preg_replace('/\.(jpg|png)$/i', '.svg', $t['image']);
+                if (file_exists(public_path('images/subjects/' . $jpgName))) {
+                    $imgUrl = asset('images/subjects/' . $jpgName);
+                } elseif (file_exists(public_path('images/subjects/' . $svgName))) {
+                    $imgUrl = asset('images/subjects/' . $svgName);
                 }
             }
 
@@ -139,7 +135,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 14px;
-            margin-bottom: 26px;
+            margin-bottom: 0;
         }
 
         .welcome-breadcrumb {
@@ -755,7 +751,7 @@
     </style>
 
     <div class="student-dashboard">
-        <div class="student-wrap">
+        <div class="student-wrap space-y-7 sm:space-y-8">
 
             {{-- TOP BAR --}}
             <div class="welcome-top">
@@ -777,8 +773,19 @@
                 </div>
             @endif
 
-            {{-- HERO BANNER IDENTITAS SISWA (MODERN GLASSMORPHISM & GRADIENT) --}}
-            <section class="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-[#0e172a] via-[#101C35] to-[#1e3a8a] p-6 text-white shadow-2xl sm:p-10">
+            {{-- HERO BANNER IDENTITAS SISWA (FOTO SISWA SMAS METHODIST DENGAN OVERLAY RESMI) --}}
+            <section class="relative isolate overflow-hidden rounded-3xl bg-[#071326] p-6 text-white shadow-2xl sm:p-10">
+                {{-- Foto Siswa SMAS Methodist Banda Aceh --}}
+                <img src="{{ asset('images/methodist-students.jpg') }}"
+                     alt="Siswa SMAS Methodist Banda Aceh"
+                     class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_30%]">
+                
+                {{-- Overlay Gradien Navy Elegan untuk Keterbacaan Kontras Maksimal --}}
+                <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#061122]/80 via-[#091b36]/65 to-[#0e2a54]/45"></div>
+                
+                {{-- Aksen Grid Geometris Halus (Gaya Portal Resmi Methodist) --}}
+                <div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+
                 {{-- Ambient Background Glow --}}
                 <div class="absolute -right-20 -top-20 -z-10 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
                 <div class="absolute -bottom-20 left-1/3 -z-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl"></div>
@@ -841,6 +848,15 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                 <span>Jadwal Ujian (E-Exam)</span>
+                            </a>
+
+                            <a href="{{ route('siswa.roster') }}"
+                               class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20 hover:-translate-y-0.5">
+                                <svg class="h-4 w-4 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/>
+                                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                                </svg>
+                                <span>Roster Pelajaran</span>
                             </a>
                         </div>
                     </div>
@@ -1103,26 +1119,78 @@
                 {{-- KOLOM KANAN (4 COLS): GABUNG KELAS, JADWAL UJIAN, WARTA --}}
                 <div class="space-y-6 lg:col-span-4">
 
+                    {{-- Widget 0: Roster Pelajaran Hari Ini --}}
+                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <h3 class="font-serif text-sm font-bold text-slate-800">Roster Hari Ini</h3>
+                            </div>
+                            <a href="{{ route('siswa.roster') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">
+                                Lengkap &rarr;
+                            </a>
+                        </div>
+
+                        <div class="mt-2.5 flex items-center justify-between text-xs">
+                            <span class="rounded-md bg-blue-50 px-2 py-0.5 font-bold text-[#123B60] text-[11px]">
+                                Kelas {{ $className ?? 'X-A' }}
+                            </span>
+                            <span class="text-slate-400 font-semibold text-[11px]">{{ $todaySchedule['day_name'] ?? 'Hari Ini' }}</span>
+                        </div>
+
+                        @if(!empty($todayGroupedSchedule ?? $todaySchedule['items'] ?? []))
+                            @php
+                                $displayItems = !empty($todayGroupedSchedule) ? $todayGroupedSchedule : ($todaySchedule['items'] ?? []);
+                            @endphp
+                            <div class="mt-2.5 space-y-1.5">
+                                @foreach(array_slice($displayItems, 0, 3) as $item)
+                                    @if(!empty($item['is_break']) || !empty($item['is_special']))
+                                        <div class="rounded-xl border border-dashed border-amber-200 bg-amber-50/70 px-3 py-1.5 text-center">
+                                            <p class="text-[10px] font-bold text-amber-800">{{ $item['time'] }} &bull; {{ $item['activity'] }}</p>
+                                        </div>
+                                    @else
+                                        <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 border border-slate-100 hover:bg-slate-100/80 transition">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <span class="rounded bg-[#123B60] text-white px-1.5 py-0.5 text-[9px] font-mono font-bold shrink-0">
+                                                    {{ $item['les_label'] ?? ('#' . ($item['les'] ?? '')) }}
+                                                </span>
+                                                <div class="min-w-0">
+                                                    <p class="text-xs font-bold text-slate-800 truncate">{{ $item['subject_desc'] ?? $item['subject'] }}</p>
+                                                    <p class="text-[10px] text-slate-400 truncate">{{ $item['teacher_name'] ?? $item['teacher'] }}</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-[10px] font-mono font-semibold text-slate-400 shrink-0 ml-2">{{ $item['time'] }}</span>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="mt-3 text-center text-xs text-slate-400 py-2">Tidak ada jadwal pelajaran hari ini.</p>
+                        @endif
+
+                        <a href="{{ route('siswa.roster') }}" class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 py-2 text-xs font-bold text-slate-700 hover:bg-[#123B60] hover:text-white transition">
+                            <span>Buka Roster Lengkap Kelas {{ $className ?? 'X-A' }}</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </div>
+
                     {{-- Widget 1: Gabung Kelas Baru --}}
-                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#123B60]">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div class="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-[#123B60]">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-bold text-sm text-slate-800">Gabung Kelas Baru</h3>
-                                <p class="text-[11px] text-slate-400">Punya kode dari guru mapel?</p>
+                                <h3 class="font-bold text-xs text-slate-800">Gabung Kelas Baru</h3>
+                                <p class="text-[10px] text-slate-400">Punya kode dari guru mapel?</p>
                             </div>
                         </div>
 
-                        <form action="{{ route('siswa.classes.join') }}" method="POST" class="mt-4 space-y-3">
+                        <form action="{{ route('siswa.classes.join') }}" method="POST" class="mt-3 space-y-2.5">
                             @csrf
                             <div>
-                                <label for="join_code" class="block text-xs font-semibold text-slate-700">
-                                    Kode Kelas (6-8 Karakter)
-                                </label>
                                 <input
                                     id="join_code"
                                     name="join_code"
@@ -1131,13 +1199,13 @@
                                     placeholder="CONTOH: 10AMAT1"
                                     required
                                     style="text-transform: uppercase;"
-                                    class="mt-1.5 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-center font-mono text-sm tracking-wider uppercase text-slate-800 placeholder-slate-400 focus:border-[#267BB5] focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-center font-mono text-xs tracking-wider uppercase text-slate-800 placeholder-slate-400 focus:border-[#267BB5] focus:outline-none focus:ring-1 focus:ring-blue-100"
                                 >
                             </div>
 
                             <button
                                 type="submit"
-                                class="w-full rounded-xl bg-[#123B60] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#267BB5] active:scale-[0.99]"
+                                class="w-full rounded-xl bg-[#123B60] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#267BB5] active:scale-[0.99]"
                             >
                                 Gabung ke Rombel
                             </button>
@@ -1145,49 +1213,55 @@
                     </div>
 
                     {{-- Widget 2: Ujian Daring (E-Exam Terdekat) --}}
-                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                            <h3 class="font-serif text-base font-bold text-slate-800">Jadwal Ujian (CBT)</h3>
+                    <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                            <h3 class="font-serif text-sm font-bold text-slate-800">Jadwal Ujian (CBT)</h3>
                             <a href="{{ route('siswa.exams.index') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">
-                                Semua &rarr;
+                                Semua ({{ $upcomingExams->count() }}) &rarr;
                             </a>
                         </div>
 
                         @if ($upcomingExams->isNotEmpty())
-                            <div class="mt-4 space-y-3">
-                                @foreach ($upcomingExams as $exam)
+                            <div class="mt-3 space-y-2.5">
+                                @foreach ($upcomingExams->take(2) as $exam)
                                     @php
                                         $isOpen = $exam->isOpen();
                                     @endphp
-                                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:bg-white hover:border-slate-200 hover:shadow-sm">
+                                    <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 transition hover:bg-white hover:border-slate-200 hover:shadow-xs">
                                         <div class="flex items-center justify-between gap-2">
                                             <span class="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
                                                 {{ $exam->classSubjectTeacher?->subject?->name ?? 'Ujian' }}
                                             </span>
                                             @if ($isOpen)
-                                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-700 shrink-0">
                                                     <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                                     Sedang Berlangsung
                                                 </span>
                                             @else
-                                                <span class="rounded bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                                                <span class="rounded bg-slate-200 px-2 py-0.5 text-[9px] font-semibold text-slate-600 shrink-0">
                                                     Terjadwal
                                                 </span>
                                             @endif
                                         </div>
 
-                                        <h4 class="mt-2 text-sm font-bold text-slate-800">{{ $exam->title }}</h4>
-                                        <p class="mt-1 text-xs text-slate-500">
-                                            Durasi: {{ $exam->duration_minutes }} menit &bull; Mulai: {{ $exam->start_time->translatedFormat('d M, H:i') }}
+                                        <h4 class="mt-1.5 text-xs font-bold text-slate-800 truncate" title="{{ $exam->title }}">{{ $exam->title }}</h4>
+                                        <p class="text-[10px] text-slate-400 mt-0.5">
+                                            Durasi: {{ $exam->duration_minutes }}m &bull; Mulai: {{ $exam->start_time->translatedFormat('d M, H:i') }}
                                         </p>
 
                                         <a href="{{ route('siswa.exams.show', $exam->exam_id) }}"
-                                           class="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-lg {{ $isOpen ? 'bg-[#123B60] text-white hover:bg-[#267BB5]' : 'bg-slate-200 text-slate-700 hover:bg-slate-300' }} py-1.5 text-xs font-bold transition">
+                                           class="mt-2.5 inline-flex w-full items-center justify-center gap-1 rounded-lg {{ $isOpen ? 'bg-[#123B60] text-white hover:bg-[#267BB5]' : 'bg-slate-200 text-slate-700 hover:bg-slate-300' }} py-1.5 text-[11px] font-bold transition">
                                             <span>{{ $isOpen ? 'Mulai Kerjakan Ujian' : 'Lihat Informasi' }}</span>
                                             <span>&rarr;</span>
                                         </a>
                                     </div>
                                 @endforeach
+
+                                @if($upcomingExams->count() > 2)
+                                    <a href="{{ route('siswa.exams.index') }}" class="block text-center text-xs font-bold text-blue-600 hover:text-blue-800 pt-1">
+                                        +{{ $upcomingExams->count() - 2 }} Ujian Lainnya (Lihat Semua) &rarr;
+                                    </a>
+                                @endif
                             </div>
                         @else
                             <div class="mt-4 p-5 text-center text-xs text-slate-400">

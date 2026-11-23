@@ -16,7 +16,7 @@ class SchoolClassSeeder extends Seeder
         $classes = [
             [
                 'class_id' => 101,
-                'name' => 'X IPA 1',
+                'name' => 'X-A',
                 'academic_year' => '2025/2026',
             ],
             [
