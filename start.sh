@@ -19,6 +19,7 @@ php artisan storage:link || true
 echo "==> Mengatur hak akses untuk www-data..."
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 755 /var/www/html/public
 
 echo "==> Menjalankan Apache web server..."
 exec apache2-foreground
