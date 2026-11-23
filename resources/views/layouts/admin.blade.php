@@ -274,6 +274,10 @@
                 <i class="bi bi-person-gear"></i>
                 <span>Profil Saya</span>
             </a>
+            <a href="{{ Route::has('admin.recovery.index') ? route('admin.recovery.index') : '#' }}" class="nav-link {{ request()->routeIs('admin.recovery.*') ? 'active' : '' }}">
+                <i class="bi bi-database-check"></i>
+                <span>Pemulihan & Cadangan</span>
+            </a>
         </div>
 
     </aside>

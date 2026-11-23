@@ -15,12 +15,42 @@
                 Daftar seluruh kelas beserta wali kelas pengampu dan jumlah siswa terdaftar.
             </p>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
-            <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
-        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-portal-primary btn-sm px-3 py-2 rounded-3"
+                    data-bs-toggle="modal" data-bs-target="#promoteClassModal">
+                <i class="bi bi-arrow-up-circle me-1"></i> Naik Kelas Massal
+            </button>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
+            </a>
+        </div>
     </div>
 
     <div class="p-4 pt-0">
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0 small">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         {{-- FORM PENCARIAN & FILTER --}}
         <form method="GET" action="{{ route('admin.classes.index') }}" class="portal-card p-3 mb-4">
@@ -200,6 +230,59 @@
             @endif
         </div>
 
+    </div>
+</div>
+
+{{-- MODAL NAIK KELAS MASSAL (Stored Procedure sp_promote_class) --}}
+<div class="modal fade" id="promoteClassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('admin.classes.promote') }}" method="POST" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-arrow-up-circle text-accent me-2"></i> Naik Kelas Massal
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="small text-muted-portal mb-3">
+                    Fitur ini memindahkan semua siswa berstatus <strong>aktif</strong> dari kelas asal ke kelas tujuan sekaligus secara aman menggunakan <code>sp_promote_class</code>.
+                </p>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Kelas Asal <span class="text-danger">*</span></label>
+                    <select name="from_class_id" class="form-select" required>
+                        <option value="">-- Pilih Kelas Asal --</option>
+                        @foreach($allClasses ?? [] as $c)
+                            <option value="{{ $c->class_id }}">
+                                {{ $c->name }} ({{ $c->academic_year ?? '-' }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Kelas Tujuan <span class="text-danger">*</span></label>
+                    <select name="to_class_id" class="form-select" required>
+                        <option value="">-- Pilih Kelas Tujuan --</option>
+                        @foreach($allClasses ?? [] as $c)
+                            <option value="{{ $c->class_id }}">
+                                {{ $c->name }} ({{ $c->academic_year ?? '-' }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-portal-primary px-4"
+                        onclick="return confirm('Apakah Anda yakin ingin memindahkan seluruh siswa aktif dari kelas asal ke kelas tujuan?')">
+                    <i class="bi bi-arrow-up-circle me-1"></i> Proses Kenaikan Kelas
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 

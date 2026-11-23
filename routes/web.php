@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AnnouncementImageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\MonitoringController;
-use App\Http\Controllers\Admin\GradeLogController;
 use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Middleware\EnsureAdmin;
@@ -279,8 +278,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
    Route::prefix('admin/monitoring')->name('admin.monitoring.')->group(function () {
     Route::get('/', [MonitoringController::class, 'index'])->name('index');
-    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams'); // Tambahan route kelas
-    Route::get('/monitoring/class/{classId}', [MonitoringController::class, 'classExams'])->name('admin.monitoring.class.exams');
+    Route::get('/class/{classId}', [MonitoringController::class, 'classExams'])->name('class.exams');
     Route::get('/exam/{id}', [MonitoringController::class, 'show'])->name('show');
 });
 
@@ -393,19 +391,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             ->name('destroy');
     });
 
-    //grade logs
-    Route::prefix('admin/activity-logs')
-    ->name('admin.activity-logs.')
-    ->group(function () {
-        Route::get('/', [GradeLogController::class, 'index'])->name('index');
-    });
-
     //classes
     Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/classes', [\App\Http\Controllers\Admin\SchoolClassController::class, 'index'])
             ->name('classes.index');
+        Route::post('/classes/promote', [\App\Http\Controllers\Admin\SchoolClassController::class, 'promote'])
+            ->name('classes.promote');
     });
 
 
@@ -520,6 +513,29 @@ Route::prefix('admin/announcements')
         Route::put('/password', [AdminProfileController::class, 'updatePassword'])
             ->name('password');
     });
+
+    // -----------------------------
+    // DATABASE RECOVERY & BACKUP
+    // -----------------------------
+    Route::prefix('admin/recovery')->name('admin.recovery.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RecoveryController::class, 'index'])
+            ->name('index');
+
+        Route::post('/backup', [\App\Http\Controllers\Admin\RecoveryController::class, 'backup'])
+            ->name('backup');
+
+        Route::post('/restore', [\App\Http\Controllers\Admin\RecoveryController::class, 'restore'])
+            ->name('restore');
+
+        Route::get('/download/{filename}', [\App\Http\Controllers\Admin\RecoveryController::class, 'download'])
+            ->name('download');
+
+        Route::delete('/{filename}', [\App\Http\Controllers\Admin\RecoveryController::class, 'destroy'])
+            ->name('destroy');
+    });
+
+    Route::post('/admin/activity-logs/{table}/{id}/recover', [\App\Http\Controllers\Admin\RecoveryController::class, 'recoverRecord'])
+        ->name('admin.activity-logs.recover');
 });
 
 Route::middleware('auth')->group(function () {
