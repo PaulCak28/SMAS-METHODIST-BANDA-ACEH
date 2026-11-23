@@ -10,7 +10,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared("ALTER DATABASE `methodist_aceh` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        // Mengambil nama database aktif secara dinamis (methodist_aceh di lokal, railway di server)
+        $dbName = DB::connection()->getDatabaseName();
+        
+        DB::unprepared("ALTER DATABASE `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        
         // 1. Hapus semua trigger, procedure, function, dan view yang berkonflik/rusak
         $existingTriggers = DB::select("SHOW TRIGGERS");
         foreach ($existingTriggers as $trigger) {
@@ -53,7 +57,7 @@ return new class extends Migration
         DB::unprepared("DROP VIEW IF EXISTS `v_exam_results`;");
         DB::unprepared("DROP VIEW IF EXISTS `v_student_grade_summary`;");
 
-        // 2. Buat FUNCTIONS (100% sesuai kolom asli di schema.sql)
+        // 2. Buat FUNCTIONS
         DB::unprepared("
             CREATE FUNCTION `fn_grade_letter`(p_score DECIMAL(6,2)) RETURNS VARCHAR(2) CHARSET utf8mb4
             DETERMINISTIC
@@ -150,7 +154,7 @@ return new class extends Migration
             END;
         ");
 
-        // 3. Perbaiki VIEW `v_exam_results` yang error & buat `v_student_grade_summary`
+        // 3. Perbaiki VIEW
         DB::unprepared("
             CREATE VIEW `v_exam_results` AS
             SELECT
@@ -599,7 +603,7 @@ return new class extends Migration
             END;
         ");
 
-        // 5. Buat TRIGGERS (100% sesuai kolom asli di schema.sql)
+        // 5. Buat TRIGGERS
         DB::unprepared("
             CREATE TRIGGER `trg_announcements_ai` AFTER INSERT ON `announcements` FOR EACH ROW
             BEGIN
@@ -772,14 +776,14 @@ return new class extends Migration
             END;
         ");
 
-        // 6. Berikan hak akses tabel & EXECUTE otomatis untuk semua user aplikasi
+        // 6. Berikan hak akses tabel & EXECUTE menggunakan nama database yang dinamis ($dbName)
         $users = DB::select("SELECT User, Host FROM mysql.user WHERE User IN ('methodist_admin', 'methodist_guru', 'methodist_siswa')");
         foreach ($users as $u) {
             $target = "'{$u->User}'@'{$u->Host}'";
             if ($u->User === 'methodist_admin') {
-                DB::unprepared("GRANT ALL PRIVILEGES ON methodist_aceh.* TO {$target};");
+                DB::unprepared("GRANT ALL PRIVILEGES ON `{$dbName}`.* TO {$target};");
             } elseif ($u->User === 'methodist_guru') {
-                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON methodist_aceh.* TO {$target};");
+                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON `{$dbName}`.* TO {$target};");
                 $guruProcs = [
                     'sp_create_exam_question',
                     'sp_exam_participants',
@@ -791,7 +795,7 @@ return new class extends Migration
                     'sp_teacher_student_grades',
                 ];
                 foreach ($guruProcs as $p) {
-                    DB::unprepared("GRANT EXECUTE ON PROCEDURE methodist_aceh.{$p} TO {$target};");
+                    DB::unprepared("GRANT EXECUTE ON PROCEDURE `{$dbName}`.{$p} TO {$target};");
                 }
                 $guruFuncs = [
                     'fn_exam_final_score',
@@ -802,19 +806,18 @@ return new class extends Migration
                     'fn_violation_count',
                 ];
                 foreach ($guruFuncs as $f) {
-                    DB::unprepared("GRANT EXECUTE ON FUNCTION methodist_aceh.{$f} TO {$target};");
+                    DB::unprepared("GRANT EXECUTE ON FUNCTION `{$dbName}`.{$f} TO {$target};");
                 }
             } elseif ($u->User === 'methodist_siswa') {
-                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON methodist_aceh.* TO {$target};");
-                DB::unprepared("GRANT EXECUTE ON PROCEDURE methodist_aceh.sp_record_exam_grade TO {$target};");
-                DB::unprepared("GRANT EXECUTE ON PROCEDURE methodist_aceh.sp_public_check_grades TO {$target};");
-                DB::unprepared("GRANT EXECUTE ON FUNCTION methodist_aceh.fn_exam_final_score TO {$target};");
-                DB::unprepared("GRANT EXECUTE ON FUNCTION methodist_aceh.fn_exam_objective_score TO {$target};");
+                DB::unprepared("GRANT SELECT, INSERT, UPDATE, DELETE ON `{$dbName}`.* TO {$target};");
+                DB::unprepared("GRANT EXECUTE ON PROCEDURE `{$dbName}`.sp_record_exam_grade TO {$target};");
+                DB::unprepared("GRANT EXECUTE ON PROCEDURE `{$dbName}`.sp_public_check_grades TO {$target};");
+                DB::unprepared("GRANT EXECUTE ON FUNCTION `{$dbName}`.fn_exam_final_score TO {$target};");
+                DB::unprepared("GRANT EXECUTE ON FUNCTION `{$dbName}`.fn_exam_objective_score TO {$target};");
             }
         }
         DB::unprepared("FLUSH PRIVILEGES;");
     }
-    
 
     /**
      * Reverse the migrations.
